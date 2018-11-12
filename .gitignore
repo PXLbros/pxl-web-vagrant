@@ -1,0 +1,7 @@
+.vagrant
+.config.yaml
+vagrant.log
+provision/user
+node_modules/
+projects/
+sites/

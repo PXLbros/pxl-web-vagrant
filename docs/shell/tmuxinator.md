@@ -1,0 +1,5 @@
+---
+title: tmuxinator
+---
+
+# tmuxinator

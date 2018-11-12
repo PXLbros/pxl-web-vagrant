@@ -1,0 +1,28 @@
+# PXL Web Vagrant
+
+Welcome to **PXL Web Vagrant** - a Ubuntu Vagrant environment for web development.
+
+* Open source :100:
+    * Help make **PXL Web Vagrant** better by making a [pull request](https://asdf.com)
+* Easy powerful configuration through [`config.yaml`](/configuration.html#config-yaml)
+* PHP
+    * Version 5.6 & 7.0-7.3
+    * Support for multiple versions at the same time
+    * Caching with Memcached and APC
+* Node.js
+* Web servers
+    * Apache
+    * NGINX
+    * Built-in helper commands for managing virtual host configurations, e.g. [`create_apache_vhost`](/web-servers/apache.html#create-apache-vhost) and [`edit_nginx_server_block`](/web-servers/nginx.html#edit-nginx-server-block)
+* Databases
+    * MySQL 5.7
+    * MongoDB
+    * Built-in helper commands for creating and deleting databases, .e.g [`create_database`](/databases/#create-database) and [`delete_database`](/databases/#delete-database)
+* Caching
+    * Redis
+* Shell
+    * liquidprompt
+    * tmux
+        * tmuxinator
+* Other
+    * Support for custom Vagrant provision scripts

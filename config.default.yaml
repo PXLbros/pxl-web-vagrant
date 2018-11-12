@@ -1,0 +1,46 @@
+debug: true
+timezone: 'America/Los_Angeles'
+vm:
+    name: 'pxl-web-vagrant'
+    memory: 1024
+network:
+    ip: '192.168.1.99'
+web-servers:
+    apache:
+        enabled: true
+        port: 7001
+    nginx:
+        enabled: true
+        port: 7002
+code:
+    php:
+        enabled: true
+        versions:
+            - 7.3
+            - 7.2
+            - 7.1
+            - 7.0
+            - 5.6
+        modules:
+            - gzip
+        cache:
+            memcached: true
+            apc: true
+databases:
+    mysql:
+        enabled: true
+    mongodb:
+        enabled: true
+cache:
+    redis:
+        enabled: true
+shell:
+    tmux:
+        enabled: true
+        version: 2.8
+        tmuxinator:
+            enabled: true
+        gpakosz:
+            enabled: true
+    liquidprompt:
+        enabled: true

@@ -1,5 +1,5 @@
 .vagrant
-.config.yaml
+config.yaml
 vagrant.log
 provision/user
 node_modules/

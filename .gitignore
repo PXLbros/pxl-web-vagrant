@@ -4,3 +4,4 @@ vagrant.log
 provision/user
 node_modules/
 sites/
+.DS_Store

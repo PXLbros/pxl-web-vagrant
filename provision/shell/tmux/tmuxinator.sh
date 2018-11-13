@@ -3,13 +3,15 @@
 # Update Ruby
 sudo apt-add-repository -y ppa:brightbox/ruby-ng
 sudo apt-get -y update
-sudo apt-get -y install ruby-dev
+sudo apt-get install -y \
+    rubygems \
+    ruby-dev
 
 # Install tmuxinator
 sudo gem install tmuxinator
 
 # Create tmuxinator directory
-mkdir -p ~/.config/tmuxinator
+mkdir -p /home/vagrant/.config/tmuxinator
 
 # Create "Home" tmuxinator project
 echo "# ~/.tmuxinator/home.yml

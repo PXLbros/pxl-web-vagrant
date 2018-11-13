@@ -6,8 +6,16 @@ require 'yaml'
 
 VAGRANT_DIR = File.dirname(File.expand_path(__FILE__))
 
+# Check which config file to use
+if File.file?("#{VAGRANT_DIR}/config.yaml")
+    config_filename = 'config.yaml'
+else
+    config_filename = 'config.default.yaml'
+end
+
 # Load settings from config file
-settings = YAML.load_file("#{VAGRANT_DIR}/config.yaml")
+settings = YAML.load_file("#{VAGRANT_DIR}/#{config_filename}")
+
 debug = settings['debug'] === true
 
 Vagrant.configure('2') do |config|

@@ -30,7 +30,7 @@ create_project \
 
 ```shell
 create_project \
-    --repo=git@github.com:x/x.git
+    --git-repo=git@github.com:x/x.git
     --dir=my-project/
 ```
 
@@ -44,11 +44,13 @@ create_project \
 
 #### Options
 
-* `--delete-files` (Delete files if no [`.pxl-vagrant/config.yaml`](/projects/configuration.html#config-yaml) file is found in specified directory from `--dir`)
+* `--dir` (Project directory)
+* `--delete-files` (Delete project files)
 * `--delete-db` (Delete database)
 
 ```shell
 delete_project \
     --dir=my-project/ \
+    --delete-files \
     --delete-db
 ```

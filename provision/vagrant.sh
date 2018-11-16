@@ -23,7 +23,8 @@ DEBIAN_FRONTEND=noninteractive \
 apt-get -y install \
     build-essential \
     libevent-dev \
-    libncurses-dev
+    libncurses-dev \
+    zip unzip
 
 # Clean up APT
 apt-get autoremove -yf

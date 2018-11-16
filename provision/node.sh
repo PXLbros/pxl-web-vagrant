@@ -9,7 +9,7 @@ export NVM_DIR="/home/vagrant/.nvm"
 # Copy NVM_DIR to .bashrc
 if ! grep -qF "export NVM_DIR" /home/vagrant/.bashrc
 then
-    echo "export NVM_DIR=$NVM_DIR" >> /home/vagrant/.bashrc
+    echo -e "\nexport NVM_DIR=$NVM_DIR" >> /home/vagrant/.bashrc
 fi
 
 # Enable NVM
@@ -23,7 +23,7 @@ nvm install --lts
 nvm use --lts
 
 # Set default Node version
-nvm alias default --lts
+nvm alias default system
 
 # Change NVM home directory ownership
 sudo chown -R vagrant:vagrant /home/vagrant/.nvm

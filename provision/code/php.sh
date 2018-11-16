@@ -8,6 +8,9 @@ apt-get update -y
 
 PHP_VERSIONS=($VERSIONS)
 
+echo "PHP_VERSIONS:"
+echo "$PHP_VERSIONS"
+
 for PHP_VERSION in "${PHP_VERSIONS[@]}"
 do
     # Install PHP version and common extensions
@@ -51,20 +54,26 @@ then
     a2enmod actions fastcgi alias proxy_fcgi
 fi
 
-# Fix FPM permissions
 for PHP_VERSION in "${PHP_VERSIONS[@]}"
 do
+    PHP_WWW_CONF_FILE=/etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
+    PHP_INI_FILE=/etc/php/${PHP_VERSION}/fpm/php.ini
+
+    # Update FPM permissions
     chmod 666 /run/php/php${PHP_VERSION}-fpm.sock
 
-    sed -i "s/user = www-data/user = vagrant/" /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
-    sed -i "s/group = www-data/group = vagrant/" /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
-    sed -i "s/listen\.owner.*/listen.owner = vagrant/" /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
-    sed -i "s/listen\.group.*/listen.group = vagrant/" /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
-    sed -i "s/;listen\.mode.*/listen.mode = 0666/" /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
+    # Change FPM user and group
+    sed -i "s/user = www-data/user = vagrant/" $PHP_WWW_CONF_FILE
+    sed -i "s/group = www-data/group = vagrant/" $PHP_WWW_CONF_FILE
+    sed -i "s/listen\.owner.*/listen.owner = vagrant/" $PHP_WWW_CONF_FILE
+    sed -i "s/listen\.group.*/listen.group = vagrant/" $PHP_WWW_CONF_FILE
+    sed -i "s/;listen\.mode.*/listen.mode = 0666/" $PHP_WWW_CONF_FILE
 
-    sed -i -r -e 's/error_reporting = E_ALL & ~E_DEPRECATED/error_reporting = E_ALL | E_STRICT/g' /etc/php/${PHP_VERSION}/fpm/php.ini
-    sed -i -r -e 's/display_errors = Off/display_errors = On/g' /etc/php/${PHP_VERSION}/fpm/php.ini
+    # Change PHP error reporting
+    sed -i -r -e 's/error_reporting=.*/error_reporting = E_ALL | E_STRICT/g' $PHP_INI_FILE
+    sed -i -r -e 's/display_errors = Off/display_errors = On/g' $PHP_INI_FILE
 
+    # Restart PHP version
     service php${PHP_VERSION}-fpm restart
 done
 

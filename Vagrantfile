@@ -13,6 +13,8 @@ else
     config_filename = 'config.default.yaml'
 end
 
+puts "CONFIG FILE: #{config_filename}"
+
 # Load settings from config file
 settings = YAML.load_file("#{VAGRANT_DIR}/#{config_filename}")
 
@@ -49,17 +51,17 @@ Vagrant.configure('2') do |config|
     end
 
     # Install Vagrant core
-    config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/vagrant.sh", privileged: true, env: {
+    config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/vagrant.sh", privileged: true, run: 'once', env: {
         'DEBUG': debug,
         'VAGRANT_NAME': settings['vm']['name']
     }
 
     # Set timezone
     TIMEZONE = (settings['timezone'] || 'UTC')
-    config.vm.provision 'shell', inline: "rm /etc/localtime && sudo ln -s /usr/share/zoneinfo/#{TIMEZONE} /etc/localtime"
+    config.vm.provision 'shell', run: 'always', inline: "rm /etc/localtime && sudo ln -s /usr/share/zoneinfo/#{TIMEZONE} /etc/localtime"
 
     # Generate .bash_profile
-    config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/shell/bash_profile.sh", privileged: false, env: {
+    config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/shell/bash_profile.sh", privileged: false, run: 'once', env: {
         'APACHE': settings['web-servers']['apache']['enabled'],
         'NGINX': settings['web-servers']['nginx']['enabled'],
         'MYSQL': settings['databases']['mysql']['enabled'],
@@ -67,17 +69,17 @@ Vagrant.configure('2') do |config|
     }
 
     # Node
-    config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/node.sh", privileged: false
+    config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/node.sh", run: 'once', privileged: false
 
     # Yarn
-    config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/yarn.sh", privileged: false
+    config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/yarn.sh", run: 'once', privileged: false
 
     # Vim
-    config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/shell/vim.sh", privileged: false
+    config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/shell/vim.sh", run: 'once', privileged: false
 
     # tmux
     if settings['shell']['tmux']['enabled']
-        config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/shell/tmux/tmux.sh", privileged: false, env: {
+        config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/shell/tmux/tmux.sh", run: 'once', privileged: false, env: {
             'VERSION': (settings['shell']['tmux']['version'] || 2.8),
             'TMUXINATOR': (settings['shell']['tmux']['tmuxinator']['enabled'] || false),
             'GPAKOSZ': (settings['shell']['tmux']['gpakosz']['enabled'] || false)
@@ -85,7 +87,7 @@ Vagrant.configure('2') do |config|
 
         # tmuxinator
         if settings['shell']['tmux']['tmuxinator']['enabled']
-            config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/shell/tmux/tmuxinator.sh", privileged: false, env: {
+            config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/shell/tmux/tmuxinator.sh", run: 'once', privileged: false, env: {
                 'VM_NAME': settings['vm']['name']
             }
         end
@@ -93,7 +95,7 @@ Vagrant.configure('2') do |config|
 
     # Liquid Prompt
     if settings['shell']['liquidprompt']['enabled']
-        config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/shell/liquidprompt.sh", privileged: false
+        config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/shell/liquidprompt.sh", run: 'once', privileged: false
     end
 
     # Install web servers
@@ -109,7 +111,7 @@ Vagrant.configure('2') do |config|
                 end
 
                 # Install web server
-                config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/web-servers/#{web_server_name}.sh", privileged: false, env: {
+                config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/web-servers/#{web_server_name}.sh", privileged: false, run: 'once', env: {
                     'PORT': port_in
                 }
 
@@ -123,7 +125,7 @@ Vagrant.configure('2') do |config|
     if settings.has_key?('code') and settings['code'].has_key?('php')
         if settings['code']['php']['enabled'] == true
             # Install PHP
-            config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/code/php.sh", privileged: true, env: {
+            config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/code/php.sh", privileged: true, run: 'once', env: {
                 'VERSIONS': settings['code']['php']['versions'].join(' '),
                 'APACHE': settings['web-servers']['apache']['enabled']
             }
@@ -135,13 +137,13 @@ Vagrant.configure('2') do |config|
         settings['databases'].each do |database_name, database_settings|
             if database_settings['enabled'] == true
                 # Install database
-                config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/databases/#{database_name}.sh", privileged: true
+                config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/databases/#{database_name}.sh", privileged: true, run: 'once'
             end
         end
     end
 
     # Run user provision scripts
     Dir.glob("#{VAGRANT_DIR}/provision/user/*.sh").each do |user_file_path|
-        config.vm.provision 'shell', path: user_file_path, privileged: false
+        config.vm.provision 'shell', path: user_file_path, privileged: false, run: 'once'
     end
 end

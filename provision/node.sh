@@ -23,7 +23,7 @@ nvm install --lts
 nvm use --lts
 
 # Set default Node version
-nvm alias default system
+nvm alias default stable
 
 # Change NVM home directory ownership
 sudo chown -R vagrant:vagrant /home/vagrant/.nvm

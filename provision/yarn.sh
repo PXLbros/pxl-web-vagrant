@@ -21,5 +21,5 @@ do
 done
 
 # Install provision shell script dependencies
-cd /vagrant/provision/shell/scripts/ \
-    && yarn install
+# cd /vagrant/provision/shell/scripts/ \
+#     && yarn install

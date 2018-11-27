@@ -1,5 +1,25 @@
 #!/bin/bash
 
+title() {
+    TITLE=$1
+    TITLE_LENGTH=${#TITLE}
+    TITLE_LENGTH_EXTRA=$((TITLE_LENGTH+2))
+    BAR_CHARACTER="~"
+
+    BAR=""
+
+    for i in $(eval echo {1..$((TITLE_LENGTH+4))})
+    do
+        BAR="${BAR}${BAR_CHARACTER}"
+    done
+
+    echo $BAR
+    echo -e "${BAR_CHARACTER} \x1b[1;34m$TITLE\e[0m ${BAR_CHARACTER}"
+    echo $BAR
+}
+
+title "vagrant.sh"
+
 export DEBIAN_FRONTEND=noninteractive
 
 # Set language and reconfigure dpkg

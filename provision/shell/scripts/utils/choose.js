@@ -17,8 +17,8 @@ module.exports = {
         return prompt_result.value;
     },
 
-    async choose_apache_site_configuration_file(question) {
-        const apache_available_sites_configuration_files = readdirSync('/etc/apache2/sites-available');
+    async choose_files_from_dir(dir, question) {
+        const apache_available_sites_configuration_files = readdirSync(dir);
 
         const choices = apache_available_sites_configuration_files.map(file => {
             return {

@@ -16,7 +16,7 @@ alias grep='grep --color=auto'\n
 # /etc/hosts\n
 alias edit_hosts='sudo vim /etc/hosts'"
 
-if [ $APACHE = "true" ]
+if [ "$APACHE" == "true" ]
 then
     BASH_PROFILE_CONTENTS="${BASH_PROFILE_CONTENTS}\n
 \n
@@ -33,7 +33,7 @@ alias delete_apache_vhost='node /vagrant/provision/shell/scripts/delete_apache_v
 alias edit_apache_vhost_conf='node /vagrant/provision/shell/scripts/edit_apache_vhost_conf.js'"
 fi
 
-if [ $NGINX = "true" ]
+if [ "$NGINX" == "true" ]
 then
     BASH_PROFILE_CONTENTS="${BASH_PROFILE_CONTENTS}\n
 \n
@@ -42,7 +42,10 @@ alias start_nginx='sudo service nginx start'\n
 alias restart_nginx='sudo service nginx restart'\n
 alias stop_nginx='sudo service nginx stop'\n
 alias nginx_status='sudo service nginx status'\n
-alias reload_nginx='sudo service nginx reload'"
+alias reload_nginx='sudo service nginx reload'\n
+alias create_nginx_site='node /vagrant/provision/shell/scripts/create_nginx_site.js'\n
+alias delete_nginx_site='node /vagrant/provision/shell/scripts/delete_nginx_site.js'\n
+alias edit_nginx_site_conf='node /vagrant/provision/shell/scripts/edit_nginx_site_conf.js'"
 fi
 
 BASH_PROFILE_CONTENTS="${BASH_PROFILE_CONTENTS}\n
@@ -51,7 +54,7 @@ BASH_PROFILE_CONTENTS="${BASH_PROFILE_CONTENTS}\n
 alias create_database='node /vagrant/provision/shell/scripts/create_database.js'\n
 alias delete_database='node /vagrant/provision/shell/scripts/delete_database.js'"
 
-if [ $MYSQL = "true" ]
+if [ "$MYSQL" == "true" ]
 then
     BASH_PROFILE_CONTENTS="${BASH_PROFILE_CONTENTS}
 
@@ -62,7 +65,7 @@ alias restart_mysql='sudo service mysql restart'\n
 alias mysql_status='sudo service mysql status'"
 fi
 
-if [ $MONGODB = "true" ]
+if [ "$MONGODB" == "true" ]
 then
     BASH_PROFILE_CONTENTS="${BASH_PROFILE_CONTENTS}\n
 \n

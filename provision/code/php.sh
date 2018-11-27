@@ -8,9 +8,6 @@ apt-get update -y
 
 PHP_VERSIONS=($VERSIONS)
 
-echo "PHP_VERSIONS:"
-echo "$PHP_VERSIONS"
-
 for PHP_VERSION in "${PHP_VERSIONS[@]}"
 do
     # Install PHP version and common extensions

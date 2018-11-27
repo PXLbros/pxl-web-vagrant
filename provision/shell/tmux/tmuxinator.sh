@@ -14,48 +14,54 @@ sudo gem install tmuxinator
 mkdir -p /home/vagrant/.config/tmuxinator
 
 # Create "Home" tmuxinator project
-echo "# ~/.tmuxinator/home.yml
+HOME_TMUXINATOR_CONTENTS="name: \"$VM_NAME\"\n
+root: ~/\n
+\n
+windows:\n
+    - Home"
 
-name: \"$VM_NAME\"
-root: ~/
+if [ $APACHE = "true" ];
+then
+    HOME_TMUXINATOR_CONTENTS="${HOME_TMUXINATOR_CONTENTS}\n
+- Apache Sites:\n
+    - sudo su -\n
+    - cd /etc/apache2/sites-available\n
+- Apache Log:\n
+    root: /var/log/apache2\n
+    layout: tiled\n
+    panes:\n
+      - access_log:\n
+        - sudo su -\n
+        - tail -f access.log\n
+      - error_log:\n
+        - sudo su -\n
+        - tail -f error.log\n"
+fi
 
-windows:
-  - Home:
-      layout: tiled
-      root: ~/
-      panes:
-        - top:
-          -
-  - Apache:
-      layout: tiled
-      root: ~/
-      panes:
-        - sites_available:
-          - sudo su -
-          - cd /etc/apache2/sites-available
-        - log:
-          - sudo su -
-          - cd /var/log/apache2
-  - PHP:
-      layout: tiled
-      root: ~/
-      panes:
-        - dir:
-          - sudo su -
-          - cd /etc/php
-  - MySQL:
-      layout: tiled
-      root: ~/
-      panes:
-        - dir:
-          - sudo su -
-          - cd /etc/mysql
-        - log:
-          - sudo su -
-          - cd /var/log/mysql
-          - tail -f error.log" > /home/vagrant/.config/tmuxinator/home.yml
+if [ $NGINX = "true" ];
+then
+    HOME_TMUXINATOR_CONTENTS="${HOME_TMUXINATOR_CONTENTS}
+- nginx Sites:\n
+    - sudo su -\n
+    - cd /etc/nginx/sites-available\n
+- nginx Log:\n
+    root: /var/log/nginx\n
+    layout: tiled\n
+    panes:\n
+      - access_log:\n
+        - sudo su -\n
+        - tail -f access.log\n
+      - error_log:\n
+        - sudo su -\n
+        - tail -f error.log\n"
+fi
 
-# Set to open tmuxinator project "Home" upon SSH login
+echo $HOME_TMUXINATOR_CONTENTS
+
+# Save tmuxinator "Home" project
+echo -e $HOME_TMUXINATOR_CONTENTS > /home/vagrant/.config/tmuxinator/home.yml
+
+# Set to open tmuxinator "Home" project upon login
 if ! grep -qF "tmuxinator start home" /home/vagrant/.bashrc
 then
     echo -e "\ntmuxinator start home" >> /home/vagrant/.bashrc

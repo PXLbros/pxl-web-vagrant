@@ -7,13 +7,7 @@ require 'yaml'
 VAGRANT_DIR = File.dirname(File.expand_path(__FILE__))
 
 # Check which config file to use
-if File.file?("#{VAGRANT_DIR}/config.yaml")
-    config_filename = 'config.yaml'
-else
-    config_filename = 'config.default.yaml'
-end
-
-puts "CONFIG FILE: #{config_filename}"
+config_filename = File.file?("#{VAGRANT_DIR}/config.yaml") ? 'config.yaml' : 'config.default.yaml'
 
 # Load settings from config file
 settings = YAML.load_file("#{VAGRANT_DIR}/#{config_filename}")

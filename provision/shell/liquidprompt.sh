@@ -1,15 +1,23 @@
 #!/bin/bash
 
+. /vagrant/provision/helpers.sh
+
+title "liquidprompt.sh"
+
 # Install Liquid Prompt
 if [ ! -d ~/liquidprompt ]
 then
-    git clone https://github.com/nojhan/liquidprompt.git /home/vagrant/liquidprompt
+    title "liquidprompt.sh (Install)"
+
+    git clone https://github.com/nojhan/liquidprompt.git $HOME/liquidprompt
+else
+    title "liquidprompt.sh (Already installed)"
 fi
 
 # Set to automatically run
-if ! grep -qF "source ~/liquidprompt/liquidprompt" /home/vagrant/.bashrc
+if ! grep -qF "source ~/liquidprompt/liquidprompt" $HOME/.bashrc
 then
-    echo -e "\n[[ \$- = *i* ]] && source ~/liquidprompt/liquidprompt" >> /home/vagrant/.bashrc
+    echo -e "\n[[ \$- = *i* ]] && source ~/liquidprompt/liquidprompt" >> $HOME/.bashrc
 fi
 
 # Create configuration file
@@ -142,4 +150,4 @@ LP_ENABLE_SSH_COLORS=0
 
 # Specify a list of complete and colon (\":\") separated paths in which, all vcs
 # will be disabled
-LP_DISABLED_VCS_PATH=\"\"" > /home/vagrant/.liquidpromptrc
+LP_DISABLED_VCS_PATH=\"\"" > $HOME/.liquidpromptrc

@@ -1,15 +1,19 @@
 #!/bin/bash
 
+. /vagrant/provision/helpers.sh
+
+title "node.sh"
+
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
 
-source /home/vagrant/.bashrc
+source $HOME/.bashrc
 
-export NVM_DIR="/home/vagrant/.nvm"
+export NVM_DIR="$HOME/.nvm"
 
 # Copy NVM_DIR to .bashrc
-if ! grep -qF "export NVM_DIR" /home/vagrant/.bashrc
+if ! grep -qF "export NVM_DIR" $HOME/.bashrc
 then
-    echo -e "\nexport NVM_DIR=$NVM_DIR" >> /home/vagrant/.bashrc
+    echo -e "\nexport NVM_DIR=$NVM_DIR" >> $HOME/.bashrc
 fi
 
 # Enable NVM
@@ -26,4 +30,4 @@ nvm use --lts
 nvm alias default stable
 
 # Change NVM home directory ownership
-sudo chown -R vagrant:vagrant /home/vagrant/.nvm
+sudo chown -R vagrant:vagrant $HOME/.nvm

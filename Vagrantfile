@@ -94,23 +94,27 @@ Vagrant.configure('2') do |config|
 
     # Install web servers
     if settings.has_key?('web-servers')
+        web_server_port_in = 80
+
         settings['web-servers'].each do |web_server_name, web_server_settings|
             if web_server_settings['enabled'] == true
                 if web_server_name === 'apache'
-                    port_in = 80
+                    # port_in = 80
                     port_out = (web_server_settings['port'] || 7001)
                 elsif web_server_name === 'nginx'
-                    port_in = 81
+                    # port_in = 81
                     port_out = (web_server_settings['port'] || 7002)
                 end
 
                 # Install web server
                 config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/web-servers/#{web_server_name}.sh", privileged: false, run: 'once', env: {
-                    'PORT': port_in
+                    'PORT': web_server_port_in
                 }
 
                 # Bind web server port
-                config.vm.network :forwarded_port, guest: port_in, host: port_out
+                config.vm.network :forwarded_port, guest: web_server_port_in, host: port_out
+
+                web_server_port_in += 1
             end
         end
     end

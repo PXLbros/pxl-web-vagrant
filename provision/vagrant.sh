@@ -1,53 +1,60 @@
 #!/bin/bash
 
-title() {
-    TITLE=$1
-    TITLE_LENGTH=${#TITLE}
-    TITLE_LENGTH_EXTRA=$((TITLE_LENGTH+2))
-    BAR_CHARACTER="~"
-
-    BAR=""
-
-    for i in $(eval echo {1..$((TITLE_LENGTH+4))})
-    do
-        BAR="${BAR}${BAR_CHARACTER}"
-    done
-
-    echo $BAR
-    echo -e "${BAR_CHARACTER} \x1b[1;34m$TITLE\e[0m ${BAR_CHARACTER}"
-    echo $BAR
-}
-
-title "vagrant.sh"
+. /vagrant/provision/helpers.sh
 
 export DEBIAN_FRONTEND=noninteractive
 
-# Set language and reconfigure dpkg
+# Set language
+title "vagrant.sh (Set language)"
+
 export LANGUAGE=en_US.UTF-8
 export LANG=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
+
+# local-gen
 locale-gen en_US.UTF-8
+
+command_exec_response "locale-gen" $?
+
+# dpkg-reconfigure
 dpkg-reconfigure locales
 
+command_exec_response "dpkg-reconfigure" $?
+
 # Update APT
+title "vagrant.sh (Update APT)"
+
 apt-get update
 
+command_exec_response "apt-update" $?
+
 # Upgrade APT
+title "vagrant.sh (Upgrade APT)"
+
 DEBIAN_FRONTEND=noninteractive \
     apt-get -y \
     -o Dpkg::Options::="--force-confdef" \
     -o Dpkg::Options::="--force-confold" \
     upgrade
 
+command_exec_response "apt-upgrade" $?
+
 # Install necessary APT packages
+title "vagrant.sh (Install necessary APT packages)"
+
 apt-get -y install \
     build-essential \
     libevent-dev \
     libncurses-dev \
     zip unzip
 
+command_exec_response "apt-install" $?
+
 # Clean up APT
+title "vagrant.sh (Clean up APT)"
+
 apt-get autoremove -yf
+
+command_exec_response "apt-get autoremove" $?
 
 # Disable default welcome message
 chmod -x /etc/update-motd.d/*

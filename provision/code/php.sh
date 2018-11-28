@@ -1,6 +1,10 @@
 #!/bin/bash
 
+. /vagrant/provision/helpers.sh
+
 # Install PHP dependencies
+title "php.sh (Install dependencies)"
+
 apt-get -y install software-properties-common
 add-apt-repository -y ppa:ondrej/apache2
 add-apt-repository -y ppa:ondrej/php
@@ -10,6 +14,8 @@ PHP_VERSIONS=($VERSIONS)
 
 for PHP_VERSION in "${PHP_VERSIONS[@]}"
 do
+    title "php.sh (Install PHP $PHP_VERSION)"
+
     # Install PHP version and common extensions
     apt-get -y install \
         php${PHP_VERSION} \
@@ -45,14 +51,10 @@ do
     fi
 done
 
-# Enable Apache Fast-CGI
-if [ $APACHE = "true" ]
-then
-    a2enmod actions fastcgi alias proxy_fcgi
-fi
-
 for PHP_VERSION in "${PHP_VERSIONS[@]}"
 do
+    title "php.sh (Fix PHP $PHP_VERSION permissions)"
+
     PHP_WWW_CONF_FILE=/etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
     PHP_INI_FILE=/etc/php/${PHP_VERSION}/fpm/php.ini
 
@@ -71,11 +73,15 @@ do
     sed -i -r -e 's/display_errors = Off/display_errors = On/g' $PHP_INI_FILE
 
     # Restart PHP version
+    title "php.sh (Restart PHP $PHP_VERSION)"
+
     service php${PHP_VERSION}-fpm restart
 done
 
 # Restart Apache
 if [ $APACHE = "true" ]
 then
+    title "php.sh (Restart Apache)"
+
     service apache2 restart
 fi

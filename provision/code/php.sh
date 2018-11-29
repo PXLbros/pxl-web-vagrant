@@ -85,3 +85,18 @@ then
 
     service apache2 restart
 fi
+
+# Download Composer
+title "php.sh (Install Composer)"
+
+curl -sS https://getcomposer.org/installer | php
+
+if [ -e composer.phar ];
+then
+    # Install Composer
+    sudo mv composer.phar /usr/local/bin/composer
+    sudo mkdir -p /root/.composer
+    grep -q -F 'PATH="$PATH:$HOME/.composer/vendor/bin"' $HOME/.profile || echo -e '\nPATH="$PATH:$HOME/.composer/vendor/bin"' >> $HOME/.profile
+else
+    red_text "Could not download Composer."
+fi

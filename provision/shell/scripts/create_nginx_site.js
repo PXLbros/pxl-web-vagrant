@@ -28,9 +28,12 @@ async function main() {
         try_files $uri $uri/ =404;
     }`;
 
+    // For Laravel: try_files $uri $uri/ /index.php?$query_string;
+
 if (php_version !== null) {
     configuration_file_contents += `\n\n\tlocation ~ \.php$ {
         include snippets/fastcgi-php.conf;
+
         fastcgi_pass unix:/var/run/php/php${php_version}-fpm.sock;
     }`;
     }

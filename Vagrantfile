@@ -140,8 +140,10 @@ Vagrant.configure('2') do |config|
         end
     end
 
-    # Run user provision scripts
+    # Run user provision scripts (TODO: do this in user.sh instead)
     Dir.glob("#{VAGRANT_DIR}/provision/user/*.sh").each do |user_file_path|
         config.vm.provision 'shell', path: user_file_path, privileged: false, run: 'once'
     end
+
+    config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/user.sh", privileged: true, run: 'once'
 end

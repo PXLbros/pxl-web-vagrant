@@ -1,9 +1,12 @@
 const commandLineArgs = require('command-line-args');
+const slugify = require('slugify');
+const { cd, mkdir, pwd, test } = require('shelljs');
 const { ask_confirm, ask_input } = require('./utils/ask');
+const { remove_trailing_slash } = require('./utils/str');
+const { create_pxl_config } = require('./utils/pxl');
 
 const options = commandLineArgs([
     { name: 'name', type: String },
-    { name: 'git-repo', type: String },
     { name: 'dir', type: String }
 ]);
 
@@ -13,21 +16,39 @@ async function main() {
         lower: true
     });
 
-    const is_from_github = (options['git-repo'] || await ask_confirm('Does a GitHub repository exist?');
+    const project_dir = remove_trailing_slash(options['dir'] || await ask_input('What is the project directory?'));
 
-    if (is_from_github) {
-        const github_ssh_repository = (options['git-repo'] || await ask_input('What is the GitHub SSH repository? (i.e. git@github.com:Organization/project-name.git)'));
+    if (test('-d', project_dir)) {
+        if (!await ask_confirm(`Directory ${project_dir} already exist, do you want to continue?`)) {
+            return;
+        }
 
-        // Clone GitHub repository
-        // shell.exec(`git clone ${github_ssh_repository} ${project_dir}`);
+        // Check if existing directory is empty (if yes, can continue safely. but ask first)
 
-        console.log('github_ssh_repository: ' + github_ssh_repository);
-
-        // Look for .pxl-vagrant/config.yaml and figure out settings from there
+        // Check if .pxl configuraton directory exist
         // ...
+    } else {
+        // Create project directory
+        mkdir('-p', project_dir);
     }
 
-    console.log(`project name: ${project_name}`);
+    // Create .pxl configuration directory
+    try {
+        await create_pxl_config(project_name, project_dir);
+    } catch (create_pxl_config_error) {
+        console.log(create_pxl_config_error);
+        console.log(create_pxl_config_error.message);
+    }
+
+    console.log(`Project "${project_name}" has been created!`);
+
+    if (pwd().stdout !== project_dir) {
+        const go_to_dir = (await ask_confirm(`Do you want to go to project directory ${project_dir}?`));
+
+        if (go_to_dir) {
+            cd(project_dir);
+        }
+    }
 }
 
 main();

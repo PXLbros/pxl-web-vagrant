@@ -55,9 +55,9 @@ set si
 set laststatus=2
 
 set statusline=Dir:\ %r%{getcwd()}%h
-set statusline+=\ \ \~\ \
-set statusline+=File:\ %f
 set statusline+=\ \ \~\ \ 
+set statusline+=File:\ %f
+set statusline+=\ \ \~\ \
 set statusline+=Line:\ %l\ (%p%%)
 
 :set mouse=a" > $HOME/.vimrc

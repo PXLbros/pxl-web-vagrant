@@ -14,8 +14,14 @@ alias refresh_aliases='source ~/.bash_profile'
 # Shortcuts
 alias ..='cd ..'
 alias cls='clear'
-alias ls='ls -lGa --color=auto'
+alias ls='ls -lGah --color=auto'
 alias grep='grep --color=auto'
+
+# Projects
+alias create_project='node /vagrant/provision/shell/scripts/create_project.js'
+
+# Sites
+alias create_site='node /vagrant/provision/shell/scripts/create_site.js'
 
 # /etc/hosts
 alias edit_hosts='sudo vim /etc/hosts'"

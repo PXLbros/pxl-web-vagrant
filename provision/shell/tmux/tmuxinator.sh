@@ -66,7 +66,7 @@ fi
 echo -e "$HOME_TMUXINATOR_CONTENTS" > $HOME/.config/tmuxinator/home.yml
 
 # Set to open tmuxinator "Home" project upon login
-if ! grep -qF "tmuxinator start home" $HOME/.bashrc
-then
-    echo -e "\ntmuxinator start home" >> $HOME/.bashrc
-fi
+# if ! grep -qF "tmuxinator start home" $HOME/.bashrc
+# then
+#     echo -e "\ntmuxinator start home" >> $HOME/.bashrc
+# fi

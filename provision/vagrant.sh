@@ -5,7 +5,7 @@
 export DEBIAN_FRONTEND=noninteractive
 
 # Set language
-title "vagrant.sh (Set language)"
+title "vagrant.sh (Configure locale)"
 
 export LANGUAGE=en_US.UTF-8
 export LANG=en_US.UTF-8

@@ -5,10 +5,7 @@
 title "yarn.sh"
 
 # ...
-export APT_KEY_DONT_WARN_ON_DANGEROUS_USAGE=1
-echo "BEFORE APT-key add"
 curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-echo "AFTER APT-key add"
 echo 'deb https://dl.yarnpkg.com/debian/ stable main' | sudo tee /etc/apt/sources.list.d/yarn.list
 
 # Update apt

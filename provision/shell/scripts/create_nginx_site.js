@@ -38,7 +38,8 @@ if (php_version !== null) {
     }`;
     }
 
-    configuration_file_contents += '}';
+    configuration_file_contents += '
+}';
 
     writeFileSync(configuration_file_path, configuration_file_contents);
 

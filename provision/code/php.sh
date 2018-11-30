@@ -96,7 +96,7 @@ then
     # Install Composer
     sudo mv composer.phar /usr/local/bin/composer
     sudo mkdir -p /root/.composer
-    grep -q -F 'PATH="$PATH:$HOME/.composer/vendor/bin"' $HOME/.profile || echo -e '\nPATH="$PATH:$HOME/.composer/vendor/bin"' >> $HOME/.profile
+    grep -q -F 'PATH="$PATH:$HOME/.composer/vendor/bin"' /home/vagrant/.profile || echo -e '\nPATH="$PATH:$HOME/.composer/vendor/bin"' >> /home/vagrant/.profile
 else
     red_text "Could not download Composer."
 fi

@@ -44,6 +44,19 @@ command_exec_response() {
     fi
 }
 
+command_exec_response_2() {
+    EXIT_CODE=$1
+    SUCCESS_TEXT=$2
+    ERROR_TEXT=$3
+
+    if [ $EXIT_CODE -eq 0 ];
+    then
+        green_text "$SUCCESS_TEXT"
+    else
+        red_text "$ERROR_TEXT"
+    fi
+}
+
 # DEBUG=1
 
 # run_command() {

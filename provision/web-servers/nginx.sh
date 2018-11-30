@@ -23,9 +23,13 @@ sudo chown -R vagrant:vagrant /etc/nginx/sites-available
 if [ ! -z "$PORT" ]
 then
     sed -i "s/80/$PORT/g" /etc/nginx/sites-available/default
+
+    command_exec_response_2 $? "NGINX port successfully set to $PORT." "Could not set NGINX port to $PORT."
 fi
 
-# Start NGINX
+# Restart NGINX
 title "nginx.sh (Restart)"
 
 sudo service nginx start
+
+command_exec_response_2 $? 'NGINX restarted successfully.' 'Could not restart NGINX.'

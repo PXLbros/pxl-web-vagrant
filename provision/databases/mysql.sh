@@ -9,8 +9,13 @@ MYSQL_CONFIG_PATH=/etc/mysql/mysql.conf.d/mysqld.cnf
 MYSQL_ROOT_USER=root
 MYSQL_ROOT_PASSWORD=root
 
-export MYSQL_USER_NAME=vagrant
-export MYSQL_USER_PASSWORD=vagrant
+MYSQL_USER_NAME=vagrant
+MYSQL_USER_PASSWORD=vagrant
+
+if ! grep -qF "MYSQL_USER_NAME" /home/vagrant/.bashrc
+then
+    echo -e "\nexport MYSQL_USER_NAME=$MYSQL_USER_NAME\nexport MYSQL_USER_PASSWORD=$MYSQL_USER_PASSWORD" >> /home/vagrant/.bashrc
+fi
 
 # Set root password
 title "mysql.sh (Set root password)"
@@ -33,8 +38,6 @@ echo "GRANT ALL PRIVILEGES ON *.* TO '$MYSQL_USER_NAME'@'%';" | mysql -u $MYSQL_
 echo "FLUSH PRIVILEGES;" | mysql -u $MYSQL_ROOT_USER --password="$MYSQL_ROOT_PASSWORD"
 
 # Enable remote connections
-title "mysql.sh (Enable remote connections)"
-
 sed -i 's/^bind-address/#bind-address/' $MYSQL_CONFIG_PATH
 sed -i 's/^skip-external-locking/#skip-external-locking/' $MYSQL_CONFIG_PATH
 
@@ -42,3 +45,5 @@ sed -i 's/^skip-external-locking/#skip-external-locking/' $MYSQL_CONFIG_PATH
 title "mysql.sh (Restart)"
 
 service mysql restart
+
+command_exec_response_2 $? 'MySQL restarted successfully.' 'Could not restart MySQL.'

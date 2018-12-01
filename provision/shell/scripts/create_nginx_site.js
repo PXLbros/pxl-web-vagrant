@@ -4,16 +4,26 @@ const { exec } = require('shelljs');
 const { ask_confirm, ask_input, ask_php_version } = require('./utils/ask');
 
 const options = commandLineArgs([
+    { name: 'non-interactive', type: Boolean },
+
     { name: 'hostname', type: String },
+    // { name: 'project-dir', type: String },
     { name: 'public-dir', type: String },
     { name: 'php', type: String }
 ]);
 
 async function main() {
+    const non_interactive = options['non-interactive'];
+
     const hostname = (options['hostname'] || await ask_input('What is the hostname? (e.g. domain.loc)'));
-    const project_dir = (options['project-dir'] || await ask_input('What is the project directory?', (hostname ? `/vagrant/sites/${hostname}` : null)));
-    const public_dir = (options['public-dir'] || await ask_input('What is the public directory?', `${project_dir}/public`));
-    const php_version = (!options['php'] && await ask_confirm('Does the project use PHP?') ? await ask_php_version() : null);
+    // const project_dir = (options['project-dir'] || await ask_input('What is the project directory?', (hostname ? `/vagrant/sites/${hostname}` : null)));
+    const public_dir = (options['public-dir'] || await ask_input('What is the public directory?')); // , `${project_dir}/public`
+
+    let php_version = null;
+
+    if (!options['php'] && !non_interactive) {
+        php_version = (!options['php'] && await ask_confirm('Does the project use PHP?') ? await ask_php_version() : null);
+    }
 
     const configuration_file_name = `${hostname}`;
     const configuration_file_path = `/etc/nginx/sites-available/${configuration_file_name}`;

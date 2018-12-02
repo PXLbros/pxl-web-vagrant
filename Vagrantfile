@@ -47,7 +47,8 @@ Vagrant.configure('2') do |config|
     # Install Vagrant core
     config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/vagrant.sh", privileged: true, run: 'once', env: {
         'DEBUG': debug,
-        'VAGRANT_NAME': settings['vm']['name']
+        'VAGRANT_NAME': settings['vm']['name'],
+        'LANGUAGE_ISO': 'en_US'
     }
 
     # Set timezone

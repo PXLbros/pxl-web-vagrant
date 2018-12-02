@@ -2,7 +2,7 @@
 
 . /vagrant/provision/helpers.sh
 
-title "mysql.sh"
+title 'MySQL'
 
 MYSQL_CONFIG_PATH=/etc/mysql/mysql.conf.d/mysqld.cnf
 
@@ -14,36 +14,37 @@ MYSQL_USER_PASSWORD=vagrant
 
 if ! grep -qF "MYSQL_USER_NAME" /home/vagrant/.bashrc
 then
-    echo -e "\nexport MYSQL_USER_NAME=$MYSQL_USER_NAME\nexport MYSQL_USER_PASSWORD=$MYSQL_USER_PASSWORD" >> /home/vagrant/.bashrc
+    debug_command "echo -e \"\nexport MYSQL_USER_NAME=$MYSQL_USER_NAME\nexport MYSQL_USER_PASSWORD=$MYSQL_USER_PASSWORD\" >> /home/vagrant/.bashrc"
 fi
 
 # Set root password
-title "mysql.sh (Set root password)"
+info_text 'Set root password...'
 
-debconf-set-selections <<< "mysql-server mysql-server/root_password password $MYSQL_ROOT_PASSWORD"
-debconf-set-selections <<< "mysql-server mysql-server/root_password_again password $MYSQL_ROOT_PASSWORD"
+debug_command debconf-set-selections <<< "mysql-server mysql-server/root_password password $MYSQL_ROOT_PASSWORD"
+debug_command debconf-set-selections <<< "mysql-server mysql-server/root_password_again password $MYSQL_ROOT_PASSWORD"
 
 ## Install MySQL
-title "mysql.sh (Install)"
+info_text 'Install MySQL...'
 
-apt-get install -y mysql-server
+debug_command apt-get install -y mysql-server
 
-# Create user
-title "mysql.sh (Create Vagrant user)"
+if [ -x "$(command -v mysql)" ];
+then
+    # Create user
+    info_text 'Create Vagrant user...'
 
-echo "CREATE USER IF NOT EXISTS '$MYSQL_USER_NAME'@'localhost' IDENTIFIED BY '$MYSQL_USER_PASSWORD';" | mysql -u $MYSQL_ROOT_USER --password="$MYSQL_ROOT_PASSWORD"
-echo "CREATE USER IF NOT EXISTS '$MYSQL_USER_NAME'@'%' IDENTIFIED BY '$MYSQL_USER_PASSWORD';" | mysql -u $MYSQL_ROOT_USER --password="$MYSQL_ROOT_PASSWORD"
-echo "GRANT ALL PRIVILEGES ON *.* TO '$MYSQL_USER_NAME'@'localhost';" | mysql -u $MYSQL_ROOT_USER --password="$MYSQL_ROOT_PASSWORD"
-echo "GRANT ALL PRIVILEGES ON *.* TO '$MYSQL_USER_NAME'@'%';" | mysql -u $MYSQL_ROOT_USER --password="$MYSQL_ROOT_PASSWORD"
-echo "FLUSH PRIVILEGES;" | mysql -u $MYSQL_ROOT_USER --password="$MYSQL_ROOT_PASSWORD"
+    debug_command "echo \"CREATE USER IF NOT EXISTS \'$MYSQL_USER_NAME\'@\'localhost\' IDENTIFIED BY \'$MYSQL_USER_PASSWORD\';\" | mysql -u $MYSQL_ROOT_USER --password=\"$MYSQL_ROOT_PASSWORD\""
+    debug_command "echo \"CREATE USER IF NOT EXISTS \'$MYSQL_USER_NAME\'@\'%\' IDENTIFIED BY \'$MYSQL_USER_PASSWORD\';\" | mysql -u $MYSQL_ROOT_USER --password=\"$MYSQL_ROOT_PASSWORD\""
+    debug_command "echo \"GRANT ALL PRIVILEGES ON *.* TO \'$MYSQL_USER_NAME\'@\'localhost\';\" | mysql -u $MYSQL_ROOT_USER --password=\"$MYSQL_ROOT_PASSWORD\""
+    debug_command "echo \"GRANT ALL PRIVILEGES ON *.* TO \'$MYSQL_USER_NAME\'@\'%\';\" | mysql -u $MYSQL_ROOT_USER --password=\"$MYSQL_ROOT_PASSWORD\""
+    debug_command "echo \"FLUSH PRIVILEGES;\" | mysql -u $MYSQL_ROOT_USER --password=\"$MYSQL_ROOT_PASSWORD\""
 
-# Enable remote connections
-sed -i 's/^bind-address/#bind-address/' $MYSQL_CONFIG_PATH
-sed -i 's/^skip-external-locking/#skip-external-locking/' $MYSQL_CONFIG_PATH
+    # Enable remote connections
+    debug_command sed -i \'s/^bind-address/#bind-address/\' $MYSQL_CONFIG_PATH
+    debug_command sed -i \'s/^skip-external-locking/#skip-external-locking/\' $MYSQL_CONFIG_PATH
 
-# Restart MySQL
-title "mysql.sh (Restart)"
+    # Restart MySQL
+    info_text 'Restart MySQL...'
 
-service mysql restart
-
-command_exec_response_2 $? 'MySQL restarted successfully.' 'Could not restart MySQL.'
+    debug_command service mysql restart
+fi

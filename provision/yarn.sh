@@ -2,24 +2,24 @@
 
 . /vagrant/provision/helpers.sh
 
-title "yarn.sh"
+title 'yarn.sh'
 
 # ...
-curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-echo 'deb https://dl.yarnpkg.com/debian/ stable main' | sudo tee /etc/apt/sources.list.d/yarn.list
+debug_command curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
+debug_command echo 'deb https://dl.yarnpkg.com/debian/ stable main' | sudo tee /etc/apt/sources.list.d/yarn.list
 
 # Update apt
-title "yarn.sh (Update APT)"
+info_text 'Update APT...'
 
-sudo apt-get update -y
+debug_command sudo apt-get update -y
 
 # Install yarn
-title "yarn.sh (Install Yarn)"
+info_text 'Install Yarn...'
 
-sudo apt-get install yarn -y
+debug_command sudo apt-get install yarn -y
 
 # Global packages
-title "yarn.sh (Install global packages)"
+info_text 'Install global packages...'
 
 GLOBAL_PACKAGES=(
     'hostile'
@@ -27,9 +27,9 @@ GLOBAL_PACKAGES=(
 
 for GLOBAL_PACKAGE in "${GLOBAL_PACKAGES[@]}"
 do
-    title "yarn.sh (Install global package \"$GLOBAL_PACKAGE\")"
+    info_text "Install global package \"$GLOBAL_PACKAGE\"..."
 
-    sudo yarn global add $GLOBAL_PACKAGE
+    debug_command sudo yarn global add $GLOBAL_PACKAGE
 done
 
 # Install provision shell script dependencies

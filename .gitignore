@@ -1,6 +1,7 @@
 .vagrant
 config.yaml
 vagrant.log
+debug.log
 provision/user
 provision/shell/scripts/yarn.lock
 node_modules/

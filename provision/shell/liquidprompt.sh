@@ -2,14 +2,14 @@
 
 . /vagrant/provision/helpers.sh
 
-title "liquidprompt.sh"
+title 'LiquidPrompt'
 
 # Install Liquid Prompt
 if [ ! -d ~/liquidprompt ]
 then
     title "liquidprompt.sh (Install)"
 
-    git clone https://github.com/nojhan/liquidprompt.git $HOME/liquidprompt
+    debug_command git clone https://github.com/nojhan/liquidprompt.git $HOME/liquidprompt
 else
     title "liquidprompt.sh (Already installed)"
 fi
@@ -17,7 +17,7 @@ fi
 # Set to automatically run
 if ! grep -qF "source ~/liquidprompt/liquidprompt" $HOME/.bashrc
 then
-    echo -e "\n[[ \$- = *i* ]] && source ~/liquidprompt/liquidprompt" >> $HOME/.bashrc
+    debug_command "echo -e \"\n[[ \$- = *i* ]] && source ~/liquidprompt/liquidprompt\" >> $HOME/.bashrc"
 fi
 
 # Create configuration file

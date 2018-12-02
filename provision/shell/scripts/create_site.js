@@ -2,6 +2,7 @@ const process = require('process');
 const commandLineArgs = require('command-line-args');
 const { cd, exec, pwd, test } = require('shelljs');
 const { bold, green, red } = require('chalk');
+const { existsSync } = require('fs');
 const { ask_confirm, ask_git_branch, ask_input, ask_php_version } = require('./utils/ask');
 const { load_pxl_config_from_dir, print_pxl_config } = require('./utils/pxl');
 const log = console.log;
@@ -80,6 +81,8 @@ async function main() {
 
             print_pxl_config(pxl_config);
 
+            log();
+
             if (typeof pxl_config.network === 'object' && typeof pxl_config.network.hostname === 'string') {
                 exec(`sudo hostile set 127.0.0.1 ${pxl_config.network.hostname}`, { silent: true });
             }
@@ -88,10 +91,19 @@ async function main() {
                 const public_dir = (typeof pxl_config['public-dir'] === 'string' ? pxl_config['public-dir'] : site_dir);
                 const php_version = (typeof pxl_config.code === 'object' && typeof pxl_config.code.php === 'string' ? pxl_config.code.php : null);
 
-                console.log('php_version: ' + php_version);
-
                 exec(`node /vagrant/provision/shell/scripts/create_nginx_site.js --non-interactive --hostname=${pxl_config.network.hostname} --public-dir=${public_dir}${php_version ? `--php=${php_version}` : ''}`);
             }
+
+            if (typeof pxl_config.database === 'object') {
+                exec(`node /vagrant/provision/shell/scripts/create_database --driver=${pxl_config.database.driver} --name=${pxl_config.database.name}`);
+            }
+        }
+
+        // Check if install script exist
+        const install_script_path = `${site_dir}/.pxl/install.js`;
+
+        if (existsSync(install_script_path)) {
+            exec(`node ${install_script_path}`);
         }
     }
 }

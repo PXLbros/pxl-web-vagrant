@@ -2,7 +2,7 @@
 
 . /vagrant/provision/helpers.sh
 
-title "mongodb.sh"
+title 'MongoDB'
 
 # Install MongoDB
-apt-get install -y mongodb
+debug_command apt-get install -y mongodb

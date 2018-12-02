@@ -2,7 +2,7 @@
 
 . /vagrant/provision/helpers.sh
 
-title "bash_profile.sh"
+title 'bash_profile'
 
 BASH_PROFILE_CONTENTS="# Source ~/.bashrc
 [[ -s \"$HOME/.bashrc\" ]] && source \"$HOME/.bashrc\"
@@ -87,7 +87,7 @@ alias mongodb_status='sudo service mysql status'"
 fi
 
 # Save .bash_profile
-echo -e "$BASH_PROFILE_CONTENTS" > $HOME/.bash_profile
+debug_command "echo -e \"$BASH_PROFILE_CONTENTS\" > $HOME/.bash_profile"
 
 # Refresh .bash_profile
-source $HOME/.bash_profile
+debug_command source $HOME/.bash_profile

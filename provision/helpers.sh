@@ -1,15 +1,80 @@
 #!/bin/bash
 
+DEBUG=false
+SEMI_DEBUG=true
+
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
+CYAN='\033[0;36m'
+CYAN_BACKGROUND='\033[46m'
 NC='\033[0m'
+
+red_title() {
+    title $1 'RED'
+}
+
+green_title() {
+    title $1 'GREEN'
+}
+
+yellow_title() {
+    title $1 'YELLOW'
+}
+
+blue_title() {
+    title $1 'BLUE'
+}
+
+red_text() {
+    echo -e "${RED}$1${NC}"
+}
+
+green_text() {
+    echo -e "${GREEN}$1${NC}"
+}
+
+yellow_text() {
+    echo -e "${YELLOW}$1${NC}"
+}
+
+blue_text() {
+    echo -e "${BLUE}$1${NC}"
+}
+
+debug_command() {
+    # COMMAND=$@
+    COMMAND=$*
+
+    if [ "$SEMI_DEBUG" == "true" ]; then blue_text "Command:" && blue_text "$COMMAND" && echo -e ""; fi
+
+    if [ "$DEBUG" == "true" ];
+    then
+        if eval "$COMMAND" | tee /vagrant/debug.log;
+        then
+            green_text 'Success!'
+        else
+            red_text 'Fail!'
+        fi
+    else
+        if eval "$COMMAND" &>> /vagrant/debug.log;
+        then
+            green_text 'Success!'
+        else
+            red_text 'Fail!'
+        fi
+    fi
+
+    echo -e " "
+}
 
 title() {
     TITLE=$1
     TITLE_LENGTH=${#TITLE}
     TITLE_LENGTH_EXTRA=$((TITLE_LENGTH+2))
+
     BAR_CHARACTER="~"
 
     BAR=""
@@ -19,69 +84,11 @@ title() {
         BAR="${BAR}${BAR_CHARACTER}"
     done
 
-    echo $BAR
-    echo -e "${BAR_CHARACTER} ${BLUE}$TITLE${NC} ${BAR_CHARACTER}"
-    echo $BAR
+    echo -e "${PURPLE}${BAR}${NC}"
+    echo -e "${PURPLE}${BAR_CHARACTER} $TITLE ${BAR_CHARACTER}${NC}"
+    echo -e "${PURPLE}${BAR}${NC}"
 }
 
-green_text() {
-    echo -e "${GREEN}$1${NC}"
+info_text() {
+    echo -e "${YELLOW}$1${NC}"
 }
-
-red_text() {
-    echo -e "${RED}$1${NC}"
-}
-
-command_exec_response() {
-    COMMAND=$1
-    EXIT_CODE=$2
-
-    if [ $EXIT_CODE -eq 0 ];
-    then
-        green_text "$COMMAND ran successfully."
-    else
-        red_text "$COMMAND failed ($EXIT_CODE)."
-    fi
-}
-
-command_exec_response_2() {
-    EXIT_CODE=$1
-    SUCCESS_TEXT=$2
-    ERROR_TEXT=$3
-
-    if [ $EXIT_CODE -eq 0 ];
-    then
-        green_text "$SUCCESS_TEXT"
-    else
-        red_text "$ERROR_TEXT"
-    fi
-}
-
-# DEBUG=1
-
-# run_command() {
-#     COMMAND=$1
-#
-#     echo "~ Run command \"$COMMAND\"..."
-#
-#     if [ $DEBUG ];
-#     then
-#         $COMMAND
-#     else
-#         $COMMAND &>/dev/null
-#     fi
-#
-#     EXIT_CODE=$?
-#
-#     echo "~ Exit code: $EXIT_CODE"
-#
-#     if [ $DEBUG ];
-#     then
-#         if [ $EXIT_CODE -eq 0 ];
-#         then
-#             echo "~ Command \"$COMMAND\" executed successfully!"
-#         else
-#             echo "~ Command \"$COMMAND\" failed (Exit code: $EXIT_CODE)"
-#         fi
-#     fi
-# }

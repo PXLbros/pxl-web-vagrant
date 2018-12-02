@@ -8,11 +8,11 @@ export EDITOR="vim";
 
 if ! grep -qF "export EDITOR" $HOME/.bashrc
 then
-    echo -e "\nexport EDITOR=$EDITOR" >> $HOME/.bashrc
+    debug_command echo -e "\nexport EDITOR=$EDITOR" >> $HOME/.bashrc
 fi
 
 # Save .vimrc
-echo "set history=500
+debug_command echo "set history=500
 filetype plugin on
 filetype indent on
 set autoread
@@ -55,7 +55,7 @@ set si
 set laststatus=2
 
 set statusline=Dir:\ %r%{getcwd()}%h
-set statusline+=\ \ \~\ \ 
+set statusline+=\ \ \~\ \
 set statusline+=File:\ %f
 set statusline+=\ \ \~\ \
 set statusline+=Line:\ %l\ (%p%%)

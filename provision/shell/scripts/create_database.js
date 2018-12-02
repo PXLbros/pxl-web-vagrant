@@ -1,7 +1,9 @@
 const commandLineArgs = require('command-line-args');
 const { exec } = require('shelljs');
+const { green, red } = require('chalk');
 const { ask_input } = require('./utils/ask');
 const { choose } = require('./utils/choose');
+const log = console.log;
 
 const options = commandLineArgs([
     { name: 'driver', type: String },
@@ -29,9 +31,9 @@ async function main() {
     }
 
     if (!create_database_error) {
-        console.log(`Database "${name}" has been created!`);
+        log(green(`Database "${name}" has been created!`));
     } else {
-        console.log(`Could not create database "${name}".`);
+        log(red(`Could not create database "${name}".`));
     }
 }
 

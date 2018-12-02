@@ -2,10 +2,10 @@
 
 . /vagrant/provision/helpers.sh
 
-title "tmuxinator.sh"
+title 'tmuxinator'
 
 # Update Ruby
-title "tmuxinator.sh (Update Ruby)"
+info_text 'Update Ruby...'
 
 sudo apt-add-repository -y ppa:brightbox/ruby-ng
 sudo apt-get -y update
@@ -14,7 +14,7 @@ sudo apt-get install -y \
     ruby-dev
 
 # Install tmuxinator
-title "tmuxinator.sh (Install)"
+info_text 'Install tmuxinator...'
 
 sudo gem install tmuxinator
 

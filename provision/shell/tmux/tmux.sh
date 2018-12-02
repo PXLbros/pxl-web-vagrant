@@ -2,27 +2,27 @@
 
 . /vagrant/provision/helpers.sh
 
-title "tmux.sh"
+title 'tmux'
 
 TMUX_CONF_FILE=$HOME/.tmux.conf.local
 
 # Remove existing tmux
-title "tmux.sh (Remove existing)"
+info_text 'Remove existing tmux...'
 
-sudo apt-get -y remove tmux
+debug_command sudo apt-get -y remove tmux
 
 # Download tmux
-title "tmux.sh (Download)"
+info_text 'Download tmux...'
 
-mkdir $HOME/tmux-src && wget -qO- https://github.com/tmux/tmux/releases/download/${VERSION}/tmux-${VERSION}.tar.gz | tar xvz -C $HOME/tmux-src && cd $HOME/tmux-src/tmux*
+debug_command mkdir $HOME/tmux-src && wget -qO- https://github.com/tmux/tmux/releases/download/${VERSION}/tmux-${VERSION}.tar.gz | tar xvz -C $HOME/tmux-src && cd $HOME/tmux-src/tmux*
 
 # Install tmux
-title "tmux.sh (Install)"
+info_text 'Install tmux...'
 
-./configure && make -j"$(nproc)" && sudo make install
+debug_command ./configure && make -j"$(nproc)" && sudo make install
 
 # Cleanup
-cd && rm -rf $HOME/tmux-src
+debug_command cd && rm -rf $HOME/tmux-src
 
 if [ "$GPAKOSZ" = "true" ]
 then
@@ -30,20 +30,20 @@ then
 
     if [ ! -d "$HOME/.tmux" ]
     then
-        title "tmux.sh (Install gpakosz)"
+        info_text 'Install gpakosz...'
 
         cd $HOME
-        git clone https://github.com/gpakosz/.tmux.git
-        ln -s -f .tmux/.tmux.conf
-        cp .tmux/.tmux.conf.local .
+        debug_command git clone https://github.com/gpakosz/.tmux.git
+        debug_command ln -s -f .tmux/.tmux.conf
+        debug_command cp .tmux/.tmux.conf.local .
 
         # Enable mouse by default
-        sed -i '/set -g mouse on/s/^#//' $TMUX_CONF_FILE
+        debug_command sed -i '/set -g mouse on/s/^#//' $TMUX_CONF_FILE
 
         # Increase history size
-        sed -i '/set -g history-limit/s/^#//' $TMUX_CONF_FILE
+        debug_command sed -i '/set -g history-limit/s/^#//' $TMUX_CONF_FILE
 
         # Remove uptime from bottom left status bar
-        sed -i "s/tmux_conf_theme_status_left=.*/tmux_conf_theme_status_left=' ❐ #S'/g" $TMUX_CONF_FILE
+        debug_command sed -i "s/tmux_conf_theme_status_left=.*/tmux_conf_theme_status_left=' ❐ #S'/g" $TMUX_CONF_FILE
     fi
 fi

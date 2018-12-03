@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export LOG_FILE_PATH=/vagrant/logs/tmux.sh
+
 . /vagrant/provision/helpers.sh
 
 title 'tmux'
@@ -21,7 +23,7 @@ debug_command "wget -qO- https://github.com/tmux/tmux/releases/download/${VERSIO
 info_text 'Install tmux...'
 
 debug_command "./configure"
-debug_command "make -j\"$(nproc)\""
+debug_command "make -j\"\$(nproc)\""
 debug_command "sudo make install"
 
 # Cleanup

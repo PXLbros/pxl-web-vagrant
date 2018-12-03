@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export LOG_FILE_PATH=/vagrant/logs/liquidprompt.sh
+export LOG_FILE_PATH=/vagrant/logs/shell/liquidprompt.sh
 
 . /vagrant/provision/helpers.sh
 

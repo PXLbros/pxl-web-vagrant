@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export LOG_FILE_PATH=/vagrant/logs/shell/vim.sh
+
 . /vagrant/provision/helpers.sh
 
 title "Vim"

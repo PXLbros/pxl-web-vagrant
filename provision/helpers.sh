@@ -1,7 +1,5 @@
 #!/bin/bash
 
-echo "LOG_FILE_PATH: $LOG_FILE_PATH"
-
 SHOW_COMMAND=true
 SHOW_COMMAND_EXECUTION_TIME=true
 

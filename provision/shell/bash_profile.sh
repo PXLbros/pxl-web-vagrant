@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export LOG_FILE_PATH=/vagrant/logs/shell/bash_profile.sh
+
 . /vagrant/provision/helpers.sh
 
 title 'bash_profile'

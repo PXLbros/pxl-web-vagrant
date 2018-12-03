@@ -94,7 +94,17 @@ debug_command() {
     fi
 
     # Show success/fail message
-    if [ "$SUCCESS" == 'true' ]; then green_text 'Success!'; else red_text "Fail! ($COMMAND_EXIT_CODE)"; fi
+    if [ "$SUCCESS" == 'true' ];
+    then
+        green_text 'Success!'
+    else
+        if [ $COMMAND_EXIT_CODE -eq 0 ];
+        then
+            red_text "Fail!"
+        else
+            red_text "Fail! ($COMMAND_EXIT_CODE)"
+        fi
+    fi
 
     # Make a new line break
     echo -e " "

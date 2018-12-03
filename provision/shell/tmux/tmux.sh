@@ -16,15 +16,11 @@ then
     debug_command "sudo apt-get -y remove tmux"
 fi
 
-# Download tmux
-info_text 'Download tmux...'
+# Download & install tmux
+info_text 'Download & install tmux...'
 
 debug_command "mkdir $HOME/tmux-src"
 debug_command "wget -qO- https://github.com/tmux/tmux/releases/download/${VERSION}/tmux-${VERSION}.tar.gz | tar xvz -C $HOME/tmux-src && cd $HOME/tmux-src/tmux*"
-
-# Install tmux
-info_text 'Install tmux...'
-
 debug_command "./configure"
 debug_command "make -j\"\$(nproc)\""
 debug_command "sudo make install"

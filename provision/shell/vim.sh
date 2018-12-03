@@ -18,7 +18,7 @@ fi
 # Set .vimrc
 info_text 'Set Vim preferences...'
 
-debug_command "echo \"set history=500
+debug_command "echo -e \"set history=500
 filetype plugin on
 filetype indent on
 set autoread
@@ -60,10 +60,10 @@ set ai
 set si
 set laststatus=2
 
-set statusline=Dir:\ %r%{getcwd()}%h
-set statusline+=\ \ \~\ \
-set statusline+=File:\ %f
-set statusline+=\ \ \~\ \
-set statusline+=Line:\ %l\ (%p%%)
+set statusline=Dir:\\ %r%{getcwd()}%h
+set statusline+=\\ \\ \\~\\ \\ \\n
+set statusline+=File:\\ %f
+set statusline+=\\ \\ \\~\\ \\ \\n
+set statusline+=Line:\\ %l\\ (%p%%)
 
 :set mouse=a\" > $HOME/.vimrc"

@@ -41,11 +41,6 @@ set tm=500
 
 syntax enable
 
-try
-    colorscheme desert
-catch
-endtry
-
 set background=dark
 set encoding=utf8
 set ffs=unix,dos,mac
@@ -67,3 +62,9 @@ set statusline+=\\ \\ \\~\\ \\ \\n
 set statusline+=Line:\\ %l\\ (%p%%)
 
 :set mouse=a\" > $HOME/.vimrc"
+
+if ! grep -qF "# Vim" $HOME/.bash_profile
+then
+    echo -e "\n# Vim
+alias edit_vimrc='vim ~/.vimrc'" >> $HOME/.bash_profile
+fi

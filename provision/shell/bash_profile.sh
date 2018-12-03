@@ -10,8 +10,12 @@ BASH_PROFILE_CONTENTS="# Source ~/.bashrc
 [[ -s \"$HOME/.bashrc\" ]] && source \"$HOME/.bashrc\"
 
 # .bash_profile
-alias edit_aliases='vim ~/.bash_profile'
-alias refresh_aliases='source ~/.bash_profile'
+alias edit_bash_profile='vim ~/.bash_profile'
+alias refresh_bash_profile='source ~/.bash_profile'
+
+# .bashrc
+alias edit_bashrc='vim ~/.bashrc'
+alias refresh_bashrc='source ~/.bashrc'
 
 # Shortcuts
 alias menu='node /vagrant/provision/shell/scripts/menu.js'

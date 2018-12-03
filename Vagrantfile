@@ -60,6 +60,10 @@ Vagrant.configure('2') do |config|
         'DISABLE_WELCOME_MESSAGE': 'false'
     }
 
+    # Welcome message
+    config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/welcome-message.sh", privileged: true, run: 'once', env: {
+    }
+
     # Generate .bash_profile
     config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/shell/bash_profile.sh", privileged: false, run: 'once', env: {
         'APACHE': settings['web-servers']['apache']['enabled'],

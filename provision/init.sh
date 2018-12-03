@@ -19,12 +19,12 @@ apt-get -y install figlet &>/dev/null
 # echo 'Installing FIGlet...'
 title 'PXL Web Vagrant'
 
-echo -e "${YELLOW}Version ${VERSION}${NC} ${BLUE}(Built on Dec 1, 2018)${NC}"
+echo -e "${YELLOW}Version ${VERSION}${NC} ${BLUE}(Built on Dec 1st, 2018)${NC}"
 
 echo " "
 
 echo -e "🇺🇸  ${BLUE}Made by${NC} ${YELLOW}PXL Agency${NC} ${BLUE}in${NC} ${YELLOW}Los Angeles, USA${NC}"
-echo -e "🌎 ${BLUE}Open Source /${NC} ${BLUE}${UNDERLINE}pxl-web-vagrant.com${NC}${NC}"
+echo -e "🌎 ${BLUE}${UNDERLINE}pxl-web-vagrant.com${NC}${NC}"
 
 echo " "
 
@@ -58,6 +58,7 @@ DEBIAN_FRONTEND=noninteractive \
     debug_command \
     apt-get -y \
     upgrade
+
     # -o Dpkg::Options::="--force-confdef" \
     # -o Dpkg::Options::="--force-confold" \
 
@@ -74,29 +75,6 @@ debug_command apt-get -y install \
 info_text "Clean up APT..."
 
 debug_command "apt-get autoremove -yf"
-
-# Disable default welcome message
-debug_command 'sudo chmod -x /etc/update-motd.d/*'
-
-if [ "$DISABLE_WELCOME_MESSAGE" == "true" ];
-then
-    debug_command "sed -i \'/pam_motd.so/s/^/#/\' /etc/pam.d/sshd"
-else
-    WELCOME_MESSAGE="$(cat /vagrant/provision/welcome-message.sh)"
-    WELCOME_MESSAGE_PATH=/etc/update-motd.d/01-custom
-
-    debug_command "echo \"$WELCOME_MESSAGE\" | sudo tee $WELCOME_MESSAGE_PATH"
-
-    if [ -e "$WELCOME_MESSAGE_PATH" ];
-    then
-        debug_command "sudo chmod +x $WELCOME_MESSAGE_PATH"
-    fi
-fi
-
-# Disable "Last login" message
-debug_command "sudo sed -i 's/PrintLastLog yes/PrintLastLog no/' /etc/ssh/sshd_config"
-debug_command "sudo sed -i 's/#PrintLastLog/PrintLastLog/' /etc/ssh/sshd_config"
-debug_command "sudo /etc/init.d/ssh restart"
 
 # Set to open menu on start
 info_text 'Set to open PXL Web Vagrant shell menu on login...'

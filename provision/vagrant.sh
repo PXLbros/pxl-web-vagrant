@@ -1,5 +1,6 @@
 #!/bin/bash
 
+DISABLE_WELCOME_MESSAGE=false
 export DEBUG=$DEBUG
 
 # Clear debug.log
@@ -9,7 +10,7 @@ rm /vagrant/debug.log
 
 apt-get -y install figlet
 
-figlet "PXL Web Vagrant"
+figlet 'PXL Web Vagrant'
 
 echo ""
 
@@ -56,7 +57,14 @@ debug_command apt-get autoremove -yf
 
 # Disable default welcome message
 debug_command 'chmod -x /etc/update-motd.d/*'
-debug_command sed -i \'/pam_motd.so/s/^/#/\' /etc/pam.d/sshd
+
+if [ "$DISABLE_WELCOME_MESSAGE" == "true" ];
+then
+    debug_command sed -i \'/pam_motd.so/s/^/#/\' /etc/pam.d/sshd
+else
+    debug_command "sudo echo \"figlet PXL Web Vagrant\" > /etc/update-motd.d/01-custom"
+    debug_command "sudo chmod +x /etc/update-motd.d/01-custom"
+fi
 
 # Disable "Last login" message
 debug_command sed -i \'s/PrintLastLog yes/PrintLastLog no/\' /etc/ssh/sshd_config

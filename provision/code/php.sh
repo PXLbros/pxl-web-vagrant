@@ -3,7 +3,8 @@
 . /vagrant/provision/helpers.sh
 
 # Install PHP dependencies
-title 'PHP'
+# title 'PHP'
+figlet 'PHP'
 
 info_text 'Instal PHP dependencies...'
 

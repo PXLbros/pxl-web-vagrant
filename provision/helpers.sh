@@ -106,7 +106,7 @@ title() {
         SPACE="${SPACE} "
     done
 
-    for i in $(eval echo {1..$((TITLE_LENGTH+15))})
+    for i in $(eval echo {1..$((22))})
     do
         TITLE_SPACE="${TITLE_SPACE} "
     done

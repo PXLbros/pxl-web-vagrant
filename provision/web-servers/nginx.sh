@@ -25,9 +25,12 @@ then
     debug_command sudo chown -R vagrant:vagrant /etc/nginx/sites-available
 
     # Update port in default site
-    if [ ! -z "$PORT" ]
+    if [ "$NGINX_PORT" != "80" ];
     then
-        debug_command sed -i "s/80/$PORT/g" /etc/nginx/sites-available/default
+        if [ ! -z "$PORT" ]
+        then
+            debug_command sed -i "s/80/$PORT/g" /etc/nginx/sites-available/default
+        fi
     fi
 
     # Restart NGINX

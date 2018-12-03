@@ -6,9 +6,12 @@ title 'NGINX'
 
 export NGINX_PORT=$PORT
 
-if ! grep -qF "export NGINX_PORT" $HOME/.bashrc
+if [ "$NGINX_PORT" != "80" ];
 then
-    debug_command echo -e "\nexport NGINX_PORT=$NGINX_PORT" >> $HOME/.bashrc
+    if ! grep -qF "export NGINX_PORT" /home/vagrant/.bashrc
+    then
+        debug_command "echo -e \"\nexport NGINX_PORT=$NGINX_PORT\" >> /home/vagrant/.bashrc"
+    fi
 fi
 
 # Install NGINX
@@ -16,16 +19,19 @@ info_text 'Install NGINX...'
 
 debug_command sudo apt-get install nginx -y
 
-# Give Vagrant permission to edit NGINX site configuration files
-debug_command sudo chown -R vagrant:vagrant /etc/nginx/sites-available
-
-# Update port in default site
-if [ ! -z "$PORT" ]
+if [ -x "$(command -v nginx)" ];
 then
-    debug_command sed -i "s/80/$PORT/g" /etc/nginx/sites-available/default
+    # Give Vagrant permission to edit NGINX site configuration files
+    debug_command sudo chown -R vagrant:vagrant /etc/nginx/sites-available
+
+    # Update port in default site
+    if [ ! -z "$PORT" ]
+    then
+        debug_command sed -i "s/80/$PORT/g" /etc/nginx/sites-available/default
+    fi
+
+    # Restart NGINX
+    info_text 'Restart NGINX...'
+
+    debug_command sudo service nginx start
 fi
-
-# Restart NGINX
-info_text 'Restart NGINX...'
-
-debug_command sudo service nginx start

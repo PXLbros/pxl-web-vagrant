@@ -1,6 +1,6 @@
 const process = require('process');
 const commandLineArgs = require('command-line-args');
-const { cd, exec, pwd, test } = require('shelljs');
+const { cd, exec, mkdir, pwd, test } = require('shelljs');
 const { bold, green, red } = require('chalk');
 const { existsSync } = require('fs');
 const { ask_confirm, ask_git_branch, ask_input, ask_php_version } = require('./utils/ask');
@@ -47,6 +47,14 @@ async function main() {
     }
 
     // Go to site directory
+    if (test('-d', site_dir)) {
+        const create_site_dir = await ask_confirm(`Site directory "${site_dir}" does not exist, do you want to create it?`);
+
+        if (create_site_dir) {
+            mkdir('-p', site_dir);
+        }
+    }
+
     cd(site_dir);
 
     // Checkout Git branch

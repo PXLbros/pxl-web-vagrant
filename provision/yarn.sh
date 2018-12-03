@@ -5,8 +5,8 @@
 title 'yarn.sh'
 
 # ...
-debug_command curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
-debug_command echo 'deb https://dl.yarnpkg.com/debian/ stable main' | sudo tee /etc/apt/sources.list.d/yarn.list
+debug_command 'curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -'
+debug_command "echo \"deb https://dl.yarnpkg.com/debian/ stable main\" | sudo tee /etc/apt/sources.list.d/yarn.list"
 
 # Update apt
 info_text 'Update APT...'
@@ -27,8 +27,6 @@ GLOBAL_PACKAGES=(
 
 for GLOBAL_PACKAGE in "${GLOBAL_PACKAGES[@]}"
 do
-    info_text "Install global package \"$GLOBAL_PACKAGE\"..."
-
     debug_command sudo yarn global add $GLOBAL_PACKAGE
 done
 

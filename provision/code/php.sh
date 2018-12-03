@@ -31,25 +31,28 @@ do
         php${PHP_VERSION}-soap \
         php${PHP_VERSION}-bcmath
 
-    # Install PHP mcrypt extension
-    if [ "$PHP_VERSION" == "7.3" ] || [ "$PHP_VERSION" == "7.2" ]
+    if [ -x "$(command -v php$PHP_VERSION)" ];
     then
-        debug_command apt-get install php-dev libmcrypt-dev php-pear -y
-        debug_command pecl channel-update pecl.php.net
-
-        if ! pecl list | grep mcrypt
+        # Install PHP mcrypt extension
+        if [ "$PHP_VERSION" == "7.3" ] || [ "$PHP_VERSION" == "7.2" ]
         then
-            debug_command pecl install mcrypt-1.0.1
-        fi
+            debug_command apt-get install php-dev libmcrypt-dev php-pear -y
+            debug_command pecl channel-update pecl.php.net
 
-        # Add line to php.ini configuration file
-        PHP_INI_FILE_PATH=/etc/php/$PHP_VERSION/fpm/php.ini
+            if ! pecl list | grep mcrypt
+            then
+                debug_command pecl install mcrypt-1.0.1
+            fi
 
-        if ! grep -q "extension=mcrypt.so" $PHP_INI_FILE_PATH; then
-            debug_command "echo -e \"\nextension=mcrypt.so\" >> $PHP_INI_FILE_PATH"
+            # Add line to php.ini configuration file
+            PHP_INI_FILE_PATH=/etc/php/$PHP_VERSION/fpm/php.ini
+
+            if ! grep -q "extension=mcrypt.so" $PHP_INI_FILE_PATH; then
+                debug_command "echo -e \"\nextension=mcrypt.so\" >> $PHP_INI_FILE_PATH"
+            fi
+        else
+            debug_command apt-get -y install php${PHP_VERSION}-mcrypt
         fi
-    else
-        debug_command apt-get -y install php${PHP_VERSION}-mcrypt
     fi
 done
 
@@ -63,45 +66,48 @@ do
         PHP_INI_FILE=/etc/php/${PHP_VERSION}/fpm/php.ini
 
         # Update FPM permissions
-        debug_command chmod 666 /run/php/php${PHP_VERSION}-fpm.sock
+        debug_command "chmod 666 /run/php/php${PHP_VERSION}-fpm.sock"
 
         # Change FPM user and group
-        debug_command sed -i "s/user = www-data/user = vagrant/" $PHP_WWW_CONF_FILE
-        debug_command sed -i "s/group = www-data/group = vagrant/" $PHP_WWW_CONF_FILE
-        debug_command sed -i "s/listen\.owner.*/listen.owner = vagrant/" $PHP_WWW_CONF_FILE
-        debug_command sed -i "s/listen\.group.*/listen.group = vagrant/" $PHP_WWW_CONF_FILE
-        debug_command sed -i "s/;listen\.mode.*/listen.mode = 0666/" $PHP_WWW_CONF_FILE
+        debug_command "sed -i \"s/user = www-data/user = vagrant/\" $PHP_WWW_CONF_FILE"
+        debug_command "sed -i \"s/group = www-data/group = vagrant/\" $PHP_WWW_CONF_FILE"
+        debug_command "sed -i \"s/listen\.owner.*/listen.owner = vagrant/\" $PHP_WWW_CONF_FILE"
+        debug_command "sed -i \"s/listen\.group.*/listen.group = vagrant/\" $PHP_WWW_CONF_FILE"
+        debug_command "sed -i \"s/;listen\.mode.*/listen.mode = 0666/\" $PHP_WWW_CONF_FILE"
 
         # Change PHP error reporting
-        debug_command sed -i -r -e 's/error_reporting=.*/error_reporting = E_ALL | E_STRICT/g' $PHP_INI_FILE
-        debug_command sed -i -r -e 's/display_errors = Off/display_errors = On/g' $PHP_INI_FILE
+        debug_command "sed -i -r -e 's/error_reporting=.*/error_reporting = E_ALL | E_STRICT/g' $PHP_INI_FILE"
+        debug_command "sed -i -r -e 's/display_errors = Off/display_errors = On/g' $PHP_INI_FILE"
 
         # Restart PHP version
         info_text "Restart PHP $PHP_VERSION..."
 
-        debug_command service php${PHP_VERSION}-fpm restart
+        debug_command "service php${PHP_VERSION}-fpm restart"
     fi
 done
 
-# Restart Apache
-if [ $APACHE = "true" ]
+if [ -x "$(command -v php)" ];
 then
-    info_text 'Restart Apache...'
+    # Restart Apache
+    if [ $APACHE = "true" ]
+    then
+        info_text 'Restart Apache...'
 
-    debug_command service apache2 restart
-fi
+        debug_command service apache2 restart
+    fi
 
-# Download Composer
-info_text 'Install Composer...'
+    # Download Composer
+    info_text 'Install Composer...'
 
-debug_command curl -sS https://getcomposer.org/installer | php
+    debug_command 'curl -sS https://getcomposer.org/installer | php'
 
-if [ -e composer.phar ];
-then
-    # Install Composer
-    debug_command sudo mv composer.phar /usr/local/bin/composer
-    debug_command sudo mkdir -p /root/.composer
-    debug_command grep -q -F 'PATH="$PATH:$HOME/.composer/vendor/bin"' /home/vagrant/.profile || echo -e '\nPATH="$PATH:$HOME/.composer/vendor/bin"' >> /home/vagrant/.profile
-else
-    red_text 'Could not download Composer.'
+    if [ -e composer.phar ];
+    then
+        # Install Composer
+        debug_command sudo mv composer.phar /usr/local/bin/composer
+        debug_command sudo mkdir -p /root/.composer
+        grep -q -F 'PATH="$PATH:$HOME/.composer/vendor/bin"' /home/vagrant/.profile || debug_command "echo -e '\nPATH=\"$PATH:$HOME/.composer/vendor/bin\"' >> /home/vagrant/.profile"
+    else
+        red_text 'Could not download Composer.'
+    fi
 fi

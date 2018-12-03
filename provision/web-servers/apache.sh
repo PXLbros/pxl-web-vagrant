@@ -8,7 +8,7 @@ export APACHE_PORT=$PORT
 
 if ! grep -qF "export APACHE_PORT" $HOME/.bashrc
 then
-    echo -e "\nexport APACHE_PORT=$APACHE_PORT" >> $HOME/.bashrc
+    debug_command "echo -e \"\nexport APACHE_PORT=$APACHE_PORT\" >> $HOME/.bashrc"
 fi
 
 # Install Apache

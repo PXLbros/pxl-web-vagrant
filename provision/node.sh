@@ -4,9 +4,7 @@
 
 title 'Node'
 
-debug_command curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash
-
-debug_command source $HOME/.bashrc
+debug_command "curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash && source $HOME/.bashrc"
 
 export NVM_DIR="$HOME/.nvm"
 

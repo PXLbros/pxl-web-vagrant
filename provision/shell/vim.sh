@@ -2,17 +2,17 @@
 
 . /vagrant/provision/helpers.sh
 
-title "vim.sh"
+title "Vim"
 
 export EDITOR="vim";
 
 if ! grep -qF "export EDITOR" $HOME/.bashrc
 then
-    debug_command echo -e "\nexport EDITOR=$EDITOR" >> $HOME/.bashrc
+    debug_command "echo -e \"\nexport EDITOR=$EDITOR\" >> $HOME/.bashrc"
 fi
 
 # Save .vimrc
-debug_command echo "set history=500
+debug_command "echo \"set history=500
 filetype plugin on
 filetype indent on
 set autoread
@@ -60,4 +60,4 @@ set statusline+=File:\ %f
 set statusline+=\ \ \~\ \
 set statusline+=Line:\ %l\ (%p%%)
 
-:set mouse=a" > $HOME/.vimrc
+:set mouse=a\" > $HOME/.vimrc"

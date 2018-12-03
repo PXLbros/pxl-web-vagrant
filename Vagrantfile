@@ -12,7 +12,10 @@ config_filename = File.file?("#{VAGRANT_DIR}/config.yaml") ? 'config.yaml' : 'co
 # Load settings from config file
 settings = YAML.load_file("#{VAGRANT_DIR}/#{config_filename}")
 
-debug = settings['debug'] === true
+DEBUG = settings['debug'] === true
+VAGRANT_NAME = (settings['vm']['name'] || 'vagrant')
+TIMEZONE = (settings['timezone'] || 'UTC')
+LANGUAGE_ISO = (settings['vm']['language-iso'] || 'en_US')
 
 Vagrant.configure('2') do |config|
     # Validate
@@ -35,25 +38,22 @@ Vagrant.configure('2') do |config|
 
     # Configure VirtualBox
     config.vm.provider 'virtualbox' do |vb|
-        vb.customize ['modifyvm', :id, '--memory', settings['vm']['memory'] ||= 1024]
-        vb.customize ['modifyvm', :id, '--cpus', settings['cpus'] ||= '1']
+        vb.customize ['modifyvm', :id, '--memory', settings['vm']['memory'] ||= '1024']
+        vb.customize ['modifyvm', :id, '--cpus', settings['vm']['cpus'] ||= '1']
 
-        vb.customize ['modifyvm', :id, '--natdnshostresolver1', settings['natdnshostresolver'] ||= 'on']
-        vb.customize ['modifyvm', :id, '--natdnsproxy1', settings["natdnsproxy"] ||= 'on']
+        vb.customize ['modifyvm', :id, '--natdnshostresolver1', settings['vm']['natdnshostresolver'] ||= 'on']
+        vb.customize ['modifyvm', :id, '--natdnsproxy1', settings['vm']['natdnsproxy'] ||= 'on']
 
         vb.customize ['modifyvm', :id, '--ioapic', 'on']
     end
 
     # Install Vagrant core
     config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/vagrant.sh", privileged: true, run: 'once', env: {
-        'DEBUG': debug,
-        'VAGRANT_NAME': settings['vm']['name'],
-        'LANGUAGE_ISO': 'en_US'
+        'DEBUG': DEBUG,
+        'VAGRANT_NAME': VAGRANT_NAME,
+        'LANGUAGE_ISO': LANGUAGE_ISO,
+        'TIMEZONE': TIMEZONE
     }
-
-    # Set timezone
-    TIMEZONE = (settings['timezone'] || 'UTC')
-    config.vm.provision 'shell', run: 'always', inline: "rm /etc/localtime && sudo ln -s /usr/share/zoneinfo/#{TIMEZONE} /etc/localtime"
 
     # Generate .bash_profile
     config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/shell/bash_profile.sh", privileged: false, run: 'once', env: {
@@ -73,20 +73,20 @@ Vagrant.configure('2') do |config|
     config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/shell/vim.sh", run: 'once', privileged: false
 
     # tmux
-    if settings['shell']['tmux']['enabled']
-        config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/shell/tmux/tmux.sh", run: 'once', privileged: false, env: {
-            'VERSION': (settings['shell']['tmux']['version'] || 2.8),
-            'TMUXINATOR': (settings['shell']['tmux']['tmuxinator']['enabled'] || false),
-            'GPAKOSZ': (settings['shell']['tmux']['gpakosz']['enabled'] || false)
-        }
-
-        # tmuxinator
-        if settings['shell']['tmux']['tmuxinator']['enabled']
-            config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/shell/tmux/tmuxinator.sh", run: 'once', privileged: false, env: {
-                'VM_NAME': settings['vm']['name']
-            }
-        end
-    end
+    # if settings['shell']['tmux']['enabled']
+    #     config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/shell/tmux/tmux.sh", run: 'once', privileged: false, env: {
+    #         'VERSION': (settings['shell']['tmux']['version'] || 2.8),
+    #         'TMUXINATOR': (settings['shell']['tmux']['tmuxinator']['enabled'] || false),
+    #         'GPAKOSZ': (settings['shell']['tmux']['gpakosz']['enabled'] || false)
+    #     }
+    #
+    #     # tmuxinator
+    #     if settings['shell']['tmux']['tmuxinator']['enabled']
+    #         config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/shell/tmux/tmuxinator.sh", run: 'once', privileged: false, env: {
+    #             'VM_NAME': settings['vm']['name']
+    #         }
+    #     end
+    # end
 
     # Liquid Prompt
     if settings['shell']['liquidprompt']['enabled']
@@ -146,5 +146,5 @@ Vagrant.configure('2') do |config|
         config.vm.provision 'shell', path: user_file_path, privileged: false, run: 'once'
     end
 
-    config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/user.sh", privileged: true, run: 'once'
+    config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/user.sh", privileged: false, run: 'once'
 end

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+echo "NUM_TOTAL: $NUM_TOTAL"
+echo "NUM_SUCCESSFUL: $NUM_SUCCESSFUL"
+echo "NUM_ERRORS: $NUM_ERRORS"

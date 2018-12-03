@@ -16,8 +16,8 @@ then
     debug_command "sudo apt-get -y remove tmux"
 fi
 
-# Download & install tmux
-info_text 'Download & install tmux...'
+# Download/install tmux
+info_text 'Download/install tmux...'
 
 debug_command "mkdir $HOME/tmux-src"
 debug_command "wget -qO- https://github.com/tmux/tmux/releases/download/${VERSION}/tmux-${VERSION}.tar.gz | tar xvz -C $HOME/tmux-src && cd $HOME/tmux-src/tmux*"

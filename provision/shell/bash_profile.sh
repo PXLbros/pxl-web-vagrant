@@ -14,6 +14,7 @@ alias edit_aliases='vim ~/.bash_profile'
 alias refresh_aliases='source ~/.bash_profile'
 
 # Shortcuts
+alias menu='node /vagrant/provision/shell/scripts/menu.js'
 alias ..='cd ..'
 alias cls='clear'
 alias ls='ls -lGah --color=auto'

@@ -12,6 +12,7 @@ CYAN='\033[0;36m'
 CYAN_BACKGROUND='\033[46m'
 NC='\033[0m'
 ITALIC='\e[3'
+UNDERLINE='\e[4m'
 
 red_title() {
     title $1 'RED'
@@ -45,8 +46,20 @@ blue_text() {
     echo -e "${BLUE}$1${NC}"
 }
 
+purple_text() {
+    echo -e "${PURPLE}$1${NC}"
+}
+
+cyan_text() {
+    echo -e "${CYAN}$1${NC}"
+}
+
 debug_command() {
     COMMAND=$*
+
+    NUM_TOTAL=$((NUM_TOTAL+1))
+
+    # echo "NUM_TOTAL: $NUM_TOTAL"
 
     if [ -z "$LOG_FILE_PATH" ];
     then
@@ -77,6 +90,13 @@ debug_command() {
     fi
 
     COMMAND_EXIT_CODE=$?
+
+    if [ "$SUCCESS" == "true" ];
+    then
+        NUM_SUCCESSFUL=$((NUM_SUCCESSFUL+1))
+    else
+        NUM_ERRORS=$((NUM_ERRORS+1))
+    fi
 
     END_TIME=$(date +%s.%N)
     TIME_TOTAL=$(echo "$END_TIME - $START_TIME" | bc)

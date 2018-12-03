@@ -47,12 +47,17 @@ Vagrant.configure('2') do |config|
         vb.customize ['modifyvm', :id, '--ioapic', 'on']
     end
 
+    num_successful_commands = 0
+    num_failed_commands = 0
+
     # Install Vagrant core
-    config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/vagrant.sh", privileged: true, run: 'once', env: {
+    config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/init.sh", privileged: true, run: 'once', env: {
         'DEBUG': DEBUG,
         'VAGRANT_NAME': VAGRANT_NAME,
         'LANGUAGE_ISO': LANGUAGE_ISO,
-        'TIMEZONE': TIMEZONE
+        'TIMEZONE': TIMEZONE,
+
+        'DISABLE_WELCOME_MESSAGE': 'false'
     }
 
     # Generate .bash_profile
@@ -62,6 +67,10 @@ Vagrant.configure('2') do |config|
         'MYSQL': settings['databases']['mysql']['enabled'],
         'MONGODB': settings['databases']['mongodb']['enabled']
     }
+
+    # Git
+    gitconfig = Pathname.new("#{Dir.home}/.gitconfig")
+    config.vm.provision 'shell', :inline => "echo -e '#{gitconfig.read()}' > '/home/vagrant/.gitconfig'", privileged: false if gitconfig.exist?
 
     # Node
     config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/node.sh", run: 'once', privileged: false

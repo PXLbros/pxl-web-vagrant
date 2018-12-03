@@ -1,11 +1,14 @@
 #!/bin/bash
 
+export VERSION=$(grep '"version":' /vagrant/package.json | cut -d\" -f4)
 export DEBUG=$DEBUG
 export DEBIAN_FRONTEND=noninteractive
 
-DISABLE_WELCOME_MESSAGE=false
+export NUM_TOTAL=0
+export NUM_SUCCESSFUL=0
+export NUM_ERRORS=0
 
-export LOG_FILE_PATH=/vagrant/logs/vagrant.log
+export LOG_FILE_PATH=/vagrant/logs/init.log
 
 . /vagrant/provision/helpers.sh
 
@@ -16,9 +19,12 @@ apt-get -y install figlet &>/dev/null
 # echo 'Installing FIGlet...'
 title 'PXL Web Vagrant'
 
-echo '💯 Open Source (github.com/PXLbros/pxl-web-vagrant)'
-echo '🌎 Los Angeles'
-echo '📧 contact@pxl-web-vagrant.com'
+echo -e "${YELLOW}Version ${VERSION}${NC} ${BLUE}(Built on Dec 1, 2018)${NC}"
+
+echo " "
+
+echo -e "🇺🇸  ${BLUE}Made by${NC} ${YELLOW}PXL Agency${NC} ${BLUE}in${NC} ${YELLOW}Los Angeles, USA${NC}"
+echo -e "🌎 ${BLUE}Open Source /${NC} ${BLUE}${UNDERLINE}pxl-web-vagrant.com${NC}${NC}"
 
 echo " "
 
@@ -81,7 +87,7 @@ else
 
     debug_command "echo \"$WELCOME_MESSAGE\" | sudo tee $WELCOME_MESSAGE_PATH"
 
-    if [ -e $WELCOME_MESSAGE_PATH ];
+    if [ -e "$WELCOME_MESSAGE_PATH" ];
     then
         debug_command "sudo chmod +x $WELCOME_MESSAGE_PATH"
     fi
@@ -90,3 +96,12 @@ fi
 # Disable "Last login" message
 debug_command "sudo sed -i 's/PrintLastLog yes/PrintLastLog no/' /etc/ssh/sshd_config"
 debug_command "sudo sed -i 's/#PrintLastLog/PrintLastLog/' /etc/ssh/sshd_config"
+debug_command "sudo /etc/init.d/ssh restart"
+
+# Set to open menu on start
+info_text 'Set to open PXL Web Vagrant shell menu on login...'
+
+if ! grep -qF "FROM_BASHRC=true node /vagrant/provision/shell/scripts/menu.js" /home/vagrant/.bashrc
+then
+    debug_command "echo -e \"\nFROM_BASHRC=true node /vagrant/provision/shell/scripts/menu.js\" >> /home/vagrant/.bashrc"
+fi

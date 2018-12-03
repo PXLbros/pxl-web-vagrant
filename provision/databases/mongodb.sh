@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export LOG_FILE_PATH=/vagrant/logs/databases/mongodb.sh
+
 . /vagrant/provision/helpers.sh
 
 title 'MongoDB'

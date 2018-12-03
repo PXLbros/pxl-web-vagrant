@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export LOG_FILE_PATH=/vagrant/logs/databases/mysql.sh
+
 . /vagrant/provision/helpers.sh
 
 title 'MySQL'
@@ -18,7 +20,7 @@ then
 fi
 
 # Set root password
-info_text 'Set root password...'
+info_text "Set MySQL root password to "$MYSQL_ROOT_PASSWORD"..."
 
 debug_command debconf-set-selections <<< "mysql-server mysql-server/root_password password $MYSQL_ROOT_PASSWORD"
 debug_command debconf-set-selections <<< "mysql-server mysql-server/root_password_again password $MYSQL_ROOT_PASSWORD"

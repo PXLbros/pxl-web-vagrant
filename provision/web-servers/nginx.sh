@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export LOG_FILE_PATH=/vagrant/logs/nginx.sh
+
 . /vagrant/provision/helpers.sh
 
 title 'NGINX'
@@ -22,7 +24,7 @@ debug_command sudo apt-get install nginx -y
 if [ -x "$(command -v nginx)" ];
 then
     # Give Vagrant permission to edit NGINX site configuration files
-    info_text 'Give permissions to NGINX available sites directory...'
+    info_text 'Give Vagrant user permission to NGINX sites-available/ directory...'
 
     debug_command sudo chown -R vagrant:vagrant /etc/nginx/sites-available
 
@@ -31,12 +33,12 @@ then
     then
         if [ ! -z "$PORT" ]
         then
-            debug_command sed -i "s/80/$PORT/g" /etc/nginx/sites-available/default
+            debug_command "sed -i \"s/80/$PORT/g\" /etc/nginx/sites-available/default"
         fi
     fi
 
     # Restart NGINX
     info_text 'Restart NGINX...'
 
-    debug_command sudo service nginx start
+    debug_command "sudo service nginx start"
 fi

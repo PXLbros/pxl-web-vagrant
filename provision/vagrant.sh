@@ -13,16 +13,9 @@ apt-get -y install figlet &>/dev/null
 # Show welcome title
 title 'PXL Web Vagrant'
 
-# Clear provision.log
-if [ -d /vagrant/logs ];
-then
-    if [ -f /vagrant/logs/provision.log ];
-    then
-        debug_command "rm /vagrant/logs/provision.log"
-    fi
-else
-    mkdir /vagrant/logs
-fi
+# Clear logs
+rm -f /vagrant/logs
+mkdir /vagrant/logs
 
 # Configure date/time
 info_text 'Configure date/time...'
@@ -30,9 +23,9 @@ info_text 'Configure date/time...'
 export LANGUAGE="$LANGUAGE_ISO.UTF-8"
 export LANG="$LANGUAGE_ISO.UTF-8"
 
-debug_command rm /etc/localtime
-debug_command ln -s /usr/share/zoneinfo/$TIMEZONE /etc/localtime
-debug_command dpkg-reconfigure locales
+debug_command "rm /etc/localtime"
+debug_command "ln -s /usr/share/zoneinfo/\$TIMEZONE /etc/localtime"
+debug_command "dpkg-reconfigure locales"
 
 # Update APT
 info_text 'Update APT...'
@@ -70,7 +63,9 @@ if [ "$DISABLE_WELCOME_MESSAGE" == "true" ];
 then
     debug_command "sed -i \'/pam_motd.so/s/^/#/\' /etc/pam.d/sshd"
 else
-    debug_command "sudo echo -e \"#!/bin/bash\n\nfiglet 'PXL Web Vagrant'\n\necho \"Start by typing \'tmuxinator start home\'.\n\nProjects:\n- load_project\n- create_project\n- delete_project\"\" > /etc/update-motd.d/01-custom"
+    WELCOME_MESSAGE=$(/vagrant/provision/welcome-message.sh)
+
+    debug_command "sudo echo -e \"echo -e $WELCOME_MESSAGE\" > /etc/update-motd.d/01-custom"
     debug_command "sudo chmod +x /etc/update-motd.d/01-custom"
 fi
 

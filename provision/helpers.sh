@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "LOG_FILE_PATH: $LOG_FILE_PATH"
+
 SHOW_COMMAND=true
 SHOW_COMMAND_EXECUTION_TIME=true
 
@@ -48,12 +50,14 @@ blue_text() {
 debug_command() {
     COMMAND=$*
 
-    # LOG_PATH="/vagrant/logs/${pwd}"
-    # echo $LOG_PATH
-    #
-    # mkdir -p $LOG_PATH
+    if [ -z "$LOG_FILE_PATH" ];
+    then
+        LOG_PATH=/vagrant/logs/provision.log
+    else
+        LOG_PATH=$LOG_FILE_PATH
+    fi
 
-    echo -e "Command:\n$COMMAND\n" >> /vagrant/logs/provision.log
+    echo -e "Command:\n$COMMAND\n" >> $LOG_PATH
 
     if [ "$SHOW_COMMAND" == "true" ]; then blue_text "\$ $COMMAND"; fi
 
@@ -63,15 +67,16 @@ debug_command() {
     # Execute command
     if [ "$DEBUG" == "true" ];
     then
-        if eval "$COMMAND" | tee /vagrant/debug.log; then SUCCESS=true; fi
+        # Show command output
+        if eval "$COMMAND" | tee $LOG_PATH; then SUCCESS=true; fi
     else
-        if eval "$COMMAND" &>> /vagrant/debug.log; then SUCCESS=true; fi
+        # Hide command output
+        if eval "$COMMAND" &>> $LOG_PATH; then SUCCESS=true; fi
     fi
 
     COMMAND_EXIT_CODE=$?
 
     END_TIME=$(date +%s.%N)
-
     TIME_TOTAL=$(echo "$END_TIME - $START_TIME" | bc)
     dd=$(echo "$TIME_TOTAL / 86400" | bc)
     dt2=$(echo "$TIME_TOTAL - 86400 * $dd" | bc)
@@ -80,13 +85,16 @@ debug_command() {
     EXECUTION_TIME_MINUTES=$(echo "$dt3 / 60" | bc)
     EXECUTION_TIME_SECONDS=$(echo "$dt3 - 60 * $EXECUTION_TIME_MINUTES" | bc)
 
+    # Show command execution time
     if [ "$SHOW_COMMAND_EXECUTION_TIME" == "true" ];
     then
         printf "${CYAN}Execution Time:${NC} \e[3m%0.2fs\e[0m\n" $EXECUTION_TIME_SECONDS
     fi
 
+    # Show success/fail message
     if [ "$SUCCESS" == 'true' ]; then green_text 'Success!'; else red_text "Fail! ($COMMAND_EXIT_CODE)"; fi
 
+    # Make a new line break
     echo -e " "
 }
 

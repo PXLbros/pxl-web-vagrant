@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export LOG_FILE_PATH=/vagrant/logs/node.sh
+
 . /vagrant/provision/helpers.sh
 
 title 'Node'

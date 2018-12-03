@@ -6,18 +6,22 @@ const inquirer = require('inquirer');
 
 inquirer.registerPrompt('fuzzypath', require('inquirer-fuzzy-path'));
 
+async function ask_input(question, default_value = null) {
+    const prompt_result = await prompt([
+        {
+            type: 'input',
+            name: 'value',
+            message: question,
+            default: default_value
+        }
+    ]);
+
+    return prompt_result.value;
+}
+
 module.exports = {
     async ask_input(question, default_value = null) {
-        const prompt_result = await prompt([
-            {
-                type: 'input',
-                name: 'value',
-                message: question,
-                default: default_value
-            }
-        ]);
-
-        return prompt_result.value;
+        return await ask_input(question, default_value);
     },
 
     async ask_confirm(question) {

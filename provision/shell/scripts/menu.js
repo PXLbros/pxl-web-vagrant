@@ -1,6 +1,8 @@
 const { exec } = require('shelljs');
 const { blue, red } = require('chalk');
 const { choose } = require('./utils/choose');
+const { new_project_questionare } = require('./utils/ask');
+const { create_project, find_pxl_projects, get_pxl_config_title_inline } = require('./utils/pxl');
 const log = console.log;
 
 const from_bashrc = (process.env.FROM_BASHRC === 'true');
@@ -81,29 +83,41 @@ async function open_sites_menu() {
 }
 
 async function open_projects_menu() {
-    open_menu([
+    const projects = find_pxl_projects('/vagrant/sites');
+
+    let projects_menu = [
         {
             name: 'New Project',
-            value: 'create_project'
-        },
-        {
-            type: 'separator'
-        },
-        {
-            name: 'Project 1',
-            value: 'project_1'
-        },
-        {
-            type: 'separator'
-        },
-        {
-            name: 'Back',
-            value: 'back',
+            value: 'create_project',
             action: () => {
-                open_main_menu();
+                create_project();
             }
+        },
+        {
+            type: 'separator'
         }
-    ]);
+    ];
+
+    for (let project of projects) {
+        projects_menu.push({
+            name: get_pxl_config_title_inline(project, true),
+            value: project.name
+        });
+    }
+
+    projects_menu.push({
+        type: 'separator'
+    });
+
+    projects_menu.push({
+        name: 'Back',
+        value: 'back',
+        action: () => {
+            open_main_menu();
+        }
+    });
+
+    open_menu(projects_menu);
 }
 
 async function open_databases_menu() {

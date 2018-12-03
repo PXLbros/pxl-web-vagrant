@@ -11,11 +11,18 @@ DISABLE_WELCOME_MESSAGE=false
 apt-get -y install figlet &>/dev/null
 
 # Show welcome title
+echo 'Installing FIGlet...'
 title 'PXL Web Vagrant'
 
+blue_text "Provisioning PXL Web Vagrant environment... (normally takes a few minutes depending on configuration and guest machine)\n"
+
 # Clear logs
-rm -f /vagrant/logs
-mkdir /vagrant/logs
+if [ -d /vagrant/logs ];
+then
+    rm -rf /vagrant/logs/*
+else
+    mkdir /vagrant/logs
+fi
 
 # Configure date/time
 info_text 'Configure date/time...'
@@ -24,7 +31,7 @@ export LANGUAGE="$LANGUAGE_ISO.UTF-8"
 export LANG="$LANGUAGE_ISO.UTF-8"
 
 debug_command "rm /etc/localtime"
-debug_command "ln -s /usr/share/zoneinfo/\$TIMEZONE /etc/localtime"
+debug_command "ln -s /usr/share/zoneinfo/$TIMEZONE /etc/localtime"
 debug_command "dpkg-reconfigure locales"
 
 # Update APT
@@ -64,9 +71,14 @@ then
     debug_command "sed -i \'/pam_motd.so/s/^/#/\' /etc/pam.d/sshd"
 else
     WELCOME_MESSAGE=$(/vagrant/provision/welcome-message.sh)
+    WELCOME_MESSAGE_PATH=/etc/update-motd.d/01-custom
 
-    debug_command "sudo echo -e \"echo -e $WELCOME_MESSAGE\" > /etc/update-motd.d/01-custom"
-    debug_command "sudo chmod +x /etc/update-motd.d/01-custom"
+    debug_command "sudo echo -e \"echo -e \"$WELCOME_MESSAGE\"\" > $WELCOME_MESSAGE_PATH"
+
+    if [ -f $WELCOME_MESSAGE_PATH ];
+    then
+        debug_command "sudo chmod +x /etc/update-motd.d/01-custom"
+    fi
 fi
 
 # Disable "Last login" message

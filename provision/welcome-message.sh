@@ -2,15 +2,18 @@
 
 figlet 'PXL Web Vagrant'
 
-echo -e "\n"
+echo -e ""
 
 echo "Start by typing 'tmuxinator start home'.
 
 Commands:
     Projects:
-        - create_project
-        - load_project
-        - edit_project
-        - delete_project
+        \$ create_project
+        \$ load_project
+        \$ edit_project
+        \$ delete_project
     Sites:
-        - create_site"
+        \$ create_site
+        \$ load_site
+        \$ edit_site
+        \$ delete_site"

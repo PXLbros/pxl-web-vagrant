@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export LOG_FILE_PATH=/vagrant/logs/databases/mysql.sh
+export LOG_FILE_PATH=/vagrant/logs/databases/mysql.log
 
 . /vagrant/provision/helpers.sh
 

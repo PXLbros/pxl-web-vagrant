@@ -55,7 +55,11 @@ debug_command() {
         LOG_PATH=$LOG_FILE_PATH
     fi
 
-    echo -e "Command:\n$COMMAND\n" >> $LOG_PATH
+    LOG_PATH_DIR=$(dirname "${LOG_PATH}")
+
+    sudo mkdir -p $LOG_PATH_DIR
+
+    echo -e "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n$COMMAND\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" >> $LOG_PATH
 
     if [ "$SHOW_COMMAND" == "true" ]; then blue_text "\$ $COMMAND"; fi
 

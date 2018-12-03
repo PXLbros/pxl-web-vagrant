@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export LOG_FILE_PATH=/vagrant/logs/shell/liquidprompt.sh
+export LOG_FILE_PATH=/vagrant/logs/shell/liquidprompt.log
 
 . /vagrant/provision/helpers.sh
 
@@ -19,11 +19,8 @@ if ! grep -qF "source ~/liquidprompt/liquidprompt" $HOME/.bashrc
 then
     info_text "Set to automatically run LiquidPrompt..."
 
-    debug_command "echo -e \"\n[[ \$- = *i* ]] && source ~/liquidprompt/liquidprompt\" >> \$HOME/.bashrc"
+    debug_command "echo -e \"\n[[ \\$- = *i* ]] && source ~/liquidprompt/liquidprompt\" >> \$HOME/.bashrc"
 fi
-
-# Run
-debug_command "[[ $- = *i* ]] && source ~/liquidprompt/liquidprompt"
 
 # Create configuration file
 debug_command "echo \"# Maximal value under which the battery level is displayed

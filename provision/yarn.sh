@@ -1,18 +1,16 @@
 #!/bin/bash
 
-export LOG_FILE_PATH=/vagrant/logs/yarn.sh
+export LOG_FILE_PATH=/vagrant/logs/yarn.log
 
 . /vagrant/provision/helpers.sh
 
 title 'Yarn'
 
-# ...
-debug_command 'curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -'
-debug_command "echo \"deb https://dl.yarnpkg.com/debian/ stable main\" | sudo tee /etc/apt/sources.list.d/yarn.list"
-
 # Update apt
 info_text 'Update APT...'
 
+debug_command 'curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -'
+debug_command "echo \"deb https://dl.yarnpkg.com/debian/ stable main\" | sudo tee /etc/apt/sources.list.d/yarn.list"
 debug_command sudo apt-get update -y
 
 # Install yarn

@@ -20,7 +20,7 @@ then
 fi
 
 # Set root password
-info_text "Set MySQL root password to "$MYSQL_ROOT_PASSWORD"..."
+info_text "Set MySQL root password to \"$MYSQL_ROOT_PASSWORD\"..."
 
 debug_command debconf-set-selections <<< "mysql-server mysql-server/root_password password $MYSQL_ROOT_PASSWORD"
 debug_command debconf-set-selections <<< "mysql-server mysql-server/root_password_again password $MYSQL_ROOT_PASSWORD"
@@ -33,7 +33,7 @@ debug_command apt-get install -y mysql-server
 if [ -x "$(command -v mysql)" ];
 then
     # Create user
-    info_text 'Create MySQL Vagrant user...'
+    info_text "Create MySQL Vagrant user \"$MYSQL_USER_NAME\" with password \"$MYSQL_USER_PASSWORD\"..."
 
     debug_command "echo \"CREATE USER IF NOT EXISTS '$MYSQL_USER_NAME'@'localhost' IDENTIFIED BY '$MYSQL_USER_PASSWORD';\" | mysql -u $MYSQL_ROOT_USER --password=\"$MYSQL_ROOT_PASSWORD\""
     debug_command "echo \"CREATE USER IF NOT EXISTS '$MYSQL_USER_NAME'@'%' IDENTIFIED BY '$MYSQL_USER_PASSWORD';\" | mysql -u $MYSQL_ROOT_USER --password=\"$MYSQL_ROOT_PASSWORD\""

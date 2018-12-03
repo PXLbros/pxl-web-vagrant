@@ -5,16 +5,18 @@ export DEBIAN_FRONTEND=noninteractive
 
 DISABLE_WELCOME_MESSAGE=false
 
+export LOG_FILE_PATH=/vagrant/logs/vagrant.log
+
 . /vagrant/provision/helpers.sh
 
 # Install figlet
 apt-get -y install figlet &>/dev/null
 
 # Show welcome title
-echo 'Installing FIGlet...'
+# echo 'Installing FIGlet...'
 title 'PXL Web Vagrant'
 
-blue_text "Provisioning PXL Web Vagrant environment... (normally takes a few minutes depending on configuration and guest machine)\n"
+blue_text "Provisioning PXL Web Vagrant environment...\n"
 
 # Clear logs
 if [ -d /vagrant/logs ];
@@ -73,7 +75,7 @@ else
     WELCOME_MESSAGE=$(/vagrant/provision/welcome-message.sh)
     WELCOME_MESSAGE_PATH=/etc/update-motd.d/01-custom
 
-    debug_command "sudo echo -e \"echo -e \"$WELCOME_MESSAGE\"\" > $WELCOME_MESSAGE_PATH"
+    debug_command "echo $WELCOME_MESSAGE | sudo tee $WELCOME_MESSAGE_PATH"
 
     if [ -f $WELCOME_MESSAGE_PATH ];
     then

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export LOG_FILE_PATH=/vagrant/logs/user.sh
+export LOG_FILE_PATH=/vagrant/logs/user.log
 
 . /vagrant/provision/helpers.sh
 

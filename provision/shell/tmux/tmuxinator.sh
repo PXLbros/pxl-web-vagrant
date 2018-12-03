@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export LOG_FILE_PATH=/vagrant/logs/tmuxinator.sh
+export LOG_FILE_PATH=/vagrant/logs/tmuxinator.log
 
 . /vagrant/provision/helpers.sh
 

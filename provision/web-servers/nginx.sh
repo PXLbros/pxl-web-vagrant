@@ -22,6 +22,8 @@ debug_command sudo apt-get install nginx -y
 if [ -x "$(command -v nginx)" ];
 then
     # Give Vagrant permission to edit NGINX site configuration files
+    info_text 'Give permissions to NGINX available sites directory...'
+
     debug_command sudo chown -R vagrant:vagrant /etc/nginx/sites-available
 
     # Update port in default site

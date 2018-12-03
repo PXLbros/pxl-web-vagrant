@@ -6,4 +6,5 @@ provision/user
 provision/shell/scripts/yarn.lock
 node_modules/
 sites/
+logs/
 .DS_Store

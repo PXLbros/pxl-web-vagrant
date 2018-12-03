@@ -7,14 +7,21 @@ DISABLE_WELCOME_MESSAGE=false
 
 . /vagrant/provision/helpers.sh
 
-# Show welcome title
+# Install figlet
 apt-get -y install figlet &>/dev/null
+
+# Show welcome title
 title 'PXL Web Vagrant'
 
-# Clear debug.log
-if [ -f /vagrant/debug.log ];
+# Clear provision.log
+if [ -d /vagrant/logs ];
 then
-    debug_command "rm /vagrant/debug.log"
+    if [ -f /vagrant/logs/provision.log ];
+    then
+        debug_command "rm /vagrant/logs/provision.log"
+    fi
+else
+    mkdir /vagrant/logs
 fi
 
 # Configure date/time
@@ -63,7 +70,7 @@ if [ "$DISABLE_WELCOME_MESSAGE" == "true" ];
 then
     debug_command "sed -i \'/pam_motd.so/s/^/#/\' /etc/pam.d/sshd"
 else
-    debug_command "sudo echo -e \"#!/bin/bash\n\nfiglet 'PXL Web Vagrant'\n\necho \"Start by typing 'tmuxinator start home'.\"\" > /etc/update-motd.d/01-custom"
+    debug_command "sudo echo -e \"#!/bin/bash\n\nfiglet 'PXL Web Vagrant'\n\necho \"Start by typing \'tmuxinator start home\'.\n\nProjects:\n- load_project\n- create_project\n- delete_project\"\" > /etc/update-motd.d/01-custom"
     debug_command "sudo chmod +x /etc/update-motd.d/01-custom"
 fi
 

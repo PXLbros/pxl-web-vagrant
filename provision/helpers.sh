@@ -48,7 +48,12 @@ blue_text() {
 debug_command() {
     COMMAND=$*
 
-    echo -e "Command:\n$COMMAND\n" >> /vagrant/debug.log
+    # LOG_PATH="/vagrant/logs/${pwd}"
+    # echo $LOG_PATH
+    #
+    # mkdir -p $LOG_PATH
+
+    echo -e "Command:\n$COMMAND\n" >> /vagrant/logs/provision.log
 
     if [ "$SHOW_COMMAND" == "true" ]; then blue_text "\$ $COMMAND"; fi
 

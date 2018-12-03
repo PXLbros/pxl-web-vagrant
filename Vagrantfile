@@ -100,10 +100,8 @@ Vagrant.configure('2') do |config|
         settings['web-servers'].each do |web_server_name, web_server_settings|
             if web_server_settings['enabled'] == true
                 if web_server_name === 'apache'
-                    # port_in = 80
                     port_out = (web_server_settings['port'] || 7001)
                 elsif web_server_name === 'nginx'
-                    # port_in = 81
                     port_out = (web_server_settings['port'] || 7002)
                 end
 

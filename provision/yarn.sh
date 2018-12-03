@@ -2,7 +2,7 @@
 
 . /vagrant/provision/helpers.sh
 
-title 'yarn.sh'
+title 'Yarn'
 
 # ...
 debug_command 'curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -'

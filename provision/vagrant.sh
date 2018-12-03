@@ -1,23 +1,21 @@
 #!/bin/bash
 
-DISABLE_WELCOME_MESSAGE=false
 export DEBUG=$DEBUG
+export DEBIAN_FRONTEND=noninteractive
+
+DISABLE_WELCOME_MESSAGE=false
 
 # Clear debug.log
 rm /vagrant/debug.log
 
 . /vagrant/provision/helpers.sh
 
-apt-get -y install figlet
+# Show welcome title
+apt-get -y install figlet &>/dev/null
+title 'PXL Web Vagrant'
 
-figlet 'PXL Web Vagrant'
-
-echo ""
-
-export DEBIAN_FRONTEND=noninteractive
-
-# Set language
-info_text 'Configure date & time...'
+# Configure date/time
+info_text 'Configure date/time...'
 
 export LANGUAGE="$LANGUAGE_ISO.UTF-8"
 export LANG="$LANGUAGE_ISO.UTF-8"
@@ -56,13 +54,13 @@ info_text "Clean up APT..."
 debug_command apt-get autoremove -yf
 
 # Disable default welcome message
-debug_command 'chmod -x /etc/update-motd.d/*'
+debug_command 'sudo chmod -x /etc/update-motd.d/*'
 
 if [ "$DISABLE_WELCOME_MESSAGE" == "true" ];
 then
-    debug_command sed -i \'/pam_motd.so/s/^/#/\' /etc/pam.d/sshd
+    debug_command "sed -i \'/pam_motd.so/s/^/#/\' /etc/pam.d/sshd"
 else
-    debug_command "sudo echo \"figlet PXL Web Vagrant\" > /etc/update-motd.d/01-custom"
+    debug_command "sudo echo -e \"#!/bin/bash\n\nfiglet 'PXL Web Vagrant'\" > /etc/update-motd.d/01-custom"
     debug_command "sudo chmod +x /etc/update-motd.d/01-custom"
 fi
 

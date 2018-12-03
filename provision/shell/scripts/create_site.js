@@ -16,10 +16,21 @@ const options = commandLineArgs([
 async function main() {
     const site_dir = (options['dir'] || await ask_input('What is the site directory?', pwd().stdout));
 
+    let pxl_config;
+
     // Check if site directory already exist
     let site_dir_exist = false;
 
     if (test('-d', site_dir)) {
+        if (test('-f', `${site_dir}/.pxl/config.yaml`)) {
+            pxl_config = load_pxl_config_from_dir(site_dir);
+
+            console.log(pxl_config);
+
+            if (await ask_confirm(`Detected PXL Web Vagrant site "${pxl_config.name}", do you want to install?`)) {
+            }
+        }
+
         if (!await ask_confirm(`Directory ${site_dir} already exist, do you want to continue?`)) {
             return;
         }
@@ -82,7 +93,7 @@ async function main() {
 
     if (site_dir_exist || is_from_github) {
         // Check if .pxl configuration file exist
-        const pxl_config = load_pxl_config_from_dir(site_dir);
+        pxl_config = load_pxl_config_from_dir(site_dir);
 
         if (pxl_config) {
             log(`\n${green('~ PXL Web Vagrant ~')}`);

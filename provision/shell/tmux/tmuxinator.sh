@@ -7,19 +7,17 @@ title 'tmuxinator'
 # Update Ruby
 info_text 'Update Ruby...'
 
-sudo apt-add-repository -y ppa:brightbox/ruby-ng
-sudo apt-get -y update
-sudo apt-get install -y \
-    rubygems \
-    ruby-dev
+debug_command 'sudo apt-add-repository -y ppa:brightbox/ruby-ng'
+debug_command 'sudo apt-get -y update'
+debug_command 'sudo apt-get install -y rubygems ruby-dev'
 
 # Install tmuxinator
 info_text 'Install tmuxinator...'
 
-sudo gem install tmuxinator
+debug_command 'sudo gem install tmuxinator'
 
 # Create tmuxinator directory
-mkdir -p $HOME/.config/tmuxinator
+debug_command "mkdir -p $HOME/.config/tmuxinator"
 
 # Create "Home" tmuxinator project
 HOME_TMUXINATOR_CONTENTS="name: \"$VM_NAME\"
@@ -63,7 +61,7 @@ then
 fi
 
 # Save tmuxinator "Home" project
-echo -e "$HOME_TMUXINATOR_CONTENTS" > $HOME/.config/tmuxinator/home.yml
+debug_command "echo -e \"$HOME_TMUXINATOR_CONTENTS\" > $HOME/.config/tmuxinator/home.yml"
 
 # Set to open tmuxinator "Home" project upon login
 # if ! grep -qF "tmuxinator start home" $HOME/.bashrc

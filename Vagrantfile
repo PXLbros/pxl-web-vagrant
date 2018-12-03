@@ -73,20 +73,20 @@ Vagrant.configure('2') do |config|
     config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/shell/vim.sh", run: 'once', privileged: false
 
     # tmux
-    # if settings['shell']['tmux']['enabled']
-    #     config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/shell/tmux/tmux.sh", run: 'once', privileged: false, env: {
-    #         'VERSION': (settings['shell']['tmux']['version'] || 2.8),
-    #         'TMUXINATOR': (settings['shell']['tmux']['tmuxinator']['enabled'] || false),
-    #         'GPAKOSZ': (settings['shell']['tmux']['gpakosz']['enabled'] || false)
-    #     }
-    #
-    #     # tmuxinator
-    #     if settings['shell']['tmux']['tmuxinator']['enabled']
-    #         config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/shell/tmux/tmuxinator.sh", run: 'once', privileged: false, env: {
-    #             'VM_NAME': settings['vm']['name']
-    #         }
-    #     end
-    # end
+    if settings['shell']['tmux']['enabled']
+        config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/shell/tmux/tmux.sh", run: 'once', privileged: false, env: {
+            'VERSION': (settings['shell']['tmux']['version'] || 2.8),
+            'TMUXINATOR': (settings['shell']['tmux']['tmuxinator']['enabled'] || false),
+            'GPAKOSZ': (settings['shell']['tmux']['gpakosz']['enabled'] || false)
+        }
+
+        # tmuxinator
+        if settings['shell']['tmux']['tmuxinator']['enabled']
+            config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/shell/tmux/tmuxinator.sh", run: 'once', privileged: false, env: {
+                'VM_NAME': settings['vm']['name']
+            }
+        end
+    end
 
     # Liquid Prompt
     if settings['shell']['liquidprompt']['enabled']

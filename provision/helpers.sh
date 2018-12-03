@@ -77,7 +77,7 @@ debug_command() {
 
     if [ "$SHOW_COMMAND_EXECUTION_TIME" == "true" ];
     then
-        printf "Execution Time: \e[3m%0.2fs\e[0m\n" $EXECUTION_TIME_SECONDS
+        printf "${CYAN}Execution Time:${NC} \e[3m%0.2fs\e[0m\n" $EXECUTION_TIME_SECONDS
     fi
 
     if [ "$SUCCESS" == 'true' ]; then green_text 'Success!'; else red_text "Fail! ($COMMAND_EXIT_CODE)"; fi
@@ -86,40 +86,49 @@ debug_command() {
 }
 
 title() {
-    TITLE=$1
-    TITLE_LENGTH=${#TITLE}
-    TITLE_LENGTH_EXTRA=$((TITLE_LENGTH+2))
+    FIGLET=true
 
-    BAR_CHARACTER='~'
+    if [ $FIGLET == "true" ];
+    then
+        echo -e " "
+        figlet $1
+        echo -e " "
+    else
+        TITLE=$1
+        TITLE_LENGTH=${#TITLE}
+        TITLE_LENGTH_EXTRA=$((TITLE_LENGTH+2))
 
-    BAR=''
-    SPACE=''
-    TITLE_SPACE=''
+        BAR_CHARACTER='~'
 
-    for i in $(eval echo {1..$((TITLE_LENGTH+56))})
-    do
-        BAR="${BAR}${BAR_CHARACTER}"
-    done
+        BAR=''
+        SPACE=''
+        TITLE_SPACE=''
 
-    for i in $(eval echo {1..$((TITLE_LENGTH+54))})
-    do
-        SPACE="${SPACE} "
-    done
+        for i in $(eval echo {1..$((TITLE_LENGTH+56))})
+        do
+            BAR="${BAR}${BAR_CHARACTER}"
+        done
 
-    for i in $(eval echo {1..$((22))})
-    do
-        TITLE_SPACE="${TITLE_SPACE} "
-    done
+        for i in $(eval echo {1..$((TITLE_LENGTH+54))})
+        do
+            SPACE="${SPACE} "
+        done
 
-    echo -e " "
-    echo -e "${PURPLE}${BAR}${NC}"
-    echo -e "${PURPLE}${BAR_CHARACTER}${SPACE}${BAR_CHARACTER}${NC}"
-    echo -e "${PURPLE}${BAR_CHARACTER}${SPACE}${BAR_CHARACTER}${NC}"
-    echo -e "${PURPLE}${BAR_CHARACTER}${TITLE_SPACE}${TITLE}${TITLE_SPACE}${BAR_CHARACTER}${NC}"
-    echo -e "${PURPLE}${BAR_CHARACTER}${SPACE}${BAR_CHARACTER}${NC}"
-    echo -e "${PURPLE}${BAR_CHARACTER}${SPACE}${BAR_CHARACTER}${NC}"
-    echo -e "${PURPLE}${BAR}${NC}"
-    echo -e " "
+        for i in $(eval echo {1..$((27))})
+        do
+            TITLE_SPACE="${TITLE_SPACE} "
+        done
+
+        echo -e " "
+        echo -e "${PURPLE}${BAR}${NC}"
+        echo -e "${PURPLE}${BAR_CHARACTER}${SPACE}${BAR_CHARACTER}${NC}"
+        echo -e "${PURPLE}${BAR_CHARACTER}${SPACE}${BAR_CHARACTER}${NC}"
+        echo -e "${PURPLE}${BAR_CHARACTER}${TITLE_SPACE}${TITLE}${TITLE_SPACE}${BAR_CHARACTER}${NC}"
+        echo -e "${PURPLE}${BAR_CHARACTER}${SPACE}${BAR_CHARACTER}${NC}"
+        echo -e "${PURPLE}${BAR_CHARACTER}${SPACE}${BAR_CHARACTER}${NC}"
+        echo -e "${PURPLE}${BAR}${NC}"
+        echo -e " "
+    fi
 }
 
 info_text() {

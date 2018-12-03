@@ -3,8 +3,7 @@
 . /vagrant/provision/helpers.sh
 
 # Install PHP dependencies
-# title 'PHP'
-figlet 'PHP'
+title 'PHP'
 
 info_text 'Instal PHP dependencies...'
 
@@ -105,9 +104,9 @@ then
     if [ -e composer.phar ];
     then
         # Install Composer
-        debug_command sudo mv composer.phar /usr/local/bin/composer
-        debug_command sudo mkdir -p /root/.composer
-        grep -q -F 'PATH="$PATH:$HOME/.composer/vendor/bin"' /home/vagrant/.profile || debug_command "echo -e '\nPATH=\"$PATH:$HOME/.composer/vendor/bin\"' >> /home/vagrant/.profile"
+        debug_command "sudo mv composer.phar /usr/local/bin/composer"
+        debug_command "sudo mkdir -p /root/.composer"
+        grep -q -F 'PATH="$PATH:$HOME/.composer/vendor/bin"' /home/vagrant/.profile || debug_command "echo -e '\nPATH=\"\$PATH:\$HOME/.composer/vendor/bin\"' >> /home/vagrant/.profile"
     else
         red_text 'Could not download Composer.'
     fi

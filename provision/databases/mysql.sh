@@ -31,15 +31,17 @@ debug_command apt-get install -y mysql-server
 if [ -x "$(command -v mysql)" ];
 then
     # Create user
-    info_text 'Create Vagrant user...'
+    info_text 'Create MySQL Vagrant user...'
 
-    debug_command "echo \"CREATE USER IF NOT EXISTS \'$MYSQL_USER_NAME\'@\'localhost\' IDENTIFIED BY \'$MYSQL_USER_PASSWORD\';\" | mysql -u $MYSQL_ROOT_USER --password=\"$MYSQL_ROOT_PASSWORD\""
-    debug_command "echo \"CREATE USER IF NOT EXISTS \'$MYSQL_USER_NAME\'@\'%\' IDENTIFIED BY \'$MYSQL_USER_PASSWORD\';\" | mysql -u $MYSQL_ROOT_USER --password=\"$MYSQL_ROOT_PASSWORD\""
-    debug_command "echo \"GRANT ALL PRIVILEGES ON *.* TO \'$MYSQL_USER_NAME\'@\'localhost\';\" | mysql -u $MYSQL_ROOT_USER --password=\"$MYSQL_ROOT_PASSWORD\""
-    debug_command "echo \"GRANT ALL PRIVILEGES ON *.* TO \'$MYSQL_USER_NAME\'@\'%\';\" | mysql -u $MYSQL_ROOT_USER --password=\"$MYSQL_ROOT_PASSWORD\""
+    debug_command "echo \"CREATE USER IF NOT EXISTS '$MYSQL_USER_NAME'@'localhost' IDENTIFIED BY '$MYSQL_USER_PASSWORD';\" | mysql -u $MYSQL_ROOT_USER --password=\"$MYSQL_ROOT_PASSWORD\""
+    debug_command "echo \"CREATE USER IF NOT EXISTS '$MYSQL_USER_NAME'@'%' IDENTIFIED BY '$MYSQL_USER_PASSWORD';\" | mysql -u $MYSQL_ROOT_USER --password=\"$MYSQL_ROOT_PASSWORD\""
+    debug_command "echo \"GRANT ALL PRIVILEGES ON *.* TO '$MYSQL_USER_NAME'@'localhost';\" | mysql -u $MYSQL_ROOT_USER --password=\"$MYSQL_ROOT_PASSWORD\""
+    debug_command "echo \"GRANT ALL PRIVILEGES ON *.* TO '$MYSQL_USER_NAME'@'%';\" | mysql -u $MYSQL_ROOT_USER --password=\"$MYSQL_ROOT_PASSWORD\""
     debug_command "echo \"FLUSH PRIVILEGES;\" | mysql -u $MYSQL_ROOT_USER --password=\"$MYSQL_ROOT_PASSWORD\""
 
     # Enable remote connections
+    info_text 'Enable remote connections to MySQL...'
+
     debug_command sed -i \'s/^bind-address/#bind-address/\' $MYSQL_CONFIG_PATH
     debug_command sed -i \'s/^skip-external-locking/#skip-external-locking/\' $MYSQL_CONFIG_PATH
 

@@ -7,21 +7,24 @@ title 'LiquidPrompt'
 # Install Liquid Prompt
 if [ ! -d ~/liquidprompt ]
 then
-    title "liquidprompt.sh (Install)"
+    info_text "Clone LiquidPrompt Git repository..."
 
-    debug_command git clone https://github.com/nojhan/liquidprompt.git $HOME/liquidprompt
-else
-    title "liquidprompt.sh (Already installed)"
+    debug_command "git clone https://github.com/nojhan/liquidprompt.git \$HOME/liquidprompt"
 fi
 
 # Set to automatically run
 if ! grep -qF "source ~/liquidprompt/liquidprompt" $HOME/.bashrc
 then
-    debug_command "echo -e \"\n[[ \$- = *i* ]] && source ~/liquidprompt/liquidprompt\" >> $HOME/.bashrc"
+    info_text "Set to automatically run LiquidPrompt..."
+
+    debug_command "echo -e \"\n[[ \$- = *i* ]] && source ~/liquidprompt/liquidprompt\" >> \$HOME/.bashrc"
 fi
 
+# Run
+debug_command "[[ $- = *i* ]] && source ~/liquidprompt/liquidprompt"
+
 # Create configuration file
-echo "# Maximal value under which the battery level is displayed
+debug_command "echo \"# Maximal value under which the battery level is displayed
 # Recommended value is 75
 LP_BATTERY_THRESHOLD=75
 
@@ -150,4 +153,4 @@ LP_ENABLE_SSH_COLORS=0
 
 # Specify a list of complete and colon (\":\") separated paths in which, all vcs
 # will be disabled
-LP_DISABLED_VCS_PATH=\"\"" > $HOME/.liquidpromptrc
+LP_DISABLED_VCS_PATH=\"\"\" > \$HOME/.liquidpromptrc"

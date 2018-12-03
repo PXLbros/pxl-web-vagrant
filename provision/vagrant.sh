@@ -5,14 +5,17 @@ export DEBIAN_FRONTEND=noninteractive
 
 DISABLE_WELCOME_MESSAGE=false
 
-# Clear debug.log
-rm /vagrant/debug.log
-
 . /vagrant/provision/helpers.sh
 
 # Show welcome title
 apt-get -y install figlet &>/dev/null
 title 'PXL Web Vagrant'
+
+# Clear debug.log
+if [ -f /vagrant/debug.log ];
+then
+    debug_command "rm /vagrant/debug.log"
+fi
 
 # Configure date/time
 info_text 'Configure date/time...'
@@ -39,8 +42,8 @@ DEBIAN_FRONTEND=noninteractive \
     -o Dpkg::Options::="--force-confold" \
     upgrade
 
-# Install necessary APT packages
-info_text "Install necessary APT packages..."
+# Install required APT packages
+info_text "Install required APT packages..."
 
 debug_command apt-get -y install \
     build-essential \
@@ -60,9 +63,9 @@ if [ "$DISABLE_WELCOME_MESSAGE" == "true" ];
 then
     debug_command "sed -i \'/pam_motd.so/s/^/#/\' /etc/pam.d/sshd"
 else
-    debug_command "sudo echo -e \"#!/bin/bash\n\nfiglet 'PXL Web Vagrant'\" > /etc/update-motd.d/01-custom"
+    debug_command "sudo echo -e \"#!/bin/bash\n\nfiglet 'PXL Web Vagrant'\n\necho \"Start by typing 'tmuxinator start home'.\"\" > /etc/update-motd.d/01-custom"
     debug_command "sudo chmod +x /etc/update-motd.d/01-custom"
 fi
 
 # Disable "Last login" message
-debug_command sed -i \'s/PrintLastLog yes/PrintLastLog no/\' /etc/ssh/sshd_config
+debug_command "sed -i 's/PrintLastLog yes/PrintLastLog no/' /etc/ssh/sshd_config"

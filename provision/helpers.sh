@@ -86,49 +86,9 @@ debug_command() {
 }
 
 title() {
-    FIGLET=true
-
-    if [ $FIGLET == "true" ];
-    then
-        echo -e " "
-        figlet $1
-        echo -e " "
-    else
-        TITLE=$1
-        TITLE_LENGTH=${#TITLE}
-        TITLE_LENGTH_EXTRA=$((TITLE_LENGTH+2))
-
-        BAR_CHARACTER='~'
-
-        BAR=''
-        SPACE=''
-        TITLE_SPACE=''
-
-        for i in $(eval echo {1..$((TITLE_LENGTH+56))})
-        do
-            BAR="${BAR}${BAR_CHARACTER}"
-        done
-
-        for i in $(eval echo {1..$((TITLE_LENGTH+54))})
-        do
-            SPACE="${SPACE} "
-        done
-
-        for i in $(eval echo {1..$((27))})
-        do
-            TITLE_SPACE="${TITLE_SPACE} "
-        done
-
-        echo -e " "
-        echo -e "${PURPLE}${BAR}${NC}"
-        echo -e "${PURPLE}${BAR_CHARACTER}${SPACE}${BAR_CHARACTER}${NC}"
-        echo -e "${PURPLE}${BAR_CHARACTER}${SPACE}${BAR_CHARACTER}${NC}"
-        echo -e "${PURPLE}${BAR_CHARACTER}${TITLE_SPACE}${TITLE}${TITLE_SPACE}${BAR_CHARACTER}${NC}"
-        echo -e "${PURPLE}${BAR_CHARACTER}${SPACE}${BAR_CHARACTER}${NC}"
-        echo -e "${PURPLE}${BAR_CHARACTER}${SPACE}${BAR_CHARACTER}${NC}"
-        echo -e "${PURPLE}${BAR}${NC}"
-        echo -e " "
-    fi
+    echo -e " "
+    figlet $1
+    echo -e " "
 }
 
 info_text() {

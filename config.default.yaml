@@ -5,6 +5,9 @@ vm:
     name: 'pxl-web-vagrant'
     memory: 1024
     cpus: 1
+    provision:
+        show-command: true
+        show-command-execution-time: true
 network:
     ip: '192.168.1.99'
 web-servers:
@@ -42,6 +45,7 @@ shell:
         version: 2.8
         tmuxinator:
             enabled: true
+            start-home-layout-on-init: false
         gpakosz:
             enabled: true
     liquidprompt:

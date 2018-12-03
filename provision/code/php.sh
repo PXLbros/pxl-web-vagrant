@@ -5,12 +5,12 @@
 # Install PHP dependencies
 title 'PHP'
 
-info_text 'Instal PHP dependencies...'
+info_text 'Install PHP dependencies...'
 
-debug_command apt-get -y install software-properties-common
-debug_command add-apt-repository -y ppa:ondrej/apache2
-debug_command add-apt-repository -y ppa:ondrej/php
-debug_command apt-get update -y
+debug_command "apt-get -y install software-properties-common"
+debug_command "add-apt-repository -y ppa:ondrej/apache2"
+debug_command "add-apt-repository -y ppa:ondrej/php"
+debug_command "apt-get update -y"
 
 PHP_VERSIONS=($VERSIONS)
 

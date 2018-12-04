@@ -1,4 +1,3 @@
-const { exec } = require('shelljs');
 const { blue, yellow } = require('chalk');
 const { find_pxl_projects, get_pxl_config_title_inline } = require('./utils/pxl');
 const { choose } = require('./utils/choose');

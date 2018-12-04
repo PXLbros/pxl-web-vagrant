@@ -75,11 +75,3 @@ debug_command apt-get -y install \
 info_text "Clean up APT..."
 
 debug_command "apt-get autoremove -yf"
-
-# Set to open menu on start
-info_text 'Set to open PXL Web Vagrant shell menu on login...'
-
-if ! grep -qF "FROM_BASHRC=true node /vagrant/provision/shell/scripts/menu.js" /home/vagrant/.bashrc
-then
-    debug_command "echo -e \"\nFROM_BASHRC=true node /vagrant/provision/shell/scripts/menu.js\" >> /home/vagrant/.bashrc"
-fi

@@ -2,7 +2,7 @@ const { exec } = require('shelljs');
 const { blue, red } = require('chalk');
 const { choose } = require('./utils/choose');
 const { new_project_questionare } = require('./utils/ask');
-const { create_project, find_pxl_projects, get_pxl_config_title_inline } = require('./utils/pxl');
+const { create_project, find_pxl_projects, get_pxl_config_title_inline, open_project } = require('./utils/pxl');
 const log = console.log;
 
 const from_bashrc = (process.env.FROM_BASHRC === 'true');
@@ -83,7 +83,7 @@ async function open_sites_menu() {
 }
 
 async function open_projects_menu() {
-    const projects = find_pxl_projects('/vagrant/sites');
+    const projects = find_pxl_projects('/vagrant/projects');
 
     let projects_menu = [
         {
@@ -101,7 +101,10 @@ async function open_projects_menu() {
     for (let project of projects) {
         projects_menu.push({
             name: get_pxl_config_title_inline(project, true),
-            value: project.name
+            value: project.name,
+            action: () => {
+                open_project(project);
+            }
         });
     }
 

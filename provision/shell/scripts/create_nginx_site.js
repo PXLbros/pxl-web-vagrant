@@ -18,7 +18,7 @@ async function main() {
     const non_interactive = options['non-interactive'];
 
     const hostname = (options['hostname'] || await ask_input('What is the hostname? (e.g. domain.loc)'));
-    // const project_dir = (options['project-dir'] || await ask_input('What is the project directory?', (hostname ? `/vagrant/sites/${hostname}` : null)));
+    // const project_dir = (options['project-dir'] || await ask_input('What is the project directory?', (hostname ? `/vagrant/projects/${hostname}` : null)));
     const public_dir = (options['public-dir'] || await ask_input('What is the public directory?')); // , `${project_dir}/public`
 
     let php_version = null;

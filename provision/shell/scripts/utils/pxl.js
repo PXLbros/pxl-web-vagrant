@@ -5,7 +5,7 @@ const slugify = require('slugify');
 const yaml = require('js-yaml');
 const log = console.log;
 const { ask_confirm, ask_input } = require('./ask');
-const { remove_trailing_slash } = require('./str');
+const { remove_last_directory, remove_trailing_slash } = require('./str');
 
 function get_pxl_config_file_path_from_dir(dir) {
     return `${dir}/config.yaml`;
@@ -47,7 +47,13 @@ function load_pxl_config(pxl_config_file_path) {
     try {
         const pxl_config = yaml.safeLoad(readFileSync(pxl_config_file_path, 'utf8'));
 
+        if (!pxl_config) {
+            throw new Error(`Could not load PXL Web Vagrant configuration file "${pxl_config_file_path}".`);
+        }
+
         validate_pxl_config(pxl_config);
+
+        pxl_config.dir = remove_last_directory(remove_last_directory(pxl_config_file_path));
 
         return pxl_config;
     } catch (e) {
@@ -76,6 +82,7 @@ function find_pxl_configs(dir, filter_type = null) {
     for (let pxl_dir of pxl_dirs) {
         try {
             const pxl_config = load_pxl_config_from_dir(pxl_dir);
+            pxl_config.dir = remove_last_directory(pxl_dir);
 
             // print_pxl_config(pxl_config);
 
@@ -151,12 +158,22 @@ function create_pxl_config(name, dir, options = {
     const create_config_result = exec(`echo "name: '${name}'\\ntype: 'project'" > ${config_file_path}`);
 
     if (create_config_result.code === 0) {
-        // Clear cache
-        // unlinkSync(`/home/vagrant/.pxl/cache/projects`);
-
-        // Add project path to cache file
-        appendFileSync(`/home/vagrant/.pxl/cache/projects\n`, config_dir);
+        // Update cache file
+        exec(`echo "${config_dir}" >> /home/vagrant/.pxl/cache/projects\n`);
     }
+
+    return load_pxl_config(config_file_path);
+}
+
+function create_project_tmuxinator(path, pxl_config) {
+    let tmuxinator_str = `
+name: "${pxl_config.name}"
+root: ~/
+
+windows:
+  - Home:`;
+
+    const create_project_tmuxinator_result = exec(`echo "${tmuxinator_str}" > ${path}`);
 }
 
 module.exports = {
@@ -192,6 +209,10 @@ module.exports = {
         load_pxl_config_from_dir(dir);
     },
 
+    load_pxl_config(path) {
+        return load_pxl_config(path);
+    },
+
     print_pxl_config(pxl_config) {
         print_pxl_config(pxl_config);
     },
@@ -210,7 +231,7 @@ module.exports = {
             lower: true
         });
 
-        const project_dir = remove_trailing_slash(options['dir'] || await ask_input('What is the project directory?'));
+        const project_dir = remove_trailing_slash(options['dir'] || await ask_input('What is the project directory?', `/vagrant/projects/${project_name_slug}`));
 
         if (test('-d', project_dir)) {
             if (!await ask_confirm(`Directory ${project_dir} already exist, do you want to continue?`)) {
@@ -228,20 +249,32 @@ module.exports = {
 
         // Create .pxl configuration directory
         try {
-            create_pxl_config(project_name, project_dir);
+            const pxl_config = create_pxl_config(project_name, project_dir);
+
+            create_project_tmuxinator(`${project_dir}/.pxl/tmuxinator.yml`, pxl_config);
         } catch (create_pxl_config_error) {
-            console.log(create_pxl_config_error);
-            console.log(create_pxl_config_error.message);
+            log(create_pxl_config_error);
+            log(red(create_pxl_config_error.message));
         }
 
-        console.log(`Project "${project_name}" has been created!`);
+        log(green(`Project "${project_name}" has been created!`));
 
-        if (pwd().stdout !== project_dir) {
-            const go_to_dir = (await ask_confirm(`Do you want to go to project directory ${project_dir}?`));
+        // if (pwd().stdout !== project_dir) {
+        //     const go_to_dir = (await ask_confirm(`Do you want to go to project directory ${project_dir}?`));
+        //
+        //     if (go_to_dir) {
+        //         cd(project_dir);
+        //     }
+        // }
+    },
 
-            if (go_to_dir) {
-                cd(project_dir);
-            }
+    async open_project(project) {
+        const tmuxinator_file_path = `${project.dir}/.pxl/tmuxinator.yml`;
+
+        if (existsSync(tmuxinator_file_path)) {
+            exec(`tmuxinator start --project-config=${tmuxinator_file_path}`);
+        } else {
+            console.log(`no tmuxinator found, just show info: ${project.dir}`);
         }
     }
 };

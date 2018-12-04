@@ -24,11 +24,16 @@ alias cls='clear'
 alias ls='ls -lGah --color=auto'
 alias grep='grep --color=auto'
 
+# Menu
+alias menu='node FROM_BASHRC=true node /vagrant/provision/shell/scripts/menu.js'
+
 # Projects
 alias create_project='node /vagrant/provision/shell/scripts/create_project.js'
+alias projects='node /vagrant/provision/shell/scripts/projects.js'
 
 # Sites
-alias create_site='node /vagrant/provision/shell/scripts/create_site.js'
+alias create_site='node /vagrant/provision/shell/scripts/sites/create.js'
+alias install_site='node /vagrant/provision/shell/scripts/sites/install.js'
 
 # /etc/hosts
 alias edit_hosts='sudo vim /etc/hosts'"
@@ -45,9 +50,9 @@ alias reload_apache='sudo service apache2 reload'
 alias apache_status='sudo service apache2 status'
 alias edit_apache_conf='sudo vim /etc/apache2/apache2.conf'
 alias apache_sites='cd /etc/apache2/sites-available'
-alias create_apache_vhost='node /vagrant/provision/shell/scripts/create_apache_vhost.js'
-alias delete_apache_vhost='node /vagrant/provision/shell/scripts/delete_apache_vhost.js'
-alias edit_apache_vhost_conf='node /vagrant/provision/shell/scripts/edit_apache_vhost_conf.js'"
+alias create_apache_site='node /vagrant/provision/shell/scripts/create_apache_site.js'
+alias delete_apache_site='node /vagrant/provision/shell/scripts/delete_apache_site.js'
+alias edit_apache_site_conf='node /vagrant/provision/shell/scripts/edit_apache_site_conf.js'"
 fi
 
 if [ "$NGINX" == "true" ]
@@ -97,4 +102,4 @@ fi
 debug_command "echo -e \"$BASH_PROFILE_CONTENTS\" > $HOME/.bash_profile"
 
 # Refresh .bash_profile
-debug_command source $HOME/.bash_profile
+debug_command "source $HOME/.bash_profile"

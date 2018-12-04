@@ -42,7 +42,7 @@ module.exports = {
         return prompt_result.value;
     },
 
-    async choose_pxl_project(dir = '/vagrant/sites') {
+    async choose_pxl_project(dir = '/vagrant/projects') {
         log(blue(`Searching for PXL Web Vagrant projects in "${dir}"...`));
 
         const projects = find_pxl_projects(dir);

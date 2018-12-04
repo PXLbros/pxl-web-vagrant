@@ -5,7 +5,7 @@ debug.log
 provision/user
 provision/shell/scripts/yarn.lock
 node_modules/
-sites/
+projects/
 logs/
 yarn-error.log
 .DS_Store

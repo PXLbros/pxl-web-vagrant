@@ -11,9 +11,9 @@ const options = commandLineArgs([
 
 async function main() {
     const hostname = (options['hostname'] || await ask_input('What is the hostname? (e.g. domain.loc)'));
-    const project_dir = (options['project-dir'] || await ask_input('What is the project directory?', (hostname ? `/vagrant/sites/${hostname}` : null)));
-    const public_dir = (options['public-dir'] || await ask_input('What is the public directory?', `${project_dir}/public`));
-    const php_version = (!options['php'] && await ask_confirm('Does the project use PHP?') ? await ask_php_version() : null);
+    // const project_dir = (options['project-dir'] || await ask_input('What is the project directory?', (hostname ? `/vagrant/projects/${hostname}` : null)));
+    const public_dir = (options['public-dir'] || await ask_input('What is the public directory?'));
+    const php_version = (!options['php'] && await ask_confirm('Does the project use PHP?') ? await ask_php_version() : (options['php'] ? options['php'] : null));
 
     const configuration_file_name = `${hostname}.conf`;
 

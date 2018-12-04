@@ -92,7 +92,7 @@ module.exports = {
                 pathFilter: (isDirectory, nodePath) => isDirectory,
                 // pathFilter :: (Bool, String) -> Bool
                 // pathFilter allows to filter FS nodes by type and path
-                rootPath: '/vagrant/sites',
+                rootPath: '/vagrant/projects',
                 // rootPath :: String
                 // Root search directory
                 message: 'Select a target directory for your component:',

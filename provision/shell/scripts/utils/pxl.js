@@ -1,6 +1,6 @@
 const { cd, exec, mkdir, pwd, test } = require('shelljs');
 const { appendFileSync, existsSync, readFileSync, unlinkSync, writeFileSync } = require('fs');
-const { blue, bold, italic, green, red } = require('chalk');
+const { blue, bold, italic, gray, green, red } = require('chalk');
 const slugify = require('slugify');
 const yaml = require('js-yaml');
 const log = console.log;
@@ -136,9 +136,12 @@ function print_pxl_config(pxl_config) {
 function get_pxl_config_title_inline(pxl_config) {
     let str = `${bold(pxl_config.name)}`;
 
-    if (typeof pxl_config['web-server'] === 'string') {
-        str += ` / ${italic('Web Server:')} ${pxl_config['web-server']}`;
-    }
+    str += gray(` ${pxl_config.dir}`);
+
+    // TODO: Check subs for sites and see what's going on...
+    // if (typeof pxl_config['web-server'] === 'string') {
+    //     str += ` / ${italic('Web Server:')} ${pxl_config['web-server']}`;
+    // }
 
     return str;
 }

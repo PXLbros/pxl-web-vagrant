@@ -1,6 +1,6 @@
 const { blue, yellow } = require('chalk');
-const { find_pxl_projects, get_pxl_config_title_inline } = require('./utils/pxl');
-const { choose } = require('./utils/choose');
+const { find_pxl_projects, get_pxl_config_title_inline } = require('../utils/pxl');
+const { choose } = require('../utils/choose');
 const log = console.log;
 
 async function main() {

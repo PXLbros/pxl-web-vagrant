@@ -28,13 +28,11 @@ alias grep='grep --color=auto'
 
 # Menu
 alias menu='FROM_BASHRC=true node /vagrant/provision/shell/scripts/menu.js'
-
-# Help
 alias help='figlet help'
 
 # Projects
-alias create_project='node $SHELL_DIR/scripts/create_project.js'
-alias projects='node $SHELL_DIR/scripts/projects.js'
+alias create_project='node $SHELL_DIR/scripts/projects/create.js'
+alias projects='node $SHELL_DIR/scripts/projects/find.js'
 
 # Sites
 alias create_site='node $SHELL_DIR/scripts/sites/create.js'
@@ -54,10 +52,10 @@ alias stop_apache='sudo service apache2 stop'
 alias reload_apache='sudo service apache2 reload'
 alias apache_status='sudo service apache2 status'
 alias edit_apache_conf='sudo vim /etc/apache2/apache2.conf'
-alias apache_sites='cd /etc/apache2/sites-available'
-alias create_apache_site='node $SHELL_DIR/scripts/create_apache_site.js'
-alias delete_apache_site='node $SHELL_DIR/scripts/delete_apache_site.js'
-alias edit_apache_site_conf='node $SHELL_DIR/scripts/edit_apache_site_conf.js'"
+alias apache_site_confs='cd /etc/apache2/sites-available'
+alias create_apache_site='node $SHELL_DIR/scripts/web-servers/apache/create_site.js'
+alias edit_apache_site='node $SHELL_DIR/scripts/edit_apache_site.js'
+alias delete_apache_site='node $SHELL_DIR/scripts/web-servers/apache/delete_site.js'"
 fi
 
 if [ "$NGINX" == "true" ]

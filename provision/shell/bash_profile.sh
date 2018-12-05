@@ -28,7 +28,6 @@ alias grep='grep --color=auto'
 
 # Menu
 alias menu='FROM_BASHRC=true node /vagrant/provision/shell/scripts/menu.js'
-alias help='figlet help'
 
 # Projects
 alias create_project='node $SHELL_DIR/scripts/projects/create.js'

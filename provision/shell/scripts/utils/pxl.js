@@ -281,7 +281,7 @@ module.exports = {
         const tmuxinator_file_path = `${project.dir}/.pxl/tmuxinator.yml`;
 
         if (existsSync(tmuxinator_file_path)) {
-            exec(`tmuxinator start --project-config=${tmuxinator_file_path}`);
+            exec(`PROJECT_DIR=${project.dir} tmuxinator start --project-config=${tmuxinator_file_path}`);
         } else {
             console.log(`no tmuxinator found, just show info: ${project.dir}`);
         }

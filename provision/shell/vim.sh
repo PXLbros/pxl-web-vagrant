@@ -55,8 +55,6 @@ set ai
 set si
 set laststatus=2
 
-set statusline=Dir:\\ %r%{getcwd()}%h
-set statusline+=\\ \\ \\~\\ \\ \\n
 set statusline+=File:\\ %f
 set statusline+=\\ \\ \\~\\ \\ \\n
 set statusline+=Line:\\ %l\\ (%p%%)
@@ -65,6 +63,6 @@ set statusline+=Line:\\ %l\\ (%p%%)
 
 if ! grep -qF "# Vim" $HOME/.bash_profile
 then
-    echo -e "\n# Vim
-alias edit_vimrc='vim ~/.vimrc'" >> $HOME/.bash_profile
+    debug_command "echo -e \"\n# Vim
+alias edit_vimrc='vim ~/.vimrc'\" >> $HOME/.bash_profile"
 fi

@@ -8,11 +8,18 @@ WELCOME_MESSAGE="#!/bin/bash
 
 . /vagrant/provision/helpers.sh
 
+echo ' '
+
 figlet PXL Web Vagrant
 
 echo ' '
 
 blue_text 'Version 1.0.0 (Built on Dec 1st, 2018)'
+
+echo ' '
+
+
+yellow_text 'New version (1.0.1) available! Download at pxl-web-vagrant.com/versions/1.0.1'
 
 echo ' '"
 

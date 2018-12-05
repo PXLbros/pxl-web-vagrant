@@ -56,6 +56,14 @@ debug_command 'rm libapache2-mod-fastcgi_2.4.7~0910052141-1.2_amd64.deb'
 # Give Vagrant permission to edit Apache site configuration files
 debug_command 'sudo chown -R vagrant:vagrant /etc/apache2/sites-available'
 
+info_text 'Set log format...'
+
+# Set access log format
+# LogFormat "%t %h %r (%>s)\n%{User-Agent}i\n%{Referer}i\n" combined
+
+# Set error log format
+debug_command 'echo "ErrorLogFormat \"[%t] %M\"" >> /etc/apache2/apache2.cnf'
+
 # Restart Apache
 info_text 'Restart Apache...'
 

@@ -1,6 +1,6 @@
 const { cd, exec, mkdir, pwd, test } = require('shelljs');
 const { appendFileSync, existsSync, readFileSync, unlinkSync, writeFileSync } = require('fs');
-const { bold, italic, green, red } = require('chalk');
+const { blue, bold, italic, green, red } = require('chalk');
 const slugify = require('slugify');
 const yaml = require('js-yaml');
 const log = console.log;
@@ -82,6 +82,13 @@ function find_pxl_configs(dir, filter_type = null) {
     for (let pxl_dir of pxl_dirs) {
         try {
             const pxl_config = load_pxl_config_from_dir(pxl_dir);
+
+            if (!pxl_config) {
+                // log(blue(`No config found in "${pxl_dir}"...`));
+
+                continue;
+            }
+
             pxl_config.dir = remove_last_directory(pxl_dir);
 
             // print_pxl_config(pxl_config);
@@ -166,8 +173,7 @@ function create_pxl_config(name, dir, options = {
 }
 
 function create_project_tmuxinator(path, pxl_config) {
-    let tmuxinator_str = `
-name: "${pxl_config.name}"
+    let tmuxinator_str = `name: "${pxl_config.name}"
 root: ~/
 
 windows:

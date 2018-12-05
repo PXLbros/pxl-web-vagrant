@@ -12,7 +12,9 @@ figlet PXL Web Vagrant
 
 echo ' '
 
-blue_text 'Version 1.0.0 (Built on Dec 1st, 2018)'"
+blue_text 'Version 1.0.0 (Built on Dec 1st, 2018)'
+
+echo ' '"
 
 # Disable default welcome message
 debug_command 'sudo chmod -x /etc/update-motd.d/*'

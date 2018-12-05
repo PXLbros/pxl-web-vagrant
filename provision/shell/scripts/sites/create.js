@@ -3,8 +3,8 @@ const commandLineArgs = require('command-line-args');
 const { cd, exec, mkdir, pwd, test } = require('shelljs');
 const { bold, green, red } = require('chalk');
 const { existsSync } = require('fs');
-const { ask_confirm, ask_git_branch, ask_input, ask_php_version } = require('./utils/ask');
-const { load_pxl_config_from_dir, print_pxl_config } = require('./utils/pxl');
+const { ask_confirm, ask_git_branch, ask_input, ask_php_version } = require('../utils/ask');
+const { load_pxl_config_from_dir, print_pxl_config } = require('../utils/pxl');
 const log = console.log;
 
 const options = commandLineArgs([

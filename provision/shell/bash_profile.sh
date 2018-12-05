@@ -4,6 +4,8 @@ export LOG_FILE_PATH=/vagrant/logs/shell/bash_profile.log
 
 . /vagrant/provision/helpers.sh
 
+SHELL_DIR="/vagrant/provision/shell"
+
 title 'bash_profile'
 
 BASH_PROFILE_CONTENTS="# Source ~/.bashrc
@@ -11,29 +13,32 @@ BASH_PROFILE_CONTENTS="# Source ~/.bashrc
 
 # .bash_profile
 alias edit_bash_profile='vim ~/.bash_profile'
-alias refresh_bash_profile='source ~/.bash_profile'
+alias source_bash_profile='source ~/.bash_profile'
 
 # .bashrc
 alias edit_bashrc='vim ~/.bashrc'
-alias refresh_bashrc='source ~/.bashrc'
+alias source_bashrc='source ~/.bashrc'
 
 # Shortcuts
-alias menu='node /vagrant/provision/shell/scripts/menu.js'
+alias menu='node $SHELL_DIR/scripts/menu.js'
 alias ..='cd ..'
 alias cls='clear'
 alias ls='ls -lGah --color=auto'
 alias grep='grep --color=auto'
 
 # Menu
-alias menu='node FROM_BASHRC=true node /vagrant/provision/shell/scripts/menu.js'
+alias menu='FROM_BASHRC=true node /vagrant/provision/shell/scripts/menu.js'
+
+# Help
+alias help='figlet help'
 
 # Projects
-alias create_project='node /vagrant/provision/shell/scripts/create_project.js'
-alias projects='node /vagrant/provision/shell/scripts/projects.js'
+alias create_project='node $SHELL_DIR/scripts/create_project.js'
+alias projects='node $SHELL_DIR/scripts/projects.js'
 
 # Sites
-alias create_site='node /vagrant/provision/shell/scripts/sites/create.js'
-alias install_site='node /vagrant/provision/shell/scripts/sites/install.js'
+alias create_site='node $SHELL_DIR/scripts/sites/create.js'
+alias install_site='node $SHELL_DIR/scripts/sites/install.js'
 
 # /etc/hosts
 alias edit_hosts='sudo vim /etc/hosts'"
@@ -50,9 +55,9 @@ alias reload_apache='sudo service apache2 reload'
 alias apache_status='sudo service apache2 status'
 alias edit_apache_conf='sudo vim /etc/apache2/apache2.conf'
 alias apache_sites='cd /etc/apache2/sites-available'
-alias create_apache_site='node /vagrant/provision/shell/scripts/create_apache_site.js'
-alias delete_apache_site='node /vagrant/provision/shell/scripts/delete_apache_site.js'
-alias edit_apache_site_conf='node /vagrant/provision/shell/scripts/edit_apache_site_conf.js'"
+alias create_apache_site='node $SHELL_DIR/scripts/create_apache_site.js'
+alias delete_apache_site='node $SHELL_DIR/scripts/delete_apache_site.js'
+alias edit_apache_site_conf='node $SHELL_DIR/scripts/edit_apache_site_conf.js'"
 fi
 
 if [ "$NGINX" == "true" ]
@@ -102,4 +107,4 @@ fi
 debug_command "echo -e \"$BASH_PROFILE_CONTENTS\" > $HOME/.bash_profile"
 
 # Refresh .bash_profile
-debug_command "source $HOME/.bash_profile"
+# debug_command "source $HOME/.bash_profile" // ISSUE: Doesn't source (out of terminal/shell/prompt))

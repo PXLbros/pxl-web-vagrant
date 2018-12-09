@@ -1,6 +1,6 @@
 const { exec } = require('shelljs');
-const { ask_confirm } = require('./utils/ask');
-const { choose_files_from_dir } = require('./utils/choose');
+const { ask_confirm } = require('../../utils/ask');
+const { choose_files_from_dir } = require('../../utils/choose');
 
 async function main() {
     const selected_apache_site_configuration_file = await choose_files_from_dir('/etc/apache2/sites-available', 'Which Apache virtual host do you want to delete?');

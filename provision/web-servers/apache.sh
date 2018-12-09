@@ -62,7 +62,7 @@ info_text 'Set log format...'
 # LogFormat "%t %h %r (%>s)\n%{User-Agent}i\n%{Referer}i\n" combined
 
 # Set error log format
-debug_command 'echo "ErrorLogFormat \"[%t] %M\"" >> /etc/apache2/apache2.cnf'
+debug_command 'echo "ErrorLogFormat \"[%t] %M\"" | sudo tee --append /etc/apache2/apache2.cnf > /dev/null'
 
 # Restart Apache
 info_text 'Restart Apache...'

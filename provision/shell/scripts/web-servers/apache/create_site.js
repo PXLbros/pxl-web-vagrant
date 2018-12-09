@@ -1,7 +1,7 @@
 const commandLineArgs = require('command-line-args');
 const { writeFileSync } = require('fs');
 const { exec } = require('shelljs');
-const { ask_confirm, ask_input, ask_php_version } = require('./utils/ask');
+const { ask_confirm, ask_input, ask_php_version } = require('../../utils/ask');
 
 const options = commandLineArgs([
     { name: 'hostname', type: String },

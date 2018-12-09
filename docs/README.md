@@ -13,7 +13,7 @@ Welcome to **PXL Web Vagrant** - a Ubuntu Vagrant environment for web developmen
 * Web servers
     * Apache
     * NGINX
-    * Built-in helper commands for managing virtual host configurations, e.g. [`create_apache_vhost`](/web-servers/apache.html#create-apache-vhost) and [`edit_nginx_server_block`](/web-servers/nginx.html#edit-nginx-server-block)
+    * Built-in helper commands for managing virtual host configurations, e.g. [`create_apache_site`](/web-servers/apache.html#create-apache-site) and [`edit_nginx_site`](/web-servers/nginx.html#edit-nginx-site)
 * Databases
     * MySQL
     * MongoDB

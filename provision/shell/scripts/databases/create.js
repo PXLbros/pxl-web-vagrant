@@ -1,8 +1,8 @@
 const commandLineArgs = require('command-line-args');
 const { exec } = require('shelljs');
 const { green, red } = require('chalk');
-const { ask_input } = require('./utils/ask');
-const { choose } = require('./utils/choose');
+const { ask_input } = require('../utils/ask');
+const { choose } = require('../utils/choose');
 const log = console.log;
 
 const options = commandLineArgs([

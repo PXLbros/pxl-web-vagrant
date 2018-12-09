@@ -23,11 +23,12 @@ info_text 'Install global packages...'
 
 GLOBAL_PACKAGES=(
     'hostile'
+    'ngrok'
 )
 
 for GLOBAL_PACKAGE in "${GLOBAL_PACKAGES[@]}"
 do
-    debug_command sudo yarn global add $GLOBAL_PACKAGE
+    debug_command "sudo yarn global add $GLOBAL_PACKAGE"
 done
 
 # Install provision shell script dependencies

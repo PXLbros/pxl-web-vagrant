@@ -58,7 +58,7 @@ async function main() {
     }
 
     // Go to site directory
-    if (test('-d', site_dir)) {
+    if (!test('-d', site_dir)) {
         const create_site_dir = await ask_confirm(`Site directory "${site_dir}" does not exist, do you want to create it?`);
 
         if (create_site_dir) {

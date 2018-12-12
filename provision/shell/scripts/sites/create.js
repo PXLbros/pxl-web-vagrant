@@ -59,11 +59,11 @@ async function main() {
 
     // Go to site directory
     if (!test('-d', site_dir)) {
-        const create_site_dir = await ask_confirm(`Site directory "${site_dir}" does not exist, do you want to create it?`);
+        // const create_site_dir = await ask_confirm(`Site directory "${site_dir}" does not exist, do you want to create it?`);
 
-        if (create_site_dir) {
+        // if (create_site_dir) {
             mkdir('-p', site_dir);
-        }
+        // }
     }
 
     cd(site_dir);
@@ -116,13 +116,15 @@ async function main() {
             if (typeof pxl_config.database === 'object') {
                 exec(`node /vagrant/provision/shell/scripts/create_database --driver=${pxl_config.database.driver} --name=${pxl_config.database.name}`);
             }
-        }
 
-        // Check if install script exist
-        const install_script_path = `${site_dir}/.pxl/install.js`;
+            // Check if install script exist
+            const install_script_path = `${site_dir}/.pxl/install.js`;
 
-        if (existsSync(install_script_path)) {
-            exec(`node ${install_script_path}`);
+            if (existsSync(install_script_path)) {
+                exec(`node ${install_script_path}`);
+            }
+        } else {
+            console.log('no config found, ask for apache/nginx?');
         }
     }
 }

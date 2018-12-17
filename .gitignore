@@ -1,11 +1,10 @@
-.vagrant
-config.yaml
-vagrant.log
-debug.log
+logs/
+node_modules/
+projects/
 provision/user
 provision/shell/scripts/yarn.lock
-node_modules/
-/projects/
-logs/
+config.yaml
+.provisioning
+.vagrant
 yarn-error.log
 .DS_Store

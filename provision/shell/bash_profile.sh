@@ -27,7 +27,7 @@ alias ls='ls -lGah --color=auto'
 alias grep='grep --color=auto'
 
 # Menu
-alias menu='FROM_BASHRC=true node /vagrant/provision/shell/scripts/menu.js'
+alias menu='node /vagrant/provision/shell/scripts/menu.js'
 
 # Projects
 alias create_project='node $SHELL_DIR/scripts/projects/create.js'

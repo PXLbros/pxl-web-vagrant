@@ -14,12 +14,8 @@ figlet PXL Web Vagrant
 
 echo ' '
 
-blue_text 'Version 1.0.0 (Built on Dec 1st, 2018)'
-
-echo ' '
-
-
-yellow_text 'New version (1.0.1) available! Download at pxl-web-vagrant.com/versions/1.0.1'
+blue_text 'v1.0.0 (Built on Dec 1st, 2018)'
+# yellow_text 'New version available (v1.0.1)'
 
 echo ' '"
 

@@ -11,12 +11,12 @@ info_text 'Update APT...'
 
 debug_command 'curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -'
 debug_command "echo \"deb https://dl.yarnpkg.com/debian/ stable main\" | sudo tee /etc/apt/sources.list.d/yarn.list"
-debug_command sudo apt-get update -y
+debug_command 'sudo apt-get update -y'
 
 # Install yarn
 info_text 'Install Yarn...'
 
-debug_command sudo apt-get install yarn -y
+debug_command 'sudo apt-get install yarn -y'
 
 # Global packages
 info_text 'Install global packages...'
@@ -32,5 +32,6 @@ do
 done
 
 # Install provision shell script dependencies
-# cd /vagrant/provision/shell/scripts/ \
-#     && yarn install
+cd /vagrant/provision/shell/scripts/
+
+debug_command 'yarn install'

@@ -158,4 +158,6 @@ Vagrant.configure('2') do |config|
     end
 
     config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/user.sh", privileged: false, run: 'once'
+
+    config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/finish.sh", privileged: false, run: 'once'
 end

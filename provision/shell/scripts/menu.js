@@ -5,8 +5,6 @@ const { new_project_questionare } = require('./utils/ask');
 const { create_project, find_pxl_projects, get_pxl_config_title_inline, open_project } = require('./utils/pxl');
 const log = console.log;
 
-const from_bashrc = (process.env.FROM_BASHRC === 'true');
-
 async function open_main_menu() {
     open_menu([
         {

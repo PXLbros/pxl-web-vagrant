@@ -1,5 +1,7 @@
 #!/bin/bash
 
+TMP_PROVISIONING_FILE_PATH=/vagrant/.provisioning
+
 SHOW_COMMAND=true
 SHOW_COMMAND_EXECUTION_TIME=true
 
@@ -54,6 +56,58 @@ cyan_text() {
     echo -e "${CYAN}$1${NC}"
 }
 
+update_provisioning_stats() {
+    RESULT=$1
+
+    if [ -f $TMP_PROVISIONING_FILE_PATH ];
+    then
+        FILE_CONTENTS=`cat $TMP_PROVISIONING_FILE_PATH`
+    else
+        FILE_CONTENTS="0;0"
+    fi
+
+    RESULTS=(${FILE_CONTENTS//;/ })
+
+    NUM_SUCCESSFUL=${RESULTS[0]}
+    NUM_ERRORS=${RESULTS[1]}
+
+    if [ "$RESULT" == "success" ];
+    then
+        NUM_SUCCESSFUL=$((NUM_SUCCESSFUL + 1))
+    elif [ "$RESULT" == "error" ];
+    then
+        NUM_ERRORS=$((NUM_ERRORS + 1))
+    fi
+
+    echo "$NUM_SUCCESSFUL;$NUM_ERRORS" > $TMP_PROVISIONING_FILE_PATH
+}
+
+reset_provisioning_stats() {
+    echo '0;0' > $TMP_PROVISIONING_FILE_PATH
+}
+
+print_provisioning_stats() {
+    if [ ! -f $TMP_PROVISIONING_FILE_PATH ];
+    then
+        exit 0
+    fi
+
+    FILE_CONTENTS=`cat $TMP_PROVISIONING_FILE_PATH`
+    RESULTS=(${FILE_CONTENTS//;/ })
+
+    NUM_SUCCESSFUL=${RESULTS[0]}
+    NUM_ERRORS=${RESULTS[1]}
+    NUM_TOTAL=$((NUM_SUCCESSFUL + NUM_ERRORS))
+
+    if (( NUM_ERRORS > 0 ));
+    then
+        error_text "There were $NUM_ERRORS errors of $NUM_TOTAL total commands."
+        error_text "Check logs/errors.log for more details."
+    else
+        success_text "PXL Web Vagrant was provisioned successfully! Start with \"vagrant ssh\" command."
+    fi
+}
+
 debug_command() {
     COMMAND=$*
 
@@ -93,8 +147,12 @@ debug_command() {
 
     if [ "$SUCCESS" == "true" ];
     then
+        update_provisioning_stats success
+
         NUM_SUCCESSFUL=$((NUM_SUCCESSFUL+1))
     else
+        update_provisioning_stats error
+
         NUM_ERRORS=$((NUM_ERRORS+1))
     fi
 
@@ -138,4 +196,16 @@ title() {
 
 info_text() {
     echo -e "${YELLOW}$1${NC}"
+}
+
+warning_text() {
+    echo -e "${YELLOW}$1${NC}"
+}
+
+error_text() {
+    echo -e "${RED}$1${NC}"
+}
+
+success_text() {
+    echo -e "${GREEN}$1${NC}"
 }

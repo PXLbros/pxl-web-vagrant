@@ -8,9 +8,21 @@ title 'tmux'
 
 TMUX_CONF_FILE=$HOME/.tmux.conf.local
 
-# Remove existing tmux
+# Check if tmux exists
 if [ -x "$(command -v tmux)" ];
 then
+    # Get current tmux version
+    CURRENT_TMUX_VERSION_RAW=$(tmux -V)
+    CURRENT_TMUX_VERSION_SPLITTED=(${CURRENT_TMUX_VERSION_RAW//\ / })
+    CURRENT_TMUX_VERSION=${CURRENT_TMUX_VERSION_SPLITTED[1]}
+
+    if [ "$CURRENT_TMUX_VERSION" == "$VERSION" ];
+    then
+        warning_text "Specified tmux version of $VERSION already installed."
+
+        exit
+    fi
+
     info_text 'Remove existing tmux installation...'
 
     debug_command "sudo apt-get -y remove tmux"

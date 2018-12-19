@@ -53,7 +53,7 @@ alias apache_status='sudo service apache2 status'
 alias edit_apache_conf='sudo vim /etc/apache2/apache2.conf'
 alias apache_site_confs='cd /etc/apache2/sites-available'
 alias create_apache_site='node $SHELL_DIR/scripts/web-servers/apache/create_site.js'
-alias edit_apache_site='node $SHELL_DIR/scripts/edit_apache_site.js'
+alias edit_apache_site='node $SHELL_DIR/scripts/web-servers/apache/edit_site.js'
 alias delete_apache_site='node $SHELL_DIR/scripts/web-servers/apache/delete_site.js'"
 fi
 
@@ -75,8 +75,8 @@ fi
 BASH_PROFILE_CONTENTS="${BASH_PROFILE_CONTENTS}
 
 # Databases
-alias create_database='node /vagrant/provision/shell/scripts/create_database.js'
-alias delete_database='node /vagrant/provision/shell/scripts/delete_database.js'"
+alias create_database='node /vagrant/provision/shell/scripts/databases/create.js'
+alias delete_database='node /vagrant/provision/shell/scripts/databases/delete.js'"
 
 if [ "$MYSQL" == "true" ]
 then

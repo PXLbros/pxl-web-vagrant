@@ -18,7 +18,7 @@ then
 
     if [ "$CURRENT_TMUX_VERSION" == "$VERSION" ];
     then
-        warning_text "Specified tmux version of $VERSION already installed."
+        warning_text "tmux version $VERSION already installed."
 
         exit
     fi

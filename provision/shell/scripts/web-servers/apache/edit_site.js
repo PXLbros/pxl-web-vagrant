@@ -1,6 +1,6 @@
 const { readdir } = require('fs');
 const { spawn } = require('child_process');
-const { choose_apache_site_configuration_file } = require('./utils/choose');
+const { choose_apache_site_configuration_file } = require('../../utils/choose');
 
 async function main() {
     readdir('/etc/apache2/sites-available', async (error, files) => {

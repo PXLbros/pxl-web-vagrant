@@ -3,34 +3,42 @@
 
 require 'find'
 require 'yaml'
+require 'json'
+require 'pp'
 
 VAGRANT_DIR = File.dirname(File.expand_path(__FILE__))
 
-# Check which config file to use
-config_filename = File.file?("#{VAGRANT_DIR}/config.yaml") ? 'config.yaml' : 'config.default.yaml'
+# Get default configuration
+default_config = YAML.load_file("#{VAGRANT_DIR}/config.default.yaml")
 
-# Load settings from config file
-settings = YAML.load_file("#{VAGRANT_DIR}/#{config_filename}")
+if File.file?("#{VAGRANT_DIR}/config.yaml")
+    user_config = YAML.load_file("#{VAGRANT_DIR}/config.yaml")
 
-DEBUG = settings['debug'] === true
-VAGRANT_NAME = (settings['vm']['name'] || 'vagrant')
-TIMEZONE = (settings['timezone'] || 'UTC')
-LANGUAGE_ISO = (settings['vm']['language-iso'] || 'en_US')
+    vagrant_config = default_config.merge(user_config)
+else
+    vagrant_config = default_config
+end
+
+# Read package.json
+package_json = JSON.parse(File.read("#{VAGRANT_DIR}/package.json"))
+
+VERSION = package_json['version']
+BUILD_DATE = `git log -1 --format=%cd | tr -d '\n'`
 
 Vagrant.configure('2') do |config|
     # Validate
-    if !settings.has_key?('vm') or settings['vm'].nil?
-        puts 'Missing Vagrant name.'
+    if vagrant_config['vm']['name'].empty?
+        puts 'Vagrant name must not be empty.'
         exit
     end
 
     # Configure Vagrant
-    config.vm.define settings['vm']['name']
+    config.vm.define vagrant_config['vm']['name']
     config.vm.box = 'bento/ubuntu-18.04'
 
     # Set static IP
-    if settings['network'].has_key?('ip') and !settings['network']['ip'].nil?
-        config.vm.network :private_network, ip: settings['network']['ip']
+    if !vagrant_config['network']['ip'].empty?
+        config.vm.network :private_network, ip: vagrant_config['network']['ip']
     end
 
     # SSH configuration
@@ -38,38 +46,37 @@ Vagrant.configure('2') do |config|
 
     # Configure VirtualBox
     config.vm.provider 'virtualbox' do |vb|
-        vb.customize ['modifyvm', :id, '--memory', settings['vm']['memory'] ||= '1024']
-        vb.customize ['modifyvm', :id, '--cpus', settings['vm']['cpus'] ||= '1']
+        vb.customize ['modifyvm', :id, '--memory', vagrant_config['vm']['memory'] ||= '1024']
+        vb.customize ['modifyvm', :id, '--cpus', vagrant_config['vm']['cpus'] ||= '1']
 
-        vb.customize ['modifyvm', :id, '--natdnshostresolver1', settings['vm']['natdnshostresolver'] ||= 'on']
-        vb.customize ['modifyvm', :id, '--natdnsproxy1', settings['vm']['natdnsproxy'] ||= 'on']
+        vb.customize ['modifyvm', :id, '--natdnshostresolver1', vagrant_config['vm']['natdnshostresolver'] ||= 'on']
+        vb.customize ['modifyvm', :id, '--natdnsproxy1', vagrant_config['vm']['natdnsproxy'] ||= 'on']
 
         vb.customize ['modifyvm', :id, '--ioapic', 'on']
     end
 
-    num_successful_commands = 0
-    num_failed_commands = 0
-
     # Install Vagrant core
     config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/init.sh", privileged: true, run: 'once', env: {
-        'DEBUG': DEBUG,
-        'VAGRANT_NAME': VAGRANT_NAME,
-        'LANGUAGE_ISO': LANGUAGE_ISO,
-        'TIMEZONE': TIMEZONE,
+        'VERSION': VERSION,
+        'BUILD_DATE': BUILD_DATE,
 
-        'DISABLE_WELCOME_MESSAGE': 'false'
+        'VAGRANT_NAME': vagrant_config['vm']['name'],
+        'LANGUAGE_ISO': vagrant_config['vm']['language-iso'],
+        'TIMEZONE': vagrant_config['vm']['timezone']
     }
 
     # Welcome message
     config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/welcome-message.sh", privileged: true, run: 'once', env: {
+        'VERSION': VERSION,
+        'BUILD_DATE': BUILD_DATE
     }
 
     # Generate .bash_profile
     config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/shell/bash_profile.sh", privileged: false, run: 'once', env: {
-        'APACHE': settings['web-servers']['apache']['enabled'],
-        'NGINX': settings['web-servers']['nginx']['enabled'],
-        'MYSQL': settings['databases']['mysql']['enabled'],
-        'MONGODB': settings['databases']['mongodb']['enabled']
+        'APACHE': vagrant_config['web-servers']['apache']['enabled'],
+        'NGINX': vagrant_config['web-servers']['nginx']['enabled'],
+        'MYSQL': vagrant_config['databases']['mysql']['enabled'],
+        'MONGODB': vagrant_config['databases']['mongodb']['enabled']
     }
 
     # Git
@@ -86,36 +93,36 @@ Vagrant.configure('2') do |config|
     config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/shell/vim.sh", run: 'once', privileged: false
 
     # tmux
-    if settings['shell']['tmux']['enabled']
+    if vagrant_config['shell']['tmux']['enabled']
         config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/shell/tmux/tmux.sh", run: 'once', privileged: false, env: {
-            'VERSION': (settings['shell']['tmux']['version'] || 2.8),
-            'TMUXINATOR': (settings['shell']['tmux']['tmuxinator']['enabled'] || false),
-            'GPAKOSZ': (settings['shell']['tmux']['gpakosz']['enabled'] || false)
+            'VERSION': (vagrant_config['shell']['tmux']['version'] || '2.8'),
+            'TMUXINATOR': (vagrant_config['shell']['tmux']['tmuxinator']['enabled'] || false),
+            'GPAKOSZ': (vagrant_config['shell']['tmux']['gpakosz']['enabled'] || false)
         }
 
         # tmuxinator
-        if settings['shell']['tmux']['tmuxinator']['enabled']
+        if vagrant_config['shell']['tmux']['tmuxinator']['enabled']
             config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/shell/tmux/tmuxinator.sh", run: 'once', privileged: false, env: {
-                'VM_NAME': settings['vm']['name']
+                'VM_NAME': vagrant_config['vm']['name']
             }
         end
     end
 
     # Liquid Prompt
-    if settings['shell']['liquidprompt']['enabled']
+    if vagrant_config['shell']['liquidprompt']['enabled']
         config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/shell/liquidprompt.sh", run: 'once', privileged: false
     end
 
     # Install web servers
-    if settings.has_key?('web-servers')
+    if vagrant_config.has_key?('web-servers')
         web_server_port_in = 80
 
-        settings['web-servers'].each do |web_server_name, web_server_settings|
-            if web_server_settings['enabled'] == true
+        vagrant_config['web-servers'].each do |web_server_name, web_server_vagrant_config|
+            if web_server_vagrant_config['enabled'] == true
                 if web_server_name === 'apache'
-                    port_out = (web_server_settings['port'] || 7001)
+                    port_out = (web_server_vagrant_config['port'] || 7001)
                 elsif web_server_name === 'nginx'
-                    port_out = (web_server_settings['port'] || 7002)
+                    port_out = (web_server_vagrant_config['port'] || 7002)
                 end
 
                 # Install web server
@@ -126,29 +133,28 @@ Vagrant.configure('2') do |config|
                 # Bind web server port
                 config.vm.network :forwarded_port, guest: web_server_port_in, host: port_out
 
-                web_server_port_in += 1
+                web_server_port_in += 1 # TODO (Try web_server_port_in++ instead)
             end
         end
     end
 
     # PHP
-    if settings.has_key?('code') and settings['code'].has_key?('php')
-        if settings['code']['php']['enabled'] == true
-            # Install PHP
-            config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/code/php.sh", privileged: true, run: 'once', env: {
-                'VERSIONS': settings['code']['php']['versions'].join(' '),
-                'APACHE': settings['web-servers']['apache']['enabled']
-            }
-        end
+    if vagrant_config['code']['php']['versions'].any?
+        # Install PHP
+        config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/code/php.sh", privileged: true, run: 'once', env: {
+            'VERSIONS': vagrant_config['code']['php']['versions'].join(' '),
+            'APACHE': vagrant_config['web-servers']['apache']['enabled'],
+
+            'MEMCACHED': (vagrant_config['code']['php']['cache']['memcached']['enabled'] ? true : false),
+            'APC': (vagrant_config['code']['php']['cache']['apc']['enabled'] ? true : false)
+        }
     end
 
     # Install databases
-    if settings.has_key?('databases')
-        settings['databases'].each do |database_name, database_settings|
-            if database_settings['enabled'] == true
-                # Install database
-                config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/databases/#{database_name}.sh", privileged: true, run: 'once'
-            end
+    vagrant_config['databases'].each do |database_name, database_vagrant_config|
+        if database_vagrant_config['enabled'] == true
+            # Install database
+            config.vm.provision 'shell', path: "#{VAGRANT_DIR}/provision/databases/#{database_name}.sh", privileged: true, run: 'once'
         end
     end
 

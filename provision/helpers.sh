@@ -3,6 +3,7 @@
 TMP_PROVISIONING_FILE_PATH=/vagrant/.provisioning
 
 SHOW_COMMAND=true
+SHOW_COMMAND_OUTPUT=false
 SHOW_COMMAND_EXECUTION_TIME=true
 
 RED='\033[0;31m'
@@ -102,7 +103,7 @@ print_provisioning_stats() {
     if (( NUM_ERRORS > 0 ));
     then
         error_text "There were $NUM_ERRORS errors of $NUM_TOTAL total commands."
-        error_text "Check logs/errors.log for more details."
+        error_text "See logs/ folder for more details."
     else
         success_text "PXL Web Vagrant was provisioned successfully! Start with \"vagrant ssh\" command."
     fi
@@ -134,7 +135,7 @@ debug_command() {
     START_TIME=$(date +%s.%N)
 
     # Execute command
-    if [ "$DEBUG" == "true" ];
+    if [ "$SHOW_COMMAND_OUTPUT" == "true" ];
     then
         # Show command output
         if eval "$COMMAND" | tee $LOG_PATH; then SUCCESS=true; fi

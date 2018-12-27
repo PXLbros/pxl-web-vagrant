@@ -24,12 +24,13 @@ module.exports = {
         return await ask_input(question, default_value);
     },
 
-    async ask_confirm(question) {
+    async ask_confirm(question, default_value = true) {
         const prompt_result = await prompt([
             {
                 type: 'confirm',
                 name: 'value',
-                message: question
+                message: question,
+                default: default_value
             }
         ]);
 

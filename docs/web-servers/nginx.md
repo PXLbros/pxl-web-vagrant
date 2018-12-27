@@ -22,8 +22,8 @@ title: NGINX
 
 ### `reload_nginx`
 
-### `create_nginx_server_block`
+### `create_nginx_site`
 
-### `edit_nginx_server_block`
+### `edit_nginx_site`
 
-### `delete_nginx_server_block`
+### `delete_nginx_site`

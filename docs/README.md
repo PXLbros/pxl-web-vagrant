@@ -3,7 +3,7 @@
 Welcome to **PXL Web Vagrant** - a Ubuntu Vagrant environment for web development.
 
 * Open source :100:
-    * Help make **PXL Web Vagrant** better by making a [pull request](https://asdf.com)
+    * Help make **PXL Web Vagrant** better [pull request](https://github.com/PXLbros/pxl-web-vagrant)
 * Easy powerful configuration through [`config.yaml`](/configuration.html#config-yaml)
 * PHP
     * Version 5.6 & 7.0-7.3
@@ -21,8 +21,8 @@ Welcome to **PXL Web Vagrant** - a Ubuntu Vagrant environment for web developmen
 * Caching
     * Redis
 * Shell
-    * liquidprompt
+    * LiquidPrompt
     * tmux
         * tmuxinator
 * Other
-    * Support for custom Vagrant provision scripts
+    * Support for custom Vagrant provisioning scripts

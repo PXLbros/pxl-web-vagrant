@@ -5,7 +5,10 @@ module.exports = {
     description: 'PXL Web Vagrant Environment',
 
     repo: 'PXLbros/pxl-web-vagrant',
+    repoLabel: 'Contribute!',
     docsDir: 'docs',
+    editLinks: true,
+    editLinkText: 'Help improve this page!',
 
     themeConfig: {
         displayAllHeaders: true,
@@ -23,7 +26,8 @@ module.exports = {
                     ['/installation', 'Installation'],
                     ['/configuration', 'Configuration'],
                     ['/running', 'Running'],
-                    ['/stopping', 'Stopping']
+                    ['/stopping', 'Stopping'],
+                    ['/uninstallation', 'Uninstallation']
                 ]
             },
             {

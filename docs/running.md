@@ -4,6 +4,4 @@ title: Running
 
 # Running
 
-Start **PXL Web Vagrant** by running `vagrant up` from root directory.
-
-## vagrant up
+Start by running `vagrant up` from **PXL Web Vagrant** directory.

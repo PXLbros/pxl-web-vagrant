@@ -1,7 +1,5 @@
 #!/bin/bash
 
-export VERSION=$(grep '"version":' /vagrant/package.json | cut -d\" -f4)
-export DEBUG=$DEBUG
 export DEBIAN_FRONTEND=noninteractive
 
 export NUM_TOTAL=0
@@ -22,11 +20,11 @@ apt-get -y install figlet &>/dev/null
 # echo 'Installing FIGlet...'
 title 'PXL Web Vagrant'
 
-echo -e "${YELLOW}v${VERSION}${NC} ${BLUE}(Built on Dec 1st, 2018)${NC}"
+echo -e "${YELLOW}v${VERSION}${NC} ${BLUE}(Built on $BUILD_DATE)${NC}"
 
 echo " "
 
-echo -e "🇺🇸  ${BLUE}Made by${NC} ${YELLOW}PXL Agency${NC} ${BLUE}in${NC} ${YELLOW}Los Angeles, USA${NC}"
+echo -e "🇺🇸  ${BLUE}Made by${NC} ${YELLOW}PXL Agency${NC} \(${YELLOW}Los Angeles, USA\)${NC}"
 echo -e "🌎 ${BLUE}${UNDERLINE}pxl-web-vagrant.com${NC}${NC}"
 
 echo " "

@@ -4,4 +4,4 @@ title: Stopping
 
 # Stopping
 
-## vagrant suspend
+Stop by running `vagrant suspend` from **PXL Web Vagrant** directory.

@@ -4,6 +4,8 @@ export LOG_FILE_PATH=/vagrant/logs/code/php.log
 
 . /vagrant/provision/helpers.sh
 
+PHP_VERSIONS=($VERSIONS)
+
 # Install PHP dependencies
 title 'PHP'
 
@@ -13,8 +15,6 @@ debug_command "apt-get -y install software-properties-common"
 debug_command "add-apt-repository -y ppa:ondrej/apache2"
 debug_command "add-apt-repository -y ppa:ondrej/php"
 debug_command "apt-get update -y"
-
-PHP_VERSIONS=($VERSIONS)
 
 for PHP_VERSION in "${PHP_VERSIONS[@]}"
 do
@@ -38,12 +38,12 @@ do
         # Install PHP mcrypt extension
         if [ "$PHP_VERSION" == "7.3" ] || [ "$PHP_VERSION" == "7.2" ]
         then
-            debug_command apt-get install php-dev libmcrypt-dev php-pear -y
-            debug_command pecl channel-update pecl.php.net
+            debug_command 'apt-get install php-dev libmcrypt-dev php-pear -y'
+            debug_command 'pecl channel-update pecl.php.net'
 
             if ! pecl list | grep mcrypt
             then
-                debug_command pecl install mcrypt-1.0.1
+                debug_command 'pecl install mcrypt-1.0.1'
             fi
 
             # Add line to php.ini configuration file

@@ -22,11 +22,13 @@ title: Apache
 
 ### `reload_apache`
 
-### `edit_apache_conf`
-
 ### `apache_sites`
 
-### `create_apache_vhost`
+### `create_apache_site`
+
+### `edit_apache_site`
+
+### `delete_apache_site`
 
 #### Interactive
 
@@ -35,17 +37,17 @@ title: Apache
 ##### Options
 
 * `--hostname` (Server hostname, .e.g `--hostname=my-site.loc`)
-* `--public-dir` (Site public directory, .e.g. `--public-dir=/vagrant/sites/my-site.loc/public`)
+* `--public-dir` (Site public directory, .e.g. `--public-dir=/vagrant/projects/my-site.loc/public`)
 * `--php` (Enable PHP, .e.g `--php=7.3`)
 
 ```shell
-create_apache_vhost \
+create_apache_site \
     --hostname=my-site.loc \
-    --public-dir=/vagrant/sites/my-site.loc/public \
+    --public-dir=/vagrant/projects/my-site.loc/public \
     --php=7.3
 ```
 
-### `delete_apache_vhost`
+### `delete_apache_site`
 
 #### Interactive
 
@@ -56,14 +58,14 @@ Yet to be implemented.
 ##### Options
 
 * `--hostname` (Server hostname, .e.g `--hostname=my-site.loc`)
-* `--public-dir` (Site public directory, .e.g. `--public-dir=/vagrant/sites/my-site.loc/public`)
+* `--public-dir` (Site public directory, .e.g. `--public-dir=/vagrant/projects/my-site.loc/public`)
 * `--php` (Enable PHP, .e.g `--php=7.3`)
 
 ```shell
-create_apache_vhost \
+create_apache_site \
     --hostname=my-site.loc \
-    --public-dir=/vagrant/sites/my-site.loc/public \
+    --public-dir=/vagrant/projects/my-site.loc/public \
     --php=7.3
 ```
 
-### `edit_apache_vhost_conf`
+### `edit_apache_site`

@@ -1,16 +1,15 @@
-debug: true
-timezone: 'America/Los_Angeles'
-language-iso: 'en_US'
+debug: false
+timezone: UTC
+language-iso: en_US
 vm:
-    name: 'pxl-web-vagrant'
+    name: pxl-web-vagrant
     memory: 1024
     cpus: 1
     provision:
-        forward-ssh-agent: true
         show-command: true
         show-command-execution-time: true
 network:
-    ip: '192.168.1.99'
+    ip: 192.168.1.99
 web-servers:
     apache:
         enabled: true
@@ -20,7 +19,6 @@ web-servers:
         port: 7002
 code:
     php:
-        enabled: true
         versions:
             - 7.3
             - 7.2
@@ -30,8 +28,10 @@ code:
         modules:
             - gzip
         cache:
-            memcached: true
-            apc: true
+            memcached:
+                enabled: true
+            apc:
+                enabled: true
 databases:
     mysql:
         enabled: true
@@ -46,7 +46,6 @@ shell:
         version: 2.8
         tmuxinator:
             enabled: true
-            start-home-layout-on-init: false
         gpakosz:
             enabled: true
     liquidprompt:

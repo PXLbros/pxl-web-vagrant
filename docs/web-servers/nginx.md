@@ -4,11 +4,13 @@ title: NGINX
 
 # NGINX
 
-## Enable
+## Configuration
+
+### Enable
 
 <<< @/docs/web-servers/nginx/enable.yaml{3}
 
-## Disable
+### Disable
 
 <<< @/docs/web-servers/nginx/disable.yaml{3}
 

@@ -35,7 +35,7 @@ module.exports = {
                 collapsable: false,
                 children: [
                     ['/web-servers/apache', 'Apache'],
-                    ['/web-servers/nginx', 'nginx']
+                    ['/web-servers/nginx', 'NGINX']
                 ]
             },
             {

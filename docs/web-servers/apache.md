@@ -4,11 +4,13 @@ title: Apache
 
 # Apache
 
-## Enable
+## Configuration
+
+### Enable
 
 <<< @/docs/web-servers/apache/enable.yaml{3}
 
-## Disable
+### Disable
 
 <<< @/docs/web-servers/apache/disable.yaml{3}
 
@@ -25,6 +27,26 @@ title: Apache
 ### `apache_sites`
 
 ### `create_apache_site`
+
+#### Interactive
+
+![](/pxl-web-vagrant/assets/gifs/create_apache_site.gif)
+
+#### Noninteractive
+
+##### Options
+
+* `--hostname` (Server hostname, .e.g `--hostname=my-site.loc`)
+* `--public-dir` (Site public directory, .e.g. `--public-dir=/vagrant/projects/my-site.loc/public`)
+* `--php` (Enable PHP, .e.g `--php=7.3`)
+* `--overwrite` (Overwrite existing configuration)
+
+```shell
+create_apache_site \
+    --hostname=my-site.loc \
+    --public-dir=/vagrant/projects/my-site.loc/public \
+    --php=7.3
+```
 
 ### `edit_apache_site`
 
@@ -45,6 +67,7 @@ create_apache_site \
     --hostname=my-site.loc \
     --public-dir=/vagrant/projects/my-site.loc/public \
     --php=7.3
+    --overwrite
 ```
 
 ### `delete_apache_site`

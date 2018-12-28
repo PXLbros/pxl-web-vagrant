@@ -20,22 +20,10 @@ alias edit_bashrc='vim ~/.bashrc'
 alias source_bashrc='source ~/.bashrc'
 
 # Shortcuts
-alias menu='node $SHELL_DIR/scripts/menu.js'
 alias ..='cd ..'
 alias cls='clear'
 alias ls='ls -lGah --color=auto'
 alias grep='grep --color=auto'
-
-# Menu
-alias menu='node /vagrant/provision/shell/scripts/menu.js'
-
-# Projects
-alias create_project='node $SHELL_DIR/scripts/projects/create.js'
-alias projects='node $SHELL_DIR/scripts/projects/find.js'
-
-# Sites
-alias create_site='node $SHELL_DIR/scripts/sites/create.js'
-alias install_site='node $SHELL_DIR/scripts/sites/install.js'
 
 # /etc/hosts
 alias edit_hosts='sudo vim /etc/hosts'"

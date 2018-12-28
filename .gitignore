@@ -1,6 +1,6 @@
 logs/
 node_modules/
-projects/
+/projects/
 provision/user
 provision/shell/scripts/yarn.lock
 config.yaml

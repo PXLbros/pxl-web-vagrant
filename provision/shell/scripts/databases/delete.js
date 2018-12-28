@@ -7,8 +7,7 @@ const log = console.log;
 
 const options = commandLineArgs([
     { name: 'driver', type: String },
-    { name: 'name', type: String },
-    { name: 'non-interactive', type: Boolean, defaultOption: false }
+    { name: 'name', type: String }
 ]);
 
 async function main() {
@@ -24,7 +23,16 @@ async function main() {
     let create_database_error = null;
 
     if (driver === 'mysql') {
-        const create_database_result = exec(`mysql -u${process.env.MYSQL_USER_NAME} -p${process.env.MYSQL_USER_PASSWORD} -e "CREATE DATABASE ${name};"`, { silent: true });
+        const database_exist_result = exec(`mysql -u${process.env.MYSQL_USER_NAME} -p${process.env.MYSQL_USER_PASSWORD} --skip-column-names -e "SHOW DATABASES LIKE '${name}'"`, { silent: true });
+        const database_exist = (database_exist_result.stdout !== '');
+
+        if (!database_exist) {
+            log(red(`Could not find database "${name}".`));
+
+            return;
+        }
+
+        const create_database_result = exec(`mysql -u${process.env.MYSQL_USER_NAME} -p${process.env.MYSQL_USER_PASSWORD} -e "DROP DATABASE ${name};"`, { silent: true });
 
         if (create_database_result.code !== 0) {
             create_database_error = create_database_result;
@@ -32,9 +40,9 @@ async function main() {
     }
 
     if (!create_database_error) {
-        log(yellow(`Database "${name}" has been created!`));
+        log(yellow(`Database "${name}" has been deleted!`));
     } else {
-        log(red(`Could not create database "${name}".`));
+        log(red(`Could not delete database "${name}".`));
     }
 }
 

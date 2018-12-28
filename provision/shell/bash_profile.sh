@@ -51,7 +51,6 @@ alias stop_apache='sudo service apache2 stop'
 alias reload_apache='sudo service apache2 reload'
 alias apache_status='sudo service apache2 status'
 alias edit_apache_conf='sudo vim /etc/apache2/apache2.conf'
-alias apache_site_confs='cd /etc/apache2/sites-available'
 alias create_apache_site='node $SHELL_DIR/scripts/web-servers/apache/create_site.js'
 alias edit_apache_site='node $SHELL_DIR/scripts/web-servers/apache/edit_site.js'
 alias delete_apache_site='node $SHELL_DIR/scripts/web-servers/apache/delete_site.js'"
@@ -67,9 +66,9 @@ alias restart_nginx='sudo service nginx restart'
 alias stop_nginx='sudo service nginx stop'
 alias nginx_status='sudo service nginx status'
 alias reload_nginx='sudo service nginx reload'
-alias create_nginx_site='node /vagrant/provision/shell/scripts/create_nginx_site.js'
-alias delete_nginx_site='node /vagrant/provision/shell/scripts/delete_nginx_site.js'
-alias edit_nginx_site_conf='node /vagrant/provision/shell/scripts/edit_nginx_site_conf.js'"
+alias create_nginx_site='node $SHELL_DIR/scripts/web-servers/nginx/create_site.js'
+alias edit_nginx_site='node $SHELL_DIR/scripts/web-servers/nginx/edit_site.js'
+alias delete_nginx_site='node $SHELL_DIR/scripts/web-servers/nginx/delete_site.js'"
 fi
 
 BASH_PROFILE_CONTENTS="${BASH_PROFILE_CONTENTS}

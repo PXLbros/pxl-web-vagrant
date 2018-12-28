@@ -1,6 +1,6 @@
 const commandLineArgs = require('command-line-args');
 const { existsSync, writeFileSync } = require('fs');
-const { exec } = require('shelljs');
+const { exec, test } = require('shelljs');
 const { bold, yellow, red, cyan } = require('chalk');
 const { ask_confirm, ask_input, ask_php_version } = require('../../utils/ask');
 const log = console.log;
@@ -19,50 +19,50 @@ async function main() {
 
     let overwrite = options['overwrite'];
 
-    const configuration_file_name = `${hostname}.conf`;
-    const configuration_file_path = `/etc/apache2/sites-available/${configuration_file_name}`;
+    const configuration_file_name = `${hostname}`;
+    const configuration_file_path = `/etc/nginx/sites-available/${configuration_file_name}`;
+    const configuration_file_enabled_path = `/etc/nginx/sites-enabled/${configuration_file_name}`;
 
     if (existsSync(configuration_file_path) && !overwrite) {
-        if (!await ask_confirm(`Apache virtual host configuration file "${configuration_file_name}" already exist, do you want to overwrite it?`, false)) {
+        if (!await ask_confirm(`NGINX virtual host configuration file "${configuration_file_name}" already exist, do you want to overwrite it?`, false)) {
             return;
         }
 
         overwrite = true;
     }
 
-    let configuration_file_contents = `<VirtualHost *:${process.env.APACHE_PORT}>
-    ServerName ${hostname}
-    DocumentRoot ${public_dir}
+    let configuration_file_contents = `server {
+    listen ${process.env.NGINX_PORT};
+    root ${public_dir};
+    index index.php;
+    server_name ${hostname};
 
-    <Directory />
-        AllowOverride All
-    </Directory>
+    location / {
+        try_files $uri $uri/ /index.php?$query_string;
+    }`;
 
-    <Directory ${public_dir}>
-        Options Indexes FollowSymLinks MultiViews
-        AllowOverride all
-        Require all granted
-    </Directory>
+if (php_version !== null) {
+    configuration_file_contents += `\n\n\tlocation ~ \.php$ {
+        include snippets/fastcgi-php.conf;
 
-    LogLevel error
-    ErrorLog /var/log/apache2/${hostname}-error.log
-    CustomLog /var/log/apache2/${hostname}-access.log combined`;
+        fastcgi_pass unix:/var/run/php/php${php_version}-fpm.sock;
+    }`;
+    }
 
-    configuration_file_contents += (php_version !== null ? `\n\n    Include /etc/apache2/conf-available/php${php_version}-fpm.conf\n` : `\n`);
-    configuration_file_contents += `</VirtualHost>`;
+    configuration_file_contents += '\n}';
 
-    configuration_file_contents += '\n# vim: syntax=apache';
+    if (overwrite && existsSync(configuration_file_enabled_path)) {
+        exec(`sudo rm ${configuration_file_enabled_path}`);
+    }
 
     writeFileSync(configuration_file_path, configuration_file_contents);
 
-    exec(`sudo a2ensite ${configuration_file_name}`, { silent: true });
+    exec(`sudo ln -s ${configuration_file_path} /etc/nginx/sites-enabled/`, { silent: true });
+    exec(`sudo service nginx reload`, { silent: true });
 
-    exec(`sudo service apache2 reload`, { silent: true });
-
-    // Add /etc/hosts entry
     exec(`sudo hostile set 127.0.0.1 ${hostname}`, { silent: true });
 
-    log(yellow(`Apache site added!\n`));
+    log(yellow(`NGINX site added!\n`));
     log(`${cyan(bold('Hostname:'))} ${hostname}`);
     log(`${cyan(bold('Public Directory:'))} ${public_dir}`);
 

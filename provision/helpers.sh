@@ -116,6 +116,8 @@ debug_command() {
 
     # echo "NUM_TOTAL: $NUM_TOTAL"
 
+    ERROR_LOG_PATH=/vagrant/logs/errors.log
+
     if [ -z "$LOG_FILE_PATH" ];
     then
         LOG_PATH=/vagrant/logs/provision.log
@@ -177,6 +179,8 @@ debug_command() {
     then
         green_text 'Success!'
     else
+        echo -e "Failed: $COMMAND\n\n" >> $ERROR_LOG_PATH
+
         if [ $COMMAND_EXIT_CODE -eq 0 ];
         then
             red_text "Fail!"

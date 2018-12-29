@@ -133,7 +133,8 @@ Vagrant.configure('2') do |config|
                 # Bind web server port
                 config.vm.network :forwarded_port, guest: web_server_port_in, host: port_out
 
-                web_server_port_in += 1 # TODO (Try web_server_port_in++ instead)
+                # Increment port number
+                web_server_port_in += 1
             end
         end
     end

@@ -27,7 +27,7 @@ debug_command "sudo sed -i 's/#PrintLastLog/PrintLastLog/' /etc/ssh/sshd_config"
 debug_command "sudo /etc/init.d/ssh restart"
 
 debug_command 'sudo chmod -x /etc/update-motd.d/*'
-debug_command "sudo sed -i \'/pam_motd.so/s/^/#/\' /etc/pam.d/sshd"
+debug_command "sudo sed -i /pam_motd.so/s/^/#/ /etc/pam.d/sshd"
 
 info_text 'Set custom welcome message...'
 

@@ -1,9 +1,9 @@
 #!/bin/bash
 
-echo "SHOW_COMMAND: $SHOW_COMMAND"
-printenv
-echo "-------------"
-env
+export TMP_PROVISIONING_FILE_PATH=/vagrant/.provisioning
+export PROVISION_SHOW_COMMAND=$PROVISION_SHOW_COMMAND
+export PROVISION_SHOW_COMMAND_EXECUTION_TIME=$PROVISION_SHOW_COMMAND_EXECUTION_TIME
+export PROVISION_SHOW_COMMAND_EXIT_CODE=$PROVISION_SHOW_COMMAND_EXIT_CODE
 
 export NUM_SUCCESSFUL=0
 export NUM_ERRORS=0
@@ -31,7 +31,7 @@ echo " "
 # 🇺🇸
 
 echo -e "🌎 ${BLUE}Made by${NC} ${YELLOW}PXL Agency${NC} (${YELLOW}Los Angeles, USA)${NC}"
-echo -e "❔ ${BLUE}See documentation at ${UNDERLINE}pxl-web-vagrant.com${NC}${NC}"
+echo -e "❓ ${BLUE}See documentation at ${UNDERLINE}pxl-web-vagrant.com${NC}${NC}"
 
 echo " "
 

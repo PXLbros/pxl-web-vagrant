@@ -46,7 +46,7 @@ print_provisioning_stats() {
         error_text "There were $num_errors errors of $num_total total commands."
         error_text "See logs/ folder for more details."
     else
-        highlight_text "\nPXL Web Vagrant has been provisioned!"
+        highlight_text "\nPXL Web Vagrant has been provisioned."
         highlight_text "Start by running command \"vagrant ssh\"."
     fi
 }
@@ -56,34 +56,42 @@ debug_command() {
 
     # If no LOG_FILE_PATH specified
     if [ -z "$LOG_FILE_PATH" ]; then
-        LOG_PATH=/vagrant/logs/provision.log
+        local log_path=/vagrant/logs/provision.log
     else
-        LOG_PATH="$PROVISION_LOG_DIR/$LOG_FILE_PATH"
+        local log_path="$PROVISION_LOG_DIR/$LOG_FILE_PATH"
     fi
 
-    LOG_PATH_DIR=$(dirname "${LOG_PATH}")
+    local log_path_dir=$(dirname "${log_path}")
 
-    sudo mkdir -p $LOG_PATH_DIR
+    # Create log directory if not exist
+    sudo mkdir -p $log_path_dir
 
-    echo -e "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n$command\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" >> $LOG_PATH
+    # Save to log file
+    echo -e "\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n\n"  >> $log_path
+    echo -e $command >> $log_path
+    echo -e "\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n" >> $log_path
 
-    if [ "$SHOW_COMMAND" == "true" ]; then blue_text "\$ $command"; fi
+    # Show command to execute
+    if [ "$PROVISION_SHOW_COMMAND" == "true" ]; then
+        blue_text "\$ $command";
+    fi
 
-    SUCCESS=false
-    START_TIME=$(date +%s.%N)
+    local success=false
+
+    local start_time=$(date +%s.%N)
 
     # Execute command
     if [ "$SHOW_COMMAND_OUTPUT" == "true" ]; then
         # Show command output
-        if eval "$command" | tee $LOG_PATH; then SUCCESS=true; fi
+        if eval "$command" | tee $log_path; then success=true; fi
     else
         # Hide command output
-        if eval "$command" &>> $LOG_PATH; then SUCCESS=true; fi
+        if eval "$command" &>> $log_path; then success=true; fi
     fi
 
-    COMMAND_EXIT_CODE=$?
+    local command_exit_code=$?
 
-    if [ "$SUCCESS" == "true" ]; then
+    if [ "$success" == "true" ]; then
         update_provisioning_stats success
 
         NUM_SUCCESSFUL=$((NUM_SUCCESSFUL+1))
@@ -93,33 +101,37 @@ debug_command() {
         NUM_ERRORS=$((NUM_ERRORS+1))
     fi
 
-    END_TIME=$(date +%s.%N)
-    TIME_TOTAL=$(echo "$END_TIME - $START_TIME" | bc)
-    local dd=$(echo "$TIME_TOTAL / 86400" | bc)
-    local dt2=$(echo "$TIME_TOTAL - 86400 * $dd" | bc)
-    echo "dt2: $dt2"
+    local end_time=$(date +%s.%N)
+    local time_total=$(echo "$end_time - $start_time" | bc)
+
+    local dd=$(echo "$time_total / 86400" | bc)
+    local dt2=$(echo "$time_total - 86400 * $dd" | bc)
     local dh=$(echo "$dt2 / 3600" | bc)
-    echo "dh: $dh"
     local dt3=$(echo "$dt2 - 3600 * $dh" | bc)
-    echo "dt3: $dt3"
-    EXECUTION_TIME_MINUTES=$(echo "$dt3 / 60" | bc)
-    EXECUTION_TIME_SECONDS=$(echo "$dt3 - 60 * $EXECUTION_TIME_MINUTES" | bc)
+
+    local execution_time_in_minutes=$(echo "$dt3 / 60" | bc)
+    local execution_time_in_seconds=$(echo "$dt3 - 60 * $execution_time_in_minutes" | bc)
 
     # Show command execution time
-    if [ "$SHOW_COMMAND_EXECUTION_TIME" == "true" ]; then
-        printf "${CYAN}Execution Time:${NC} \e[3m%0.2fs\e[0m\n" $EXECUTION_TIME_SECONDS
+    if [ "$PROVISION_SHOW_COMMAND_EXECUTION_TIME" == "true" ]; then
+        printf "${CYAN}Execution Time:${NC} \e[3m%0.2fs\e[0m\n" $execution_time_in_seconds
     fi
 
     # Show success/fail message
-    if [ "$SUCCESS" == 'true' ]; then
+    if [ "$success" == "true" ]; then
         green_text 'Success!'
     else
-        echo -e "Failed: $COMMAND\n\n" >> $ERROR_LOG_PATH
+        # Save to error log file
+        echo -e "$COMMAND\n\n" >> $ERROR_LOG_PATH
 
-        if [ $COMMAND_EXIT_CODE -eq 0 ]; then
-            red_text "Fail!"
+        if [ "$PROVISION_SHOW_COMMAND_EXIT_CODE" == "true" ]; then
+            if [ $command_exit_code -eq 0 ]; then
+                red_text "Fail!"
+            else
+                red_text "Fail! ($command_exit_code)"
+            fi
         else
-            red_text "Fail! ($COMMAND_EXIT_CODE)"
+            red_text "Fail!"
         fi
     fi
 

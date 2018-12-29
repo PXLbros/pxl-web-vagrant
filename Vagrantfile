@@ -56,8 +56,6 @@ Vagrant.configure('2') do |config|
         vb.customize ['modifyvm', :id, '--ioapic', 'on']
     end
 
-    config.vm.provision 'shell', name: 'Global', inline: "export DENNIS_TEST=dennis", privileged: true
-
     # Install Vagrant core
     config.vm.provision 'shell', name: 'Init', path: "#{VAGRANT_DIR}/provision/init.sh", privileged: true, run: 'once', env: {
         'VERSION': VERSION,
@@ -67,8 +65,9 @@ Vagrant.configure('2') do |config|
         'LANGUAGE_ISO': vagrant_config['vm']['language-iso'],
         'TIMEZONE': vagrant_config['timezone'],
 
-        'PROVISION_CONFIG': vagrant_config['vm']['provision']
-        # 'SHOW_COMMAND': vagrant_config['vm']['provision']['show-command']
+        'PROVISION_SHOW_COMMAND': vagrant_config['vm']['provision']['show-command'],
+        'PROVISION_SHOW_COMMAND_EXECUTION_TIME': vagrant_config['vm']['provision']['show-command-execution-time'],
+        'PROVISION_SHOW_COMMAND_EXIT_CODE': vagrant_config['vm']['provision']['show-command-exit-code']
     }
 
     # Welcome message
@@ -76,6 +75,8 @@ Vagrant.configure('2') do |config|
         'VERSION': VERSION,
         'BUILD_DATE': BUILD_DATE
     }
+
+    exit
 
     # Generate .bash_profile
     config.vm.provision 'shell', name: '.bash_profile', path: "#{VAGRANT_DIR}/provision/shell/bash_profile.sh", privileged: false, run: 'once', env: {

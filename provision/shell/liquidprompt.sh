@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export LOG_FILE_PATH=/vagrant/logs/shell/liquidprompt.log
+export LOG_FILE_PATH=shell/liquidprompt.log
 
 . /vagrant/provision/helpers/include.sh
 
@@ -9,7 +9,7 @@ title 'LiquidPrompt'
 # Install Liquid Prompt
 if [ ! -d ~/liquidprompt ]
 then
-    info_text "Clone LiquidPrompt Git repository..."
+    highlight_text "Clone LiquidPrompt Git repository..."
 
     debug_command "git clone https://github.com/nojhan/liquidprompt.git \$HOME/liquidprompt"
 fi
@@ -17,7 +17,7 @@ fi
 # Set to automatically run
 if ! grep -qF "source ~/liquidprompt/liquidprompt" $HOME/.bashrc
 then
-    info_text "Set to automatically run LiquidPrompt..."
+    highlight_text "Set to automatically run LiquidPrompt..."
 
     debug_command "echo -e \"\n[[ \\$- = *i* ]] && source ~/liquidprompt/liquidprompt\" >> \$HOME/.bashrc"
 fi

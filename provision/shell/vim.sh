@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export LOG_FILE_PATH=/vagrant/logs/shell/vim.log
+export LOG_FILE_PATH=shell/vim.log
 
 . /vagrant/provision/helpers/include.sh
 
@@ -10,13 +10,13 @@ export EDITOR='vim';
 
 if ! grep -qF "export EDITOR" $HOME/.bashrc
 then
-    info_text 'Set Vim as default editor...'
+    highlight_text 'Set Vim as default editor...'
 
     debug_command "echo -e \"\nexport EDITOR=$EDITOR\" >> $HOME/.bashrc"
 fi
 
 # Set .vimrc
-info_text 'Set Vim preferences...'
+highlight_text 'Set Vim preferences...'
 
 debug_command "echo -e \"set history=500
 filetype plugin on

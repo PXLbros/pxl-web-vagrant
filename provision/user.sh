@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export LOG_FILE_PATH=/vagrant/logs/user.log
+export LOG_FILE_PATH=user.log
 
 . /vagrant/provision/helpers/include.sh
 
@@ -12,7 +12,7 @@ if [ -e $USER_BASH_PROFILE_PATH ]
 then
     USER_BASH_PROFILE_CONTENTS=$(cat $USER_BASH_PROFILE_PATH)
 
-    info_text 'Copy user .bash_profile...'
+    highlight_text 'Copy user .bash_profile...'
 
     debug_command "echo -e \"\n# User\n$USER_BASH_PROFILE_CONTENTS\" >> $HOME/.bash_profile"
 

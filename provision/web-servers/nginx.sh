@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export LOG_FILE_PATH=/vagrant/logs/web-servers/nginx.log
+export LOG_FILE_PATH=web-servers/nginx.log
 
 . /vagrant/provision/helpers/include.sh
 
@@ -17,14 +17,14 @@ then
 fi
 
 # Install NGINX
-info_text 'Install NGINX...'
+highlight_text 'Install NGINX...'
 
 debug_command sudo apt-get install nginx -y
 
 if [ -x "$(command -v nginx)" ];
 then
     # Give Vagrant permission to edit NGINX site configuration files
-    info_text 'Give Vagrant user permission to NGINX /etc/nginx/sites-available directory...'
+    highlight_text 'Give Vagrant user permission to NGINX /etc/nginx/sites-available directory...'
 
     debug_command sudo chown -R vagrant:vagrant /etc/nginx/sites-available
 
@@ -38,7 +38,7 @@ then
     fi
 
     # Restart NGINX
-    info_text 'Restart NGINX...'
+    highlight_text 'Restart NGINX...'
 
     debug_command "sudo service nginx start"
 fi

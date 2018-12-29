@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export LOG_FILE_PATH=/vagrant/logs/tmux.log
+export LOG_FILE_PATH=shell/tmux/tmux.log
 
 . /vagrant/provision/helpers/include.sh
 
@@ -23,13 +23,13 @@ then
         exit
     fi
 
-    info_text "Remove existing tmux ($CURRENT_TMUX_VERSION) installation..."
+    highlight_text "Remove existing tmux ($CURRENT_TMUX_VERSION) installation..."
 
     debug_command "sudo apt-get -y remove tmux"
 fi
 
 # Download/install tmux
-info_text "Download/install tmux (v$VERSION)..."
+highlight_text "Download/install tmux (v$VERSION)..."
 
 debug_command "mkdir $HOME/tmux-src"
 debug_command "wget -qO- https://github.com/tmux/tmux/releases/download/${VERSION}/tmux-${VERSION}.tar.gz | tar xvz -C $HOME/tmux-src && cd $HOME/tmux-src/tmux*"
@@ -45,7 +45,7 @@ then
     # Install gpakosz
     if [ ! -d "$HOME/.tmux" ] # If gpakosz isn't installed
     then
-        info_text 'Install gpakosz...'
+        highlight_text 'Install gpakosz...'
 
         cd $HOME
 

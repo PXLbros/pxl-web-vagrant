@@ -1,10 +1,10 @@
 #!/bin/bash
 
-export LOG_FILE_PATH=/vagrant/logs/shell/bash_profile.log
+export LOG_FILE_PATH=shell/bash_profile.log
 
 . /vagrant/provision/helpers/include.sh
 
-SHELL_DIR="/vagrant/provision/shell"
+SCRIPTS_DIR="/vagrant/scripts"
 
 title 'bash_profile'
 
@@ -12,7 +12,7 @@ BASH_PROFILE_CONTENTS="# Source ~/.bashrc
 [[ -s \"$HOME/.bashrc\" ]] && source \"$HOME/.bashrc\"
 
 # PXL Web vagrant
-alias help='node $SHELL_DIR/scripts/help.js'
+alias help='node $SCRIPTS_DIR/shell/help.js'
 
 # .bash_profile
 alias edit_bash_profile='vim ~/.bash_profile'
@@ -42,9 +42,9 @@ alias stop_apache='sudo service apache2 stop'
 alias reload_apache='sudo service apache2 reload'
 alias apache_status='sudo service apache2 status'
 alias edit_apache_conf='sudo vim /etc/apache2/apache2.conf'
-alias create_apache_site='node $SHELL_DIR/scripts/web-servers/apache/create_site.js'
-alias edit_apache_site='node $SHELL_DIR/scripts/web-servers/apache/edit_site.js'
-alias delete_apache_site='node $SHELL_DIR/scripts/web-servers/apache/delete_site.js'"
+alias create_apache_site='node $SCRIPTS_DIR/web-servers/apache/create_site.js'
+alias edit_apache_site='node $SCRIPTS_DIR/web-servers/apache/edit_site.js'
+alias delete_apache_site='node $SCRIPTS_DIR/web-servers/apache/delete_site.js'"
 fi
 
 if [ "$NGINX" == "true" ]
@@ -57,16 +57,16 @@ alias restart_nginx='sudo service nginx restart'
 alias stop_nginx='sudo service nginx stop'
 alias nginx_status='sudo service nginx status'
 alias reload_nginx='sudo service nginx reload'
-alias create_nginx_site='node $SHELL_DIR/scripts/web-servers/nginx/create_site.js'
-alias edit_nginx_site='node $SHELL_DIR/scripts/web-servers/nginx/edit_site.js'
-alias delete_nginx_site='node $SHELL_DIR/scripts/web-servers/nginx/delete_site.js'"
+alias create_nginx_site='node $SCRIPTS_DIR/web-servers/nginx/create_site.js'
+alias edit_nginx_site='node $SCRIPTS_DIR/web-servers/nginx/edit_site.js'
+alias delete_nginx_site='node $SCRIPTS_DIR/web-servers/nginx/delete_site.js'"
 fi
 
 BASH_PROFILE_CONTENTS="${BASH_PROFILE_CONTENTS}
 
 # Databases
-alias create_database='node /vagrant/provision/shell/scripts/databases/create.js'
-alias delete_database='node /vagrant/provision/shell/scripts/databases/delete.js'"
+alias create_database='node $SCRIPTS_DIR/databases/create.js'
+alias delete_database='node $SCRIPTS_DIR/databases/delete.js'"
 
 if [ "$MYSQL" == "true" ]
 then
@@ -92,6 +92,3 @@ fi
 
 # Save .bash_profile
 debug_command "echo -e \"$BASH_PROFILE_CONTENTS\" > $HOME/.bash_profile"
-
-# Refresh .bash_profile
-# debug_command "source $HOME/.bash_profile" // ISSUE: Doesn't source (out of terminal/shell/prompt))

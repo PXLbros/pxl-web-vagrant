@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export LOG_FILE_PATH=/vagrant/logs/code/php.log
+export LOG_FILE_PATH=code/php.log
 
 . /vagrant/provision/helpers/include.sh
 
@@ -9,7 +9,7 @@ PHP_VERSIONS=($VERSIONS)
 # Install PHP dependencies
 title 'PHP'
 
-info_text 'Install PHP dependencies...'
+highlight_text 'Install PHP dependencies...'
 
 debug_command "apt-get -y install software-properties-common"
 debug_command "add-apt-repository -y ppa:ondrej/apache2"
@@ -18,7 +18,7 @@ debug_command "apt-get update -y"
 
 for PHP_VERSION in "${PHP_VERSIONS[@]}"
 do
-    info_text "Install PHP $PHP_VERSION..."
+    highlight_text "Install PHP $PHP_VERSION..."
 
     # Install PHP version and common extensions
     debug_command apt-get -y install \
@@ -62,7 +62,7 @@ for PHP_VERSION in "${PHP_VERSIONS[@]}"
 do
     if [ -x "$(command -v php$PHP_VERSION)" ];
     then
-        info_text "Fix PHP $PHP_VERSION permissions..."
+        highlight_text "Fix PHP $PHP_VERSION permissions..."
 
         PHP_WWW_CONF_FILE=/etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
         PHP_INI_FILE=/etc/php/${PHP_VERSION}/fpm/php.ini
@@ -82,7 +82,7 @@ do
         debug_command "sed -i -r -e 's/display_errors = Off/display_errors = On/g' $PHP_INI_FILE"
 
         # Restart PHP version
-        info_text "Restart PHP $PHP_VERSION..."
+        highlight_text "Restart PHP $PHP_VERSION..."
 
         debug_command "service php${PHP_VERSION}-fpm restart"
     fi
@@ -93,13 +93,13 @@ then
     # Restart Apache
     if [ $APACHE = "true" ]
     then
-        info_text 'Restart Apache...'
+        highlight_text 'Restart Apache...'
 
         debug_command service apache2 restart
     fi
 
     # Download Composer
-    info_text 'Install Composer...'
+    highlight_text 'Install Composer...'
 
     debug_command 'curl -sS https://getcomposer.org/installer | php'
 

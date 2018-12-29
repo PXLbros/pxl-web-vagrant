@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export LOG_FILE_PATH=/vagrant/logs/databases/mongodb.log
+export LOG_FILE_PATH=databases/mongodb.log
 
 . /vagrant/provision/helpers/include.sh
 

@@ -2,7 +2,7 @@
 
 export LOG_FILE_PATH=/vagrant/logs/tmux.log
 
-. /vagrant/provision/helpers.sh
+. /vagrant/provision/helpers/include.sh
 
 title 'tmux'
 
@@ -16,14 +16,14 @@ then
     CURRENT_TMUX_VERSION_SPLITTED=(${CURRENT_TMUX_VERSION_RAW//\ / })
     CURRENT_TMUX_VERSION=${CURRENT_TMUX_VERSION_SPLITTED[1]}
 
-    info_text "Remove existing tmux ($CURRENT_TMUX_VERSION) installation..."
-
     if [ "$CURRENT_TMUX_VERSION" == "$VERSION" ];
     then
         warning_text "tmux version $VERSION already installed."
 
         exit
     fi
+
+    info_text "Remove existing tmux ($CURRENT_TMUX_VERSION) installation..."
 
     debug_command "sudo apt-get -y remove tmux"
 fi

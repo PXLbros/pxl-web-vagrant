@@ -2,7 +2,7 @@
 
 export LOG_FILE_PATH=/vagrant/logs/databases/mongodb.log
 
-. /vagrant/provision/helpers.sh
+. /vagrant/provision/helpers/include.sh
 
 title 'MongoDB'
 

@@ -2,7 +2,7 @@
 
 export LOG_FILE_PATH=/vagrant/logs/web-servers/apache.log
 
-. /vagrant/provision/helpers.sh
+. /vagrant/provision/helpers/include.sh
 
 title 'Apache'
 

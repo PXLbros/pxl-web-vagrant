@@ -1,12 +1,12 @@
 #!/bin/bash
 
-. /vagrant/provision/helpers.sh
+. /vagrant/provision/helpers/include.sh
 
 WELCOME_MESSAGE_PATH=/etc/update-motd.d/01-custom
 
 WELCOME_MESSAGE="#!/bin/bash
 
-. /vagrant/provision/helpers.sh
+. /vagrant/provision/helpers/include.sh
 
 echo ' '
 
@@ -27,7 +27,6 @@ debug_command "sudo sed -i 's/#PrintLastLog/PrintLastLog/' /etc/ssh/sshd_config"
 debug_command "sudo /etc/init.d/ssh restart"
 
 debug_command 'sudo chmod -x /etc/update-motd.d/*'
-debug_command "sudo sed -i /pam_motd.so/s/^/#/ /etc/pam.d/sshd"
 
 info_text 'Set custom welcome message...'
 

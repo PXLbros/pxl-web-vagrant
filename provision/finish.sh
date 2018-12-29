@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. /vagrant/provision/helpers.sh
+. /vagrant/provision/helpers/include.sh
 
 echo -e "\n"
 

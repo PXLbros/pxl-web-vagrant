@@ -2,7 +2,7 @@
 
 export LOG_FILE_PATH=/vagrant/logs/shell/bash_profile.log
 
-. /vagrant/provision/helpers.sh
+. /vagrant/provision/helpers/include.sh
 
 SHELL_DIR="/vagrant/provision/shell"
 
@@ -10,6 +10,9 @@ title 'bash_profile'
 
 BASH_PROFILE_CONTENTS="# Source ~/.bashrc
 [[ -s \"$HOME/.bashrc\" ]] && source \"$HOME/.bashrc\"
+
+# PXL Web vagrant
+alias help='node $SHELL_DIR/scripts/help.js'
 
 # .bash_profile
 alias edit_bash_profile='vim ~/.bash_profile'

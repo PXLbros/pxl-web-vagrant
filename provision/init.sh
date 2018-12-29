@@ -8,7 +8,7 @@ export NUM_ERRORS=0
 
 export LOG_FILE_PATH=/vagrant/logs/init.log
 
-. /vagrant/provision/helpers.sh
+. /vagrant/provision/helpers/include.sh
 
 # Reset provision stats
 reset_provisioning_stats

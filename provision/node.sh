@@ -2,7 +2,7 @@
 
 export LOG_FILE_PATH=/vagrant/logs/node.log
 
-. /vagrant/provision/helpers.sh
+. /vagrant/provision/helpers/include.sh
 
 title 'Node'
 

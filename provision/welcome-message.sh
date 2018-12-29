@@ -2,6 +2,8 @@
 
 . /vagrant/provision/helpers/include.sh
 
+echo "TEST: $PROVISION_SHOW_COMMAND"
+
 WELCOME_MESSAGE_PATH=/etc/update-motd.d/01-custom
 
 WELCOME_MESSAGE="#!/bin/bash

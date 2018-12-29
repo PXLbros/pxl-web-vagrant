@@ -9,9 +9,10 @@ require 'json'
 
 VAGRANT_DIR = File.dirname(File.expand_path(__FILE__))
 
-# Get default configuration
+# Get default config
 default_config = YAML.load_file("#{VAGRANT_DIR}/config.default.yaml")
 
+# Get user config and merge with default config
 if File.file?("#{VAGRANT_DIR}/config.yaml")
     user_config = YAML.load_file("#{VAGRANT_DIR}/config.yaml")
 
@@ -57,7 +58,7 @@ Vagrant.configure('2') do |config|
     end
 
     # Install Vagrant core
-    config.vm.provision 'shell', name: 'Init', path: "#{VAGRANT_DIR}/provision/init.sh", privileged: true, run: 'once', env: {
+    config.vm.provision 'shell', name: 'Initialize', path: "#{VAGRANT_DIR}/provision/initialize.sh", privileged: true, run: 'once', env: {
         'VERSION': VERSION,
         'BUILD_DATE': BUILD_DATE,
 
@@ -76,8 +77,6 @@ Vagrant.configure('2') do |config|
         'BUILD_DATE': BUILD_DATE
     }
 
-    exit
-
     # Generate .bash_profile
     config.vm.provision 'shell', name: '.bash_profile', path: "#{VAGRANT_DIR}/provision/shell/bash_profile.sh", privileged: false, run: 'once', env: {
         'APACHE': vagrant_config['web-servers']['apache']['enabled'],
@@ -91,7 +90,7 @@ Vagrant.configure('2') do |config|
     config.vm.provision 'shell', name: 'Git', :inline => "echo -e '#{gitconfig.read()}' > '/home/vagrant/.gitconfig'", privileged: false if gitconfig.exist?
 
     # Node
-    config.vm.provision 'shell', name: 'Node', path: "#{VAGRANT_DIR}/provision/node.sh", run: 'once', privileged: false
+    config.vm.provision 'shell', name: 'Node', path: "#{VAGRANT_DIR}/provision/code/node.sh", run: 'once', privileged: false
 
     # Yarn
     config.vm.provision 'shell', name: 'Yarn', path: "#{VAGRANT_DIR}/provision/yarn.sh", run: 'once', privileged: false
@@ -164,6 +163,12 @@ Vagrant.configure('2') do |config|
             # Install database
             config.vm.provision 'shell', name: "Web Server: #{database_name}", path: "#{VAGRANT_DIR}/provision/databases/#{database_name}.sh", privileged: true, run: 'once'
         end
+    end
+
+    # Redis
+    if vagrant_config['cache']['redis']['enabled']
+        # Install Redis
+        config.vm.provision 'shell', name: "Redis", path: "#{VAGRANT_DIR}/provision/cache/redis.sh", privileged: true, run: 'once'
     end
 
     # Run user provision scripts (TODO: do this in user.sh instead)

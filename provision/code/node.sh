@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export LOG_FILE_PATH=node.log
+export LOG_FILE_PATH=code/node.log
 
 . /vagrant/provision/helpers/include.sh
 

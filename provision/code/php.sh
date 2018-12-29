@@ -4,7 +4,7 @@ export LOG_FILE_PATH=code/php.log
 
 . /vagrant/provision/helpers/include.sh
 
-PHP_VERSIONS=($VERSIONS)
+PHP_VERSIONS=($PHP_VERSIONS)
 
 # Install PHP dependencies
 title 'PHP'

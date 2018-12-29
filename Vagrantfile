@@ -27,6 +27,33 @@ package_json = JSON.parse(File.read("#{VAGRANT_DIR}/package.json"))
 VERSION = package_json['version']
 BUILD_DATE = `git log -1 --format=%cd | tr -d '\n'`
 
+GLOBAL_VARIABLES = {
+    'VERSION': VERSION,
+    'BUILD_DATE': BUILD_DATE,
+
+    'VAGRANT_NAME': vagrant_config['vm']['name'],
+    'LANGUAGE_ISO': vagrant_config['vm']['language-iso'],
+    'TIMEZONE': vagrant_config['timezone'],
+
+    'PROVISION_SHOW_COMMAND': vagrant_config['vm']['provision']['show-command'],
+    'PROVISION_SHOW_COMMAND_EXECUTION_TIME': vagrant_config['vm']['provision']['show-command-execution-time'],
+    'PROVISION_SHOW_COMMAND_EXIT_CODE': vagrant_config['vm']['provision']['show-command-exit-code'],
+
+    'APACHE': vagrant_config['web-servers']['apache']['enabled'],
+    'NGINX': vagrant_config['web-servers']['nginx']['enabled'],
+    'MYSQL': vagrant_config['databases']['mysql']['enabled'],
+    'MONGODB': vagrant_config['databases']['mongodb']['enabled'],
+
+    'VERSION': (vagrant_config['shell']['tmux']['version'] || '2.8'),
+    'TMUXINATOR': (vagrant_config['shell']['tmux']['tmuxinator']['enabled'] || false),
+    'GPAKOSZ': (vagrant_config['shell']['tmux']['gpakosz']['enabled'] || false),
+
+    'PHP_VERSIONS': vagrant_config['code']['php']['versions'].join(' '),
+
+    'MEMCACHED': (vagrant_config['code']['php']['cache']['memcached']['enabled'] ? true : false),
+    'APC': (vagrant_config['code']['php']['cache']['apc']['enabled'] ? true : false)
+}
+
 Vagrant.configure('2') do |config|
     # Validate
     if vagrant_config['vm']['name'].empty?
@@ -58,32 +85,13 @@ Vagrant.configure('2') do |config|
     end
 
     # Install Vagrant core
-    config.vm.provision 'shell', name: 'Initialize', path: "#{VAGRANT_DIR}/provision/initialize.sh", privileged: true, run: 'once', env: {
-        'VERSION': VERSION,
-        'BUILD_DATE': BUILD_DATE,
-
-        'VAGRANT_NAME': vagrant_config['vm']['name'],
-        'LANGUAGE_ISO': vagrant_config['vm']['language-iso'],
-        'TIMEZONE': vagrant_config['timezone'],
-
-        'PROVISION_SHOW_COMMAND': vagrant_config['vm']['provision']['show-command'],
-        'PROVISION_SHOW_COMMAND_EXECUTION_TIME': vagrant_config['vm']['provision']['show-command-execution-time'],
-        'PROVISION_SHOW_COMMAND_EXIT_CODE': vagrant_config['vm']['provision']['show-command-exit-code']
-    }
+    config.vm.provision 'shell', name: 'Initialize', path: "#{VAGRANT_DIR}/provision/initialize.sh", privileged: true, run: 'once', env: GLOBAL_VARIABLES
 
     # Welcome message
-    config.vm.provision 'shell', name: 'Welcome Message', path: "#{VAGRANT_DIR}/provision/welcome-message.sh", privileged: true, run: 'once', env: {
-        'VERSION': VERSION,
-        'BUILD_DATE': BUILD_DATE
-    }
+    config.vm.provision 'shell', name: 'Welcome Message', path: "#{VAGRANT_DIR}/provision/welcome-message.sh", privileged: true, run: 'once', env: GLOBAL_VARIABLES
 
     # Generate .bash_profile
-    config.vm.provision 'shell', name: '.bash_profile', path: "#{VAGRANT_DIR}/provision/shell/bash_profile.sh", privileged: false, run: 'once', env: {
-        'APACHE': vagrant_config['web-servers']['apache']['enabled'],
-        'NGINX': vagrant_config['web-servers']['nginx']['enabled'],
-        'MYSQL': vagrant_config['databases']['mysql']['enabled'],
-        'MONGODB': vagrant_config['databases']['mongodb']['enabled']
-    }
+    config.vm.provision 'shell', name: '.bash_profile', path: "#{VAGRANT_DIR}/provision/shell/bash_profile.sh", privileged: false, run: 'once', env: GLOBAL_VARIABLES
 
     # Git
     gitconfig = Pathname.new("#{Dir.home}/.gitconfig")
@@ -100,17 +108,11 @@ Vagrant.configure('2') do |config|
 
     # tmux
     if vagrant_config['shell']['tmux']['enabled']
-        config.vm.provision 'shell', name: 'tmux', path: "#{VAGRANT_DIR}/provision/shell/tmux/tmux.sh", run: 'once', privileged: false, env: {
-            'VERSION': (vagrant_config['shell']['tmux']['version'] || '2.8'),
-            'TMUXINATOR': (vagrant_config['shell']['tmux']['tmuxinator']['enabled'] || false),
-            'GPAKOSZ': (vagrant_config['shell']['tmux']['gpakosz']['enabled'] || false)
-        }
+        config.vm.provision 'shell', name: 'tmux', path: "#{VAGRANT_DIR}/provision/shell/tmux/tmux.sh", run: 'once', privileged: false, env: GLOBAL_VARIABLES
 
         # tmuxinator
         if vagrant_config['shell']['tmux']['tmuxinator']['enabled']
-            config.vm.provision 'shell', name: 'tmuxinator', path: "#{VAGRANT_DIR}/provision/shell/tmux/tmuxinator.sh", run: 'once', privileged: false, env: {
-                'VM_NAME': vagrant_config['vm']['name']
-            }
+            config.vm.provision 'shell', name: 'tmuxinator', path: "#{VAGRANT_DIR}/provision/shell/tmux/tmuxinator.sh", run: 'once', privileged: false, env: GLOBAL_VARIABLES
         end
     end
 
@@ -131,10 +133,10 @@ Vagrant.configure('2') do |config|
                     port_out = (web_server_vagrant_config['port'] || 7002)
                 end
 
+                GLOBAL_VARIABLES['WEB_SERVER_PORT_IN'] = web_server_port_in
+
                 # Install web server
-                config.vm.provision 'shell', name: "Web Server: #{web_server_name}", path: "#{VAGRANT_DIR}/provision/web-servers/#{web_server_name}.sh", privileged: false, run: 'once', env: {
-                    'PORT': web_server_port_in
-                }
+                config.vm.provision 'shell', name: "Web Server: #{web_server_name}", path: "#{VAGRANT_DIR}/provision/web-servers/#{web_server_name}.sh", privileged: false, run: 'once', env: GLOBAL_VARIABLES
 
                 # Bind web server port
                 config.vm.network :forwarded_port, guest: web_server_port_in, host: port_out
@@ -148,13 +150,7 @@ Vagrant.configure('2') do |config|
     # PHP
     if vagrant_config['code']['php']['versions'].any?
         # Install PHP
-        config.vm.provision 'shell', name: 'PHP', path: "#{VAGRANT_DIR}/provision/code/php.sh", privileged: true, run: 'once', env: {
-            'VERSIONS': vagrant_config['code']['php']['versions'].join(' '),
-            'APACHE': vagrant_config['web-servers']['apache']['enabled'],
-
-            'MEMCACHED': (vagrant_config['code']['php']['cache']['memcached']['enabled'] ? true : false),
-            'APC': (vagrant_config['code']['php']['cache']['apc']['enabled'] ? true : false)
-        }
+        config.vm.provision 'shell', name: 'PHP', path: "#{VAGRANT_DIR}/provision/code/php.sh", privileged: true, run: 'once', env: GLOBAL_VARIABLES
     end
 
     # Install databases

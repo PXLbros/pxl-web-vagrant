@@ -22,7 +22,7 @@ debug_command 'sudo gem install tmuxinator'
 debug_command "mkdir -p $HOME/.config/tmuxinator"
 
 # Create "Home" tmuxinator project
-HOME_TMUXINATOR_CONTENTS="name: \"$VM_NAME\"
+HOME_TMUXINATOR_CONTENTS="name: \"$VAGRANT_NAME\"
 root: ~/
 
 windows:

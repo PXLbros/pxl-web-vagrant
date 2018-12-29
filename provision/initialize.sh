@@ -1,9 +1,5 @@
 #!/bin/bash
 
-export PROVISION_SHOW_COMMAND=$PROVISION_SHOW_COMMAND
-export PROVISION_SHOW_COMMAND_EXECUTION_TIME=$PROVISION_SHOW_COMMAND_EXECUTION_TIME
-export PROVISION_SHOW_COMMAND_EXIT_CODE=$PROVISION_SHOW_COMMAND_EXIT_CODE
-
 export NUM_SUCCESSFUL=0
 export NUM_ERRORS=0
 
@@ -14,7 +10,7 @@ export LOG_FILE_PATH=init.log
 . /vagrant/provision/helpers/include.sh
 
 # Reset provision stats
-reset_provisioning_stats
+init_provisioning_stats
 
 # Install figlet
 apt-get -y install figlet &>/dev/null

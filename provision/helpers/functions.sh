@@ -1,5 +1,6 @@
 #!/bin/bash
 
+TMP_PROVISIONING_FILE_PATH=/vagrant/.provisioning
 PROVISION_LOG_DIR=/vagrant/logs/provisions
 ERROR_LOG_PATH=/vagrant/logs/errors.log
 
@@ -26,7 +27,7 @@ update_provisioning_stats() {
     echo "$num_successful;$num_errors" > $TMP_PROVISIONING_FILE_PATH
 }
 
-reset_provisioning_stats() {
+init_provisioning_stats() {
     echo '0;0' > $TMP_PROVISIONING_FILE_PATH
 }
 
@@ -49,6 +50,10 @@ print_provisioning_stats() {
         highlight_text "\nPXL Web Vagrant has been provisioned."
         highlight_text "Start by running command \"vagrant ssh\"."
     fi
+}
+
+clear_provisioning_stats() {
+    rm $TMP_PROVISIONING_FILE_PATH
 }
 
 debug_command() {
@@ -81,6 +86,8 @@ debug_command() {
     local start_time=$(date +%s.%N)
 
     # Execute command
+    # local command_output=$($command)
+
     if [ "$SHOW_COMMAND_OUTPUT" == "true" ]; then
         # Show command output
         if eval "$command" | tee $log_path; then success=true; fi
@@ -118,23 +125,25 @@ debug_command() {
     fi
 
     # Show success/fail message
-    if [ "$success" == "true" ]; then
-        green_text 'Success!'
-    else
-        # Save to error log file
-        echo -e "$COMMAND\n\n" >> $ERROR_LOG_PATH
-
-        if [ "$PROVISION_SHOW_COMMAND_EXIT_CODE" == "true" ]; then
-            if [ $command_exit_code -eq 0 ]; then
-                red_text "Fail!"
-            else
-                red_text "Fail! ($command_exit_code)"
-            fi
+    if [ "$PROVISION_SHOW_COMMAND" == "true" ]; then
+        if [ "$success" == "true" ]; then
+            green_text 'Success!'
         else
-            red_text "Fail!"
-        fi
-    fi
+            # Save to error log file
+            echo -e "$command\n\n" >> $ERROR_LOG_PATH
 
-    # Print new line
-    line_break
+            if [ "$PROVISION_SHOW_COMMAND_EXIT_CODE" == "true" ]; then
+                if [ $command_exit_code -eq 0 ]; then
+                    red_text "Fail!"
+                else
+                    red_text "Fail! ($command_exit_code)"
+                fi
+            else
+                red_text "Fail!"
+            fi
+        fi
+
+        # Print new line
+        line_break
+    fi
 }

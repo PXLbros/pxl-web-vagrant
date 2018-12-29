@@ -32,6 +32,6 @@ do
 done
 
 # Install provision shell script dependencies
-cd /vagrant/provision/shell/scripts/
+cd /vagrant/scripts/
 
 debug_command 'yarn install'

@@ -29,7 +29,7 @@ then
 fi
 
 # Download/install tmux
-highlight_text "Download/install tmux (v$VERSION)..."
+highlight_text "Download and install tmux (v$VERSION)..."
 
 debug_command "mkdir $HOME/tmux-src"
 debug_command "wget -qO- https://github.com/tmux/tmux/releases/download/${VERSION}/tmux-${VERSION}.tar.gz | tar xvz -C $HOME/tmux-src && cd $HOME/tmux-src/tmux*"

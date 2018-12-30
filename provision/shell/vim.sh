@@ -12,13 +12,13 @@ if ! grep -qF "export EDITOR" $HOME/.bashrc
 then
     highlight_text 'Set Vim as default editor...'
 
-    debug_command "echo -e \"\nexport EDITOR=$EDITOR\" >> $HOME/.bashrc"
+    exec_command "echo -e \"\nexport EDITOR=$EDITOR\" >> $HOME/.bashrc"
 fi
 
 # Set .vimrc
 highlight_text 'Set Vim preferences...'
 
-debug_command "echo -e \"set history=500
+exec_command "echo -e \"set history=500
 filetype plugin on
 filetype indent on
 set autoread
@@ -61,8 +61,12 @@ set statusline+=Line:\\ %l\\ (%p%%)
 
 :set mouse=a\" > $HOME/.vimrc"
 
-if ! grep -qF "# Vim" $HOME/.bash_profile
-then
-    debug_command "echo -e \"\n# Vim
-alias edit_vimrc='vim ~/.vimrc'\" >> $HOME/.bash_profile"
+BASH_PROFILE_PATH=$HOME/.bash_profile
+
+if [ ! -f $BASH_PROFILE_PATH ]; then
+    if ! grep -qF "# Vim" $BASH_PROFILE_PATH
+    then
+        exec_command "echo -e \"\n# Vim
+    alias edit_vimrc='vim ~/.vimrc'\" >> $HOME/.bash_profile"
+    fi
 fi

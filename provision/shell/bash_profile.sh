@@ -91,4 +91,4 @@ alias mongodb_status='sudo service mysql status'"
 fi
 
 # Save .bash_profile
-debug_command "echo -e \"$BASH_PROFILE_CONTENTS\" > $HOME/.bash_profile"
+exec_command "echo -e \"$BASH_PROFILE_CONTENTS\" > $HOME/.bash_profile"

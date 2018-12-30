@@ -1,22 +1,21 @@
 #!/bin/bash
 
+export DEBIAN_FRONTEND=noninteractive
+
 export NUM_SUCCESSFUL=0
 export NUM_ERRORS=0
 
-export DEBIAN_FRONTEND=noninteractive
-
-export LOG_FILE_PATH=init.log
+export LOG_FILE_PATH=initialize.log
 
 . /vagrant/provision/helpers/include.sh
 
-# Reset provision stats
+# Initialize provisioning stats file
 init_provisioning_stats
 
 # Install figlet
 apt-get -y install figlet &>/dev/null
 
 # Show welcome title
-# echo 'Installing FIGlet...'
 title 'PXL Web Vagrant'
 
 echo -e "${BLUE}v${VERSION} (Built on $BUILD_DATE)${NC}"
@@ -44,33 +43,33 @@ highlight_text 'Configure date/time...'
 export LANGUAGE="$LANGUAGE_ISO.UTF-8"
 export LANG="$LANGUAGE_ISO.UTF-8"
 
-debug_command 'rm /etc/localtime'
-debug_command "ln -s /usr/share/zoneinfo/$TIMEZONE /etc/localtime"
-debug_command 'dpkg-reconfigure locales'
+exec_command "rm /etc/localtime"
+exec_command "ln -s /usr/share/zoneinfo/$TIMEZONE /etc/localtime"
+exec_command "dpkg-reconfigure locales"
 
 # Update APT
 highlight_text 'Update APT...'
 
-debug_command 'apt-get update'
+exec_command 'apt-get update'
 
 # Upgrade APT
 highlight_text 'Upgrade APT...'
 
-DEBIAN_FRONTEND=noninteractive debug_command 'apt-get -y upgrade'
+DEBIAN_FRONTEND=noninteractive exec_command 'apt-get -y upgrade'
 # -o Dpkg::Options::="--force-confdef" \
 # -o Dpkg::Options::="--force-confold" \
 
 # Install required APT packages
 highlight_text 'Install required APT packages...'
 
-debug_command 'apt-get -y install build-essential libevent-dev libncurses-dev zip unzip'
+exec_command 'apt-get -y install build-essential libevent-dev libncurses-dev zip unzip'
 
 # Clean up APT
 highlight_text 'Clean up APT...'
 
-debug_command "apt-get autoremove -yf"
+exec_command "apt-get autoremove -yf"
 
 # Set home directory
 # highlight_text 'Set home directory...'
 #
-# debug_command 'usermod -d /vagrant/projects/ vagrant'
+# exec_command 'usermod -d /vagrant/projects/ vagrant'

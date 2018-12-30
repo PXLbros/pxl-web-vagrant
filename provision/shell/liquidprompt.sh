@@ -11,7 +11,7 @@ if [ ! -d ~/liquidprompt ]
 then
     highlight_text "Clone LiquidPrompt Git repository..."
 
-    debug_command "git clone https://github.com/nojhan/liquidprompt.git \$HOME/liquidprompt"
+    exec_command "git clone https://github.com/nojhan/liquidprompt.git \$HOME/liquidprompt"
 fi
 
 # Set to automatically run
@@ -19,11 +19,11 @@ if ! grep -qF "source ~/liquidprompt/liquidprompt" $HOME/.bashrc
 then
     highlight_text "Set to automatically run LiquidPrompt..."
 
-    debug_command "echo -e \"\n[[ \\$- = *i* ]] && source ~/liquidprompt/liquidprompt\" >> \$HOME/.bashrc"
+    exec_command "echo -e \"\n[[ \\$- = *i* ]] && source ~/liquidprompt/liquidprompt\" >> \$HOME/.bashrc"
 fi
 
 # Create configuration file
-debug_command "echo \"# Maximal value under which the battery level is displayed
+exec_command "echo \"# Maximal value under which the battery level is displayed
 # Recommended value is 75
 LP_BATTERY_THRESHOLD=75
 

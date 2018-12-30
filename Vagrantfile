@@ -5,8 +5,6 @@ require 'find'
 require 'yaml'
 require 'json'
 
-# require 'deep_merge/rails_compat' (TODO: Install for better merging of user vs default config)
-
 VAGRANT_DIR = File.dirname(File.expand_path(__FILE__))
 
 # Get default config
@@ -32,9 +30,10 @@ GLOBAL_VARIABLES = {
     'BUILD_DATE': BUILD_DATE,
 
     'VAGRANT_NAME': vagrant_config['vm']['name'],
-    'LANGUAGE_ISO': vagrant_config['vm']['language-iso'],
+    'LANGUAGE_ISO': vagrant_config['language-iso'],
     'TIMEZONE': vagrant_config['timezone'],
 
+    'PROVISION_SHOW_COMMAND_DESCRIPTION': vagrant_config['vm']['provision']['show-command-description'],
     'PROVISION_SHOW_COMMAND': vagrant_config['vm']['provision']['show-command'],
     'PROVISION_SHOW_COMMAND_EXECUTION_TIME': vagrant_config['vm']['provision']['show-command-execution-time'],
     'PROVISION_SHOW_COMMAND_EXIT_CODE': vagrant_config['vm']['provision']['show-command-exit-code'],
@@ -44,7 +43,7 @@ GLOBAL_VARIABLES = {
     'MYSQL': vagrant_config['databases']['mysql']['enabled'],
     'MONGODB': vagrant_config['databases']['mongodb']['enabled'],
 
-    'VERSION': (vagrant_config['shell']['tmux']['version'] || '2.8'),
+    'TMUX_VERSION': (vagrant_config['shell']['tmux']['version'] || '2.8'),
     'TMUXINATOR': (vagrant_config['shell']['tmux']['tmuxinator']['enabled'] || false),
     'GPAKOSZ': (vagrant_config['shell']['tmux']['gpakosz']['enabled'] || false),
 
@@ -150,7 +149,19 @@ Vagrant.configure('2') do |config|
     # PHP
     if vagrant_config['code']['php']['versions'].any?
         # Install PHP
-        config.vm.provision 'shell', name: 'PHP', path: "#{VAGRANT_DIR}/provision/code/php.sh", privileged: true, run: 'once', env: GLOBAL_VARIABLES
+        config.vm.provision 'shell', name: 'PHP', path: "#{VAGRANT_DIR}/provision/code/php/php.sh", privileged: true, run: 'once', env: GLOBAL_VARIABLES
+
+        # Memcached
+        if vagrant_config['code']['php']['cache']['memcached']['enabled']
+            # Install Memcached
+            config.vm.provision 'shell', name: "Memcached", path: "#{VAGRANT_DIR}/provision/code/php/cache/memcached.sh", privileged: true, run: 'once'
+        end
+
+        # APC
+        if vagrant_config['code']['php']['cache']['apc']['enabled']
+            # Install APC
+            config.vm.provision 'shell', name: "APC", path: "#{VAGRANT_DIR}/provision/code/php/cache/apc.sh", privileged: true, run: 'once'
+        end
     end
 
     # Install databases
@@ -172,7 +183,9 @@ Vagrant.configure('2') do |config|
         config.vm.provision 'shell', name: "User Script (#{user_file_path})", path: user_file_path, privileged: false, run: 'once'
     end
 
+    # User script
     config.vm.provision 'shell', name: 'User Script', path: "#{VAGRANT_DIR}/provision/user.sh", privileged: false, run: 'once'
 
+    # Finalize
     config.vm.provision 'shell', name: 'Finalize', path: "#{VAGRANT_DIR}/provision/finalize.sh", privileged: false, run: 'once'
 end

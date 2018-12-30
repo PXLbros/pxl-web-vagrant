@@ -16,14 +16,12 @@ fi
 
 # Install NGINX
 highlight_text 'Install NGINX...'
-
 exec_command sudo apt-get install nginx -y
 
 if [ -x "$(command -v nginx)" ];
 then
     # Give Vagrant permission to edit NGINX site configuration files
     highlight_text 'Give Vagrant user permission to NGINX /etc/nginx/sites-available directory...'
-
     exec_command sudo chown -R vagrant:vagrant /etc/nginx/sites-available
 
     # Update port in default site
@@ -37,6 +35,5 @@ then
 
     # Restart NGINX
     highlight_text 'Restart NGINX...'
-
     exec_command "sudo service nginx start"
 fi

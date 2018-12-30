@@ -6,6 +6,7 @@ node_modules/
 /scripts/yarn.lock
 /config.yaml
 /.provisioning
+/.command_output
 .vagrant
 yarn-error.log
 .DS_Store

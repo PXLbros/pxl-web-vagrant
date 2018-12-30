@@ -19,20 +19,20 @@ exec_command() {
     local start_time=$(date +%s.%N)
 
     # Execute command
-    local command_output=`eval $command`
-    # local command_output=`eval "$command"`
-    # eval "$command"
+    if [ "$PROVISION_SHOW_COMMAND_OUTPUT" == "true" ]; then
+        eval "$command" | tee /vagrant/.command_output
+    else
+        eval "$command" &> /vagrant/.command_output
+    fi
 
     local command_exit_code=$?
+    local command_output=$(cat /vagrant/.command_output)
 
     # Save command ouput to log file
     echo -e "\nOutput:\n$command_output" >> $LOG_FILE_PATH
 
     if [ $command_exit_code -eq 0 ]; then # Command executed successfully
         success=true
-
-        # Print command ouput
-        [ "$PROVISION_SHOW_COMMAND_OUTPUT" == "true" ] && echo $command_output
 
         # Update provisioning stats file
         update_provisioning_stats success
@@ -62,7 +62,7 @@ exec_command() {
     fi
 
     # Save execution time to log file
-    printf "\nExecution Time: %0.2f\n" $execution_time_in_seconds >> $LOG_FILE_PATH
+    printf "\nExecution Time: %0.2fs\n" $execution_time_in_seconds >> $LOG_FILE_PATH
 
     # Save exit code to log file
     echo -e "Exit Code: $command_exit_code" >> $LOG_FILE_PATH
@@ -70,7 +70,7 @@ exec_command() {
     # Show success/fail message
     if [ "$PROVISION_SHOW_COMMAND" == "true" ]; then
         if [ "$success" == "true" ]; then
-            green_text 'Success!'
+            green_text "Success!"
         else
             # Save to error log file
             echo -e "Command:\n$command\nOutput:\n$command_output\n$LOG_LINE_SEPARATOR\n\n" >> $ERROR_LOG_PATH

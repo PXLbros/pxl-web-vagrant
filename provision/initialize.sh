@@ -19,11 +19,11 @@ apt-get -y install figlet &>/dev/null
 title "PXL Web Vagrant"
 
 echo -e "${BLUE}v${VERSION} (Built on $BUILD_DATE)${NC}"
+echo -e "${BLUE}https://github.com/PXLbros/pxl-web-vagrant${NC}"
 
 line_break
 
 # echo -e "🇺🇸  ${BLUE}Made by${NC} ${YELLOW}PXL Agency (Los Angeles, USA)${NC}"
-echo -e "📦 ${BLUE}https://github.com/PXLbros/pxl-web-vagrant${NC}"
 echo -e "🌎 ${BLUE}See documentation at${NC} ${YELLOW}${UNDERLINE}pxl-web-vagrant.com${NC}${NC}"
 echo -e "✉️  ${BLUE}hello@pxl-web-vagrant.com${NC}"
 
@@ -52,16 +52,10 @@ exec_command "apt-get update"
 # Upgrade APT
 highlight_text "Upgrade APT..."
 exec_command "apt-get -y upgrade -o Dpkg::Options::=\"--force-confdef\" -o Dpkg::Options::=\"--force-confold\""
-# -o Dpkg::Options::="--force-confdef" \
-# -o Dpkg::Options::="--force-confold" \
 
 # Install required APT packages
 highlight_text "Install required APT packages..."
 exec_command "apt-get -y install build-essential libevent-dev libncurses-dev zip unzip"
-
-# Clean up APT
-highlight_text "Clean up APT..."
-exec_command "apt-get autoremove -yf"
 
 # Set home directory
 # highlight_text "Set home directory..."

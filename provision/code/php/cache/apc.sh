@@ -19,13 +19,13 @@ highlight_text "Configure Opcache..."
 # exec_command "apt-get -y install php7.2-opcache"
 
 # Restart Apache
-if [ "$APACHE" === "true" ]; then
+if [ "$APACHE" == "true" ]; then
     highlight_text "Restart Apache..."
     exec_command "sudo service apache2 restart"
 fi
 
 # Restart NGINX
-if [ "$NGINX" === "true" ]; then
+if [ "$NGINX" == "true" ]; then
     highlight_text "Restart NGINX..."
     exec_command "sudo service nginx restart"
 fi

@@ -25,19 +25,19 @@ exec_command "sudo systemctl enable redis-server.service"
 highlight_text "Restart Redis..."
 exec_command "sudo systemctl restart redis-server.service"
 
-if [ "$PHP" === "true" ]; then
+if [ "$PHP" == "true" ]; then
     # Install Redis PHP extension
     highlight_text "Install Redis PHP extension..."
     exec_command "sudo apt-get install php-redis"
 
     # Restart Apache
-    if [ "$APACHE" === "true" ]; then
+    if [ "$APACHE" == "true" ]; then
         highlight_text "Restart Apache"
         exec_command "sudo service apache2 restart"
     fi
 
     # Restart NGINX
-    if [ "$NGINX" === "true" ]; then
+    if [ "$NGINX" == "true" ]; then
         highlight_text "Restart NGINX"
         exec_command "sudo service nginx restart"
     fi

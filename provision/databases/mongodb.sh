@@ -6,7 +6,7 @@ export LOG_FILE_PATH=databases/mongodb.log
 
 MONGODB_CONFIG_FILE_PATH=/etc/mongodb.conf
 
-title 'MongoDB'
+title "MongoDB"
 
 # Install MongoDB
 highlight_text "Install MongoDB..."

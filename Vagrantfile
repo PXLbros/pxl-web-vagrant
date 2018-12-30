@@ -69,8 +69,8 @@ Vagrant.configure('2') do |config|
     config.vm.box = 'bento/ubuntu-18.04'
 
     # Set static IP
-    if !vagrant_config['network']['ip'].empty?
-        config.vm.network :private_network, ip: vagrant_config['network']['ip']
+    if !vagrant_config['vm']['ip'].empty?
+        config.vm.network :private_network, ip: vagrant_config['vm']['ip']
     end
 
     # SSH configuration

@@ -44,13 +44,13 @@ then
     # Install gpakosz
     if [ ! -d "$HOME/.tmux" ] # If gpakosz isn't installed
     then
-        highlight_text 'Install gpakosz...'
+        highlight_text "Install gpakosz..."
 
         cd $HOME
 
-        exec_command 'git clone https://github.com/gpakosz/.tmux.git'
-        exec_command 'ln -s -f .tmux/.tmux.conf'
-        exec_command 'cp .tmux/.tmux.conf.local .'
+        exec_command "git clone https://github.com/gpakosz/.tmux.git"
+        exec_command "ln -s -f .tmux/.tmux.conf"
+        exec_command "cp .tmux/.tmux.conf.local ."
 
         # Enable mouse by default
         exec_command "sed -i '/set -g mouse on/s/^#//' $TMUX_CONF_FILE"

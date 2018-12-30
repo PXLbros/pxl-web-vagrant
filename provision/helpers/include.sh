@@ -5,7 +5,7 @@ LOG_LINE_SEPARATOR="------------------------------------------------------------
 PROVISIONING_STATS_FILE_PATH=/vagrant/.provisioning
 
 LOGS_DIR=/vagrant/logs
-PROVISIONS_LOG_DIR=$LOGS_DIR/provisions
+PROVISIONS_LOG_DIR=$LOGS_DIR/provision
 ERROR_LOG_PATH=$LOGS_DIR/errors.log
 
 if [ -z "$LOG_FILE_PATH" ]; then

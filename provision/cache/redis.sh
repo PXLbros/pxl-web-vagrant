@@ -10,7 +10,7 @@ REDIS_CONFIG_FILE_PATH=/etc/redis/redis.conf
 
 # Install Redis
 highlight_text "Install Redis..."
-exec_command "sudo apt-get install redis-server"
+exec_command "sudo apt-get -y install redis-server"
 
 # Enable Redis to start on boot...
 highlight_text "Enable Redis to start on boot..."

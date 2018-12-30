@@ -4,7 +4,7 @@
 
 # Clean up APT
 highlight_text "Clean up APT..."
-exec_command "apt-get autoremove -yf"
+exec_command "sudo apt-get autoremove -yf"
 
 line_break
 

@@ -98,16 +98,16 @@ Vagrant.configure('2') do |config|
 
     # Git
     gitconfig = Pathname.new("#{Dir.home}/.gitconfig")
-    config.vm.provision 'shell', name: 'Git', :inline => "echo -e '#{gitconfig.read()}' > '/home/vagrant/.gitconfig'", privileged: false if gitconfig.exist?
+    config.vm.provision 'shell', name: 'Git', :inline => "echo -e '#{gitconfig.read()}' > '/home/vagrant/.gitconfig'", privileged: false, env: GLOBAL_VARIABLES if gitconfig.exist?
 
     # Node
-    config.vm.provision 'shell', name: 'Node', path: "#{VAGRANT_DIR}/provision/code/node.sh", run: 'once', privileged: false
+    config.vm.provision 'shell', name: 'Node', path: "#{VAGRANT_DIR}/provision/code/node.sh", run: 'once', privileged: false, env: GLOBAL_VARIABLES
 
     # Yarn
-    config.vm.provision 'shell', name: 'Yarn', path: "#{VAGRANT_DIR}/provision/code/yarn.sh", run: 'once', privileged: false
+    config.vm.provision 'shell', name: 'Yarn', path: "#{VAGRANT_DIR}/provision/code/yarn.sh", run: 'once', privileged: false, env: GLOBAL_VARIABLES
 
     # Vim
-    config.vm.provision 'shell', name: 'Vim', path: "#{VAGRANT_DIR}/provision/shell/vim.sh", run: 'once', privileged: false
+    config.vm.provision 'shell', name: 'Vim', path: "#{VAGRANT_DIR}/provision/shell/vim.sh", run: 'once', privileged: false, env: GLOBAL_VARIABLES
 
     # tmux
     if vagrant_config['shell']['tmux']['enabled']
@@ -121,7 +121,7 @@ Vagrant.configure('2') do |config|
 
     # Liquid Prompt
     if vagrant_config['shell']['liquidprompt']['enabled']
-        config.vm.provision 'shell', name: 'Liquid Prompt', path: "#{VAGRANT_DIR}/provision/shell/liquidprompt.sh", run: 'once', privileged: false
+        config.vm.provision 'shell', name: 'Liquid Prompt', path: "#{VAGRANT_DIR}/provision/shell/liquidprompt.sh", run: 'once', privileged: false, env: GLOBAL_VARIABLES
     end
 
     # Install web servers
@@ -160,13 +160,13 @@ Vagrant.configure('2') do |config|
         # Memcached
         if vagrant_config['code']['php']['cache']['memcached']['enabled']
             # Install Memcached
-            config.vm.provision 'shell', name: "Memcached", path: "#{VAGRANT_DIR}/provision/code/php/cache/memcached.sh", privileged: true, run: 'once'
+            config.vm.provision 'shell', name: "Memcached", path: "#{VAGRANT_DIR}/provision/code/php/cache/memcached.sh", privileged: true, env: GLOBAL_VARIABLES, run: 'once'
         end
 
         # APC
         if vagrant_config['code']['php']['cache']['apc']['enabled']
             # Install APC
-            config.vm.provision 'shell', name: "APC", path: "#{VAGRANT_DIR}/provision/code/php/cache/apc.sh", privileged: true, run: 'once'
+            config.vm.provision 'shell', name: "APC", path: "#{VAGRANT_DIR}/provision/code/php/cache/apc.sh", privileged: true, env: GLOBAL_VARIABLES, run: 'once'
         end
     end
 
@@ -174,24 +174,24 @@ Vagrant.configure('2') do |config|
     vagrant_config['databases'].each do |database_name, database_vagrant_config|
         if database_vagrant_config['enabled'] == true
             # Install database
-            config.vm.provision 'shell', name: "Web Server: #{database_name}", path: "#{VAGRANT_DIR}/provision/databases/#{database_name}.sh", privileged: true, run: 'once'
+            config.vm.provision 'shell', name: "Web Server: #{database_name}", path: "#{VAGRANT_DIR}/provision/databases/#{database_name}.sh", privileged: true, env: GLOBAL_VARIABLES, run: 'once'
         end
     end
 
     # Redis
     if vagrant_config['cache']['redis']['enabled']
         # Install Redis
-        config.vm.provision 'shell', name: "Redis", path: "#{VAGRANT_DIR}/provision/cache/redis.sh", privileged: true, run: 'once'
+        config.vm.provision 'shell', name: "Redis", path: "#{VAGRANT_DIR}/provision/cache/redis.sh", privileged: true, env: GLOBAL_VARIABLES, run: 'once'
     end
 
     # Run user provision scripts (TODO: do this in user.sh instead)
     Dir.glob("#{VAGRANT_DIR}/provision/user/*.sh").each do |user_file_path|
-        config.vm.provision 'shell', name: "User Script (#{user_file_path})", path: user_file_path, privileged: false, run: 'once'
+        config.vm.provision 'shell', name: "User Script (#{user_file_path})", path: user_file_path, privileged: false, env: GLOBAL_VARIABLES, run: 'once'
     end
 
     # User script
-    config.vm.provision 'shell', name: 'User Script', path: "#{VAGRANT_DIR}/provision/user.sh", privileged: false, run: 'once'
+    config.vm.provision 'shell', name: 'User Script', path: "#{VAGRANT_DIR}/provision/user.sh", privileged: false, env: GLOBAL_VARIABLES, run: 'once'
 
     # Finalize
-    config.vm.provision 'shell', name: 'Finalize', path: "#{VAGRANT_DIR}/provision/finalize.sh", privileged: false, run: 'once'
+    config.vm.provision 'shell', name: 'Finalize', path: "#{VAGRANT_DIR}/provision/finalize.sh", privileged: false, env: GLOBAL_VARIABLES, run: 'once'
 end

@@ -26,9 +26,9 @@ exec_command "sudo sed -i 's/PrintLastLog yes/PrintLastLog no/' /etc/ssh/sshd_co
 exec_command "sudo sed -i 's/#PrintLastLog/PrintLastLog/' /etc/ssh/sshd_config"
 exec_command "sudo /etc/init.d/ssh restart"
 
-exec_command 'sudo chmod -x /etc/update-motd.d/*'
+exec_command "sudo chmod -x /etc/update-motd.d/*"
 
-highlight_text 'Set custom welcome message...'
+highlight_text "Set custom welcome message..."
 
 exec_command "echo \"$WELCOME_MESSAGE\" | sudo tee $WELCOME_MESSAGE_PATH"
 

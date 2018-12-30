@@ -6,8 +6,8 @@ export LOG_FILE_PATH=code/yarn.log
 
 title 'Yarn'
 
-# Update apt
-highlight_text 'Update APT...'
+# Update APT
+highlight_text "Update APT..."
 
 exec_command "curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -"
 exec_command "echo \"deb https://dl.yarnpkg.com/debian/ stable main\" | sudo tee /etc/apt/sources.list.d/yarn.list"

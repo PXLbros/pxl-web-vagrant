@@ -22,7 +22,7 @@ fi
 if [ ! -x "$(command -v mysql)" ]; # If MySQL isn't installed
 then
     # Set root password
-    highlight_text "Set MySQL root password to \"$MYSQL_ROOT_PASSWORD\"..."
+    highlight_text "Set MySQL root password..."
 
     exec_command debconf-set-selections <<< "mysql-server mysql-server/root_password password $MYSQL_ROOT_PASSWORD"
     exec_command debconf-set-selections <<< "mysql-server mysql-server/root_password_again password $MYSQL_ROOT_PASSWORD"
@@ -35,7 +35,7 @@ then
     if [ -x "$(command -v mysql)" ];
     then
         # Create user
-        highlight_text "Create MySQL Vagrant user \"$MYSQL_USER_NAME\" with password \"$MYSQL_USER_PASSWORD\"..."
+        highlight_text "Create MySQL Vagrant user..."
 
         exec_command "echo \"CREATE USER IF NOT EXISTS '$MYSQL_USER_NAME'@'localhost' IDENTIFIED BY '$MYSQL_USER_PASSWORD';\" | mysql -u $MYSQL_ROOT_USER --password=\"$MYSQL_ROOT_PASSWORD\""
         exec_command "echo \"CREATE USER IF NOT EXISTS '$MYSQL_USER_NAME'@'%' IDENTIFIED BY '$MYSQL_USER_PASSWORD';\" | mysql -u $MYSQL_ROOT_USER --password=\"$MYSQL_ROOT_PASSWORD\""

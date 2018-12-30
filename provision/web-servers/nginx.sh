@@ -6,8 +6,6 @@ export LOG_FILE_PATH=web-servers/nginx.log
 
 title 'NGINX'
 
-export NGINX_PORT=$PORT
-
 if [ "$NGINX_PORT" != "80" ];
 then
     if ! grep -qF "export NGINX_PORT" /home/vagrant/.bashrc

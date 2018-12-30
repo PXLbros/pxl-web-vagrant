@@ -29,12 +29,16 @@ GLOBAL_VARIABLES = {
     'VERSION': VERSION,
     'BUILD_DATE': BUILD_DATE,
 
+    'LANGUAGE': "#{vagrant_config['language-iso']}.UTF-8",
+    'LANG': "#{vagrant_config['language-iso']}.UTF-8",
+    'LC_ALL': "#{vagrant_config['language-iso']}.UTF-8",
+
     'VAGRANT_NAME': vagrant_config['vm']['name'],
-    'LANGUAGE_ISO': vagrant_config['language-iso'],
     'TIMEZONE': vagrant_config['timezone'],
 
     'PROVISION_SHOW_COMMAND_DESCRIPTION': vagrant_config['vm']['provision']['show-command-description'],
     'PROVISION_SHOW_COMMAND': vagrant_config['vm']['provision']['show-command'],
+    'PROVISION_SHOW_COMMAND_OUTPUT': vagrant_config['vm']['provision']['show-command-output'],
     'PROVISION_SHOW_COMMAND_EXECUTION_TIME': vagrant_config['vm']['provision']['show-command-execution-time'],
     'PROVISION_SHOW_COMMAND_EXIT_CODE': vagrant_config['vm']['provision']['show-command-exit-code'],
 
@@ -87,7 +91,7 @@ Vagrant.configure('2') do |config|
     config.vm.provision 'shell', name: 'Initialize', path: "#{VAGRANT_DIR}/provision/initialize.sh", privileged: true, run: 'once', env: GLOBAL_VARIABLES
 
     # Welcome message
-    config.vm.provision 'shell', name: 'Welcome Message', path: "#{VAGRANT_DIR}/provision/welcome-message.sh", privileged: true, run: 'once', env: GLOBAL_VARIABLES
+    config.vm.provision 'shell', name: 'Welcome Message', path: "#{VAGRANT_DIR}/provision/shell/welcome-message.sh", privileged: true, run: 'once', env: GLOBAL_VARIABLES
 
     # Generate .bash_profile
     config.vm.provision 'shell', name: '.bash_profile', path: "#{VAGRANT_DIR}/provision/shell/bash_profile.sh", privileged: false, run: 'once', env: GLOBAL_VARIABLES
@@ -100,7 +104,7 @@ Vagrant.configure('2') do |config|
     config.vm.provision 'shell', name: 'Node', path: "#{VAGRANT_DIR}/provision/code/node.sh", run: 'once', privileged: false
 
     # Yarn
-    config.vm.provision 'shell', name: 'Yarn', path: "#{VAGRANT_DIR}/provision/yarn.sh", run: 'once', privileged: false
+    config.vm.provision 'shell', name: 'Yarn', path: "#{VAGRANT_DIR}/provision/code/yarn.sh", run: 'once', privileged: false
 
     # Vim
     config.vm.provision 'shell', name: 'Vim', path: "#{VAGRANT_DIR}/provision/shell/vim.sh", run: 'once', privileged: false
@@ -128,11 +132,13 @@ Vagrant.configure('2') do |config|
             if web_server_vagrant_config['enabled'] == true
                 if web_server_name === 'apache'
                     port_out = (web_server_vagrant_config['port'] || 7001)
+
+                    GLOBAL_VARIABLES['APACHE_PORT'] = web_server_port_in
                 elsif web_server_name === 'nginx'
                     port_out = (web_server_vagrant_config['port'] || 7002)
-                end
 
-                GLOBAL_VARIABLES['WEB_SERVER_PORT_IN'] = web_server_port_in
+                    GLOBAL_VARIABLES['NGINX_PORT'] = web_server_port_in
+                end
 
                 # Install web server
                 config.vm.provision 'shell', name: "Web Server: #{web_server_name}", path: "#{VAGRANT_DIR}/provision/web-servers/#{web_server_name}.sh", privileged: false, run: 'once', env: GLOBAL_VARIABLES

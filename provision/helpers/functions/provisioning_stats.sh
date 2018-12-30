@@ -43,8 +43,7 @@ print_provisioning_stats() {
         error_text "There were $num_errors errors of $num_total total commands."
         error_text "See logs/ folder for more details."
     else
-        highlight_text "\nPXL Web Vagrant has been provisioned."
-        highlight_text "Start by running command \"vagrant ssh\"."
+        highlight_text "\nPXL Web Vagrant has been provisioned.\nStart by running command \"vagrant ssh\"."
     fi
 }
 

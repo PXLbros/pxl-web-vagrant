@@ -1,6 +1,9 @@
 {
+  "name": "pxl-web-vagrant",
+  "description": "A Ubuntu Vagrant environment for web development.",
   "version": "1.0.0",
   "license": "ISC",
+  "author": "PXL Agency",
   "scripts": {
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
@@ -8,5 +11,13 @@
   },
   "devDependencies": {
     "electron": "^4.0.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PXLbros/pxl-web-vagrant.git"
+  },
+  "bugs": {
+    "url": "https://github.com/PXLbros/pxl-web-vagrant/issues"
+  },
+  "homepage": "https://pxlbros.github.io/pxl-web-vagrant"
 }

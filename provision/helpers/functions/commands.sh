@@ -20,17 +20,19 @@ exec_command() {
 
     # Execute command
     local command_output=`eval $command`
+    # local command_output=`eval "$command"`
+    # eval "$command"
+
     local command_exit_code=$?
 
     # Save command ouput to log file
     echo -e "\nOutput:\n$command_output" >> $LOG_FILE_PATH
-    echo -e "\n$LOG_LINE_SEPARATOR\n" >> $LOG_FILE_PATH
 
     if [ $command_exit_code -eq 0 ]; then # Command executed successfully
         success=true
 
         # Print command ouput
-        [ "$SHOW_COMMAND_OUTPUT" == "true" ] && echo $command_output
+        [ "$PROVISION_SHOW_COMMAND_OUTPUT" == "true" ] && echo $command_output
 
         # Update provisioning stats file
         update_provisioning_stats success
@@ -43,21 +45,27 @@ exec_command() {
     fi
 
     # Calculate total execution time
+    local end_time=$(date +%s.%N)
+    local time_total=$(echo "$end_time - $start_time" | bc)
+
+    local dd=$(echo "$time_total / 86400" | bc)
+    local dt2=$(echo "$time_total - 86400 * $dd" | bc)
+    local dh=$(echo "$dt2 / 3600" | bc)
+    local dt3=$(echo "$dt2 - 3600 * $dh" | bc)
+
+    local execution_time_in_minutes=$(echo "$dt3 / 60" | bc)
+    local execution_time_in_seconds=$(echo "$dt3 - 60 * $execution_time_in_minutes" | bc)
+
+    # Show command execution time
     if [ "$PROVISION_SHOW_COMMAND_EXECUTION_TIME" == "true" ]; then
-        local end_time=$(date +%s.%N)
-        local time_total=$(echo "$end_time - $start_time" | bc)
-
-        local dd=$(echo "$time_total / 86400" | bc)
-        local dt2=$(echo "$time_total - 86400 * $dd" | bc)
-        local dh=$(echo "$dt2 / 3600" | bc)
-        local dt3=$(echo "$dt2 - 3600 * $dh" | bc)
-
-        local execution_time_in_minutes=$(echo "$dt3 / 60" | bc)
-        local execution_time_in_seconds=$(echo "$dt3 - 60 * $execution_time_in_minutes" | bc)
-
-        # Show command execution time
         [ "$PROVISION_SHOW_COMMAND" == "true" ] && printf "${CYAN}Execution Time:${NC} \e[3m%0.2fs\e[0m\n" $execution_time_in_seconds
     fi
+
+    # Save execution time to log file
+    printf "\nExecution Time: %0.2f\n" $execution_time_in_seconds >> $LOG_FILE_PATH
+
+    # Save exit code to log file
+    echo -e "Exit Code: $command_exit_code" >> $LOG_FILE_PATH
 
     # Show success/fail message
     if [ "$PROVISION_SHOW_COMMAND" == "true" ]; then
@@ -77,4 +85,6 @@ exec_command() {
         # Print new line
         line_break
     fi
+
+    echo -e "\n$LOG_LINE_SEPARATOR\n" >> $LOG_FILE_PATH
 }

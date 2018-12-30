@@ -6,8 +6,6 @@ export LOG_FILE_PATH=web-servers/apache.log
 
 title 'Apache'
 
-export APACHE_PORT=$PORT
-
 if ! grep -qF "export APACHE_PORT" $HOME/.bashrc
 then
     exec_command "echo -e \"\nexport APACHE_PORT=$APACHE_PORT\" >> $HOME/.bashrc"

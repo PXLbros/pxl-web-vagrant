@@ -26,12 +26,6 @@ if [ -x "$(command -v nginx)" ]; then
         fi
     fi
 
-    # Delete Apache home page if Apache is not installed
-    if [[ ! -x "$(command -v apache)" ]]; then
-        highlight_text "Delete default Apache home page file..."
-        exec_command "sudo rm /var/www/html/index.html"
-    fi
-
     # Restart NGINX
     highlight_text "Restart NGINX..."
     exec_command "sudo service nginx start"

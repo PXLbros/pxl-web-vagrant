@@ -35,11 +35,9 @@ for PHP_VERSION in "${PHP_VERSIONS[@]}"; do
         exec_command "apt-get -y install php$PHP_VERSION-$PHP_COMMON_MODULE"
     done
 
-    if [ -x "$(command -v php$PHP_VERSION)" ];
-    then
+    if [ -x "$(command -v php$PHP_VERSION)" ]; then
         # Install PHP mcrypt extension
-        if [ "$PHP_VERSION" == "7.3" ] || [ "$PHP_VERSION" == "7.2" ]
-        then
+        if [ "$PHP_VERSION" == "7.3" ] || [ "$PHP_VERSION" == "7.2" ]; then
             exec_command "apt-get install php-dev libmcrypt-dev php-pear -y"
             exec_command "pecl channel-update pecl.php.net"
 
@@ -58,20 +56,22 @@ for PHP_VERSION in "${PHP_VERSIONS[@]}"; do
         fi
 
         # Install user modules
-        if [ -z $PHP_USER_MODULES ]; then
+        if [[ ! -z $PHP_USER_MODULES ]]; then
             highlight_text "Install user modules..."
 
             PHP_USER_MODULES=($PHP_USER_MODULES)
 
+            echo "PHP_USER_MODULES:"
+            echo $PHP_USER_MODULES
+
             for PHP_USER_MODULE in "${PHP_USER_MODULES[@]}"; do
-                exec_command "apt-get install -y $PHP_USER_MODULE"
+                exec_command "apt-get install -y php$PHP_VERSION-$PHP_USER_MODULE"
             done
         fi
     fi
 done
 
-for PHP_VERSION in "${PHP_VERSIONS[@]}"
-do
+for PHP_VERSION in "${PHP_VERSIONS[@]}"; do
     if [ -x "$(command -v php$PHP_VERSION)" ]; then
         highlight_text "Fix PHP $PHP_VERSION permissions..."
 
@@ -99,8 +99,7 @@ do
     fi
 done
 
-if [ -x "$(command -v php)" ];
-then
+if [ -x "$(command -v php)" ]; then
     # Restart Apache
     if [ "$APACHE" == "true" ]; then
         highlight_text "Restart Apache..."
@@ -109,7 +108,6 @@ then
 
     # Download Composer
     highlight_text "Install Composer..."
-
     exec_command "curl -sS https://getcomposer.org/installer | php"
 
     if [ -e composer.phar ]; then
@@ -119,5 +117,18 @@ then
         grep -q -F 'PATH="$PATH:$HOME/.composer/vendor/bin"' /home/vagrant/.profile || exec_command "echo -e '\nPATH=\"\$PATH:\$HOME/.composer/vendor/bin\"' >> /home/vagrant/.profile"
     else
         red_text "Could not download Composer."
+    fi
+fi
+
+# Delete Apache home page if Apache is not installed
+if [[ ! -x "$(command -v apache)" ]]; then
+    highlight_text "Delete default Apache home page file..."
+
+    DEFAULT_APACHE_HOME_PAGE_FILE=/var/www/html/index.html
+
+    if [ -f $DEFAULT_APACHE_HOME_PAGE_FILE ]; then
+        exec_command "sudo rm $DEFAULT_APACHE_HOME_PAGE_FILE"
+    else
+        echo "APACHE DEFAULT HOME PAGE FILE DOES NOT EXIST!"
     fi
 fi

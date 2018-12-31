@@ -33,7 +33,7 @@ print_provisioning_stats() {
     fi
 
     local file_contents=`cat $PROVISIONING_STATS_FILE_PATH`
-    local results=(${FILE_CONTENTS//;/ })
+    local results=(${file_contents//;/ })
 
     local num_successful=${results[0]}
     local num_errors=${results[1]}
@@ -44,8 +44,6 @@ print_provisioning_stats() {
     else
         local error_word="errors"
     fi
-
-    echo "NUM ERRORS: $num_errors"
 
     if (( num_errors > 0 )); then
         error_text "There were $num_errors $error_word of $num_total total commands."

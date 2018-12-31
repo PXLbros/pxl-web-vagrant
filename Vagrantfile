@@ -52,6 +52,7 @@ GLOBAL_VARIABLES = {
     'GPAKOSZ': (vagrant_config['shell']['tmux']['gpakosz']['enabled'] || false),
 
     'PHP_VERSIONS': vagrant_config['code']['php']['versions'].join(' '),
+    'PHP_MODULES': vagrant_config['code']['php']['modules'].join(' '),
 
     'MEMCACHED': (vagrant_config['code']['php']['cache']['memcached']['enabled'] ? true : false),
     'APC': (vagrant_config['code']['php']['cache']['apc']['enabled'] ? true : false)

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export LOG_FILE_PATH=shell/welcome-message.sh
+
 . /vagrant/provision/helpers/include.sh
 
 WELCOME_MESSAGE_PATH=/etc/update-motd.d/01-custom

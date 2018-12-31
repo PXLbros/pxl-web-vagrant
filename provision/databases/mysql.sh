@@ -19,8 +19,8 @@ then
     exec_command "echo -e \"\nexport MYSQL_USER_NAME=$MYSQL_USER_NAME\nexport MYSQL_USER_PASSWORD=$MYSQL_USER_PASSWORD\" >> /home/vagrant/.bashrc"
 fi
 
-if [ ! -x "$(command -v mysql)" ]; # If MySQL isn't installed
-then
+# If MySQL isn't installed
+if [ ! -x "$(command -v mysql)" ]; then
     # Set root password
     highlight_text "Set MySQL root password..."
 
@@ -50,10 +50,21 @@ then
         exec_command sed -i \'s/^skip-external-locking/#skip-external-locking/\' $MYSQL_CONFIG_PATH
 
         # Restart MySQL
-        highlight_text 'Restart MySQL...'
+        highlight_text "Restart MySQL..."
 
         exec_command service mysql restart
     fi
 else
-    warning_text 'Already installed.'
+    warning_text "Already installed."
+fi
+
+# Install PHP module
+if [ -x "$(command -v mysql)" ]; then
+    PHP_VERSIONS=($PHP_VERSIONS)
+
+    highlight_text "Install PHP MySQL module..."
+
+    for PHP_VERSION in "${PHP_VERSIONS[@]}"; do
+        exec_command "apt-get install -y php$PHP_VERSION-mysql"
+    done
 fi

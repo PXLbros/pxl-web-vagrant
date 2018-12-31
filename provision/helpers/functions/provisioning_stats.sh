@@ -39,13 +39,13 @@ print_provisioning_stats() {
     local num_errors=${results[1]}
     local num_total=$((num_successful + num_errors))
 
-    if [ "$num_total" == "1" ]; then
+    if [ "$num_errors" == "1" ]; then
         local error_word="error"
     else
         local error_word="errors"
     fi
 
-    if (( num_total > 0 )); then
+    if (( num_errors > 0 )); then
         error_text "There were $num_errors $error_word of $num_total total commands."
         error_text "See logs/ folder for more details."
     else

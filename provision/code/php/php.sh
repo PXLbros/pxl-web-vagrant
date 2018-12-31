@@ -5,45 +5,47 @@ export LOG_FILE_PATH=code/php.log
 . /vagrant/provision/helpers/include.sh
 
 PHP_VERSIONS=($PHP_VERSIONS)
+PHP_COMMON_MODULES=(
+    "fpm"
+    "curl"
+    "gd"
+    "mbstring"
+    "xml"
+    "zip"
+    "soap"
+    "bcmath"
+)
+PHP_USER_MODULES=($PHP_USER_MODULES)
 
 # Install PHP dependencies
-title 'PHP'
+title "PHP"
 
-highlight_text 'Install PHP dependencies...'
-
+highlight_text "Install PHP dependencies..."
 exec_command "apt-get -y install software-properties-common"
 exec_command "add-apt-repository -y ppa:ondrej/apache2"
 exec_command "add-apt-repository -y ppa:ondrej/php"
 exec_command "apt-get update -y"
 
-for PHP_VERSION in "${PHP_VERSIONS[@]}"
-do
+for PHP_VERSION in "${PHP_VERSIONS[@]}"; do
     highlight_text "Install PHP $PHP_VERSION..."
+    exec_command "apt-get -y install php$PHP_VERSION"
 
-    # Install PHP version and common extensions
-    exec_command apt-get -y install \
-        php${PHP_VERSION} \
-        php${PHP_VERSION}-fpm \
-        php${PHP_VERSION}-curl \
-        php${PHP_VERSION}-gd \
-        php${PHP_VERSION}-mysql \
-        php${PHP_VERSION}-mbstring \
-        php${PHP_VERSION}-xml \
-        php${PHP_VERSION}-zip \
-        php${PHP_VERSION}-soap \
-        php${PHP_VERSION}-bcmath
+    # Install common modules
+    for PHP_COMMON_MODULE in "${PHP_COMMON_MODULE[@]}"; do
+        exec_command "apt-get -y install php$PHP_VERSION-$PHP_COMMON_MODULE"
+    done
 
     if [ -x "$(command -v php$PHP_VERSION)" ];
     then
         # Install PHP mcrypt extension
         if [ "$PHP_VERSION" == "7.3" ] || [ "$PHP_VERSION" == "7.2" ]
         then
-            exec_command 'apt-get install php-dev libmcrypt-dev php-pear -y'
-            exec_command 'pecl channel-update pecl.php.net'
+            exec_command "apt-get install php-dev libmcrypt-dev php-pear -y"
+            exec_command "pecl channel-update pecl.php.net"
 
             if ! pecl list | grep mcrypt
             then
-                exec_command 'pecl install mcrypt-1.0.1'
+                exec_command "pecl install mcrypt-1.0.1"
             fi
 
             # Add line to php.ini configuration file
@@ -53,7 +55,16 @@ do
                 exec_command "echo -e \"\nextension=mcrypt.so\" >> $PHP_INI_FILE_PATH"
             fi
         else
-            exec_command apt-get -y install php${PHP_VERSION}-mcrypt
+            exec_command "apt-get -y install php${PHP_VERSION}-mcrypt"
+        fi
+
+        # Install user modules
+        if [ -z $PHP_USER_MODULES ]; then
+            highlight_text "Install user modules..."
+
+            for PHP_USER_MODULE in "${PHP_USER_MODULES[@]}"; do
+                exec_command "apt-get install -y $PHP_USER_MODULE"
+            done
         fi
     fi
 done
@@ -91,25 +102,23 @@ done
 if [ -x "$(command -v php)" ];
 then
     # Restart Apache
-    if [ $APACHE = "true" ]
-    then
+    if [ "$APACHE" == "true" ]; then
         highlight_text 'Restart Apache...'
 
         exec_command service apache2 restart
     fi
 
     # Download Composer
-    highlight_text 'Install Composer...'
+    highlight_text "Install Composer..."
 
-    exec_command 'curl -sS https://getcomposer.org/installer | php'
+    exec_command "curl -sS https://getcomposer.org/installer | php"
 
-    if [ -e composer.phar ];
-    then
+    if [ -e composer.phar ]; then
         # Install Composer
         exec_command "sudo mv composer.phar /usr/local/bin/composer"
         exec_command "sudo mkdir -p /root/.composer"
         grep -q -F 'PATH="$PATH:$HOME/.composer/vendor/bin"' /home/vagrant/.profile || exec_command "echo -e '\nPATH=\"\$PATH:\$HOME/.composer/vendor/bin\"' >> /home/vagrant/.profile"
     else
-        red_text 'Could not download Composer.'
+        red_text "Could not download Composer."
     fi
 fi

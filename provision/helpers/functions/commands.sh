@@ -73,7 +73,7 @@ exec_command() {
             green_text "Success!"
         else
             # Save to error log file
-            echo -e "Command:\n$command\n\nOutput:\n$command_output\n\n\nExecution Time: %0.2fs\nExit Code: $command_exit_code\n\n$LOG_LINE_SEPARATOR\n\n" >> $ERROR_LOG_PATH
+            printf "Command:\n$command\n\nOutput:\n$command_output\n\n\nExecution Time: %0.2fs\nExit Code: $command_exit_code\n\n$LOG_LINE_SEPARATOR\n\n" >> $ERROR_LOG_PATH
 
             if [ "$PROVISION_SHOW_COMMAND_EXIT_CODE" == "true" ]; then
                 red_text "Fail! ($command_exit_code)"

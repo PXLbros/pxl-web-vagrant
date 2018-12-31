@@ -21,11 +21,11 @@ title "PXL Web Vagrant"
 echo -e "${BLUE}v${VERSION} (Built on $BUILD_DATE)${NC}"
 echo -e "${BLUE}https://github.com/PXLbros/pxl-web-vagrant${NC}"
 
-line_break
+# line_break
 
 # echo -e "🇺🇸  ${BLUE}Made by${NC} ${YELLOW}PXL Agency (Los Angeles, USA)${NC}"
-echo -e "🌎 ${BLUE}See documentation at${NC} ${YELLOW}${UNDERLINE}pxl-web-vagrant.com${NC}${NC}"
-echo -e "✉️  ${BLUE}hello@pxl-web-vagrant.com${NC}"
+# echo -e "🌎 ${BLUE}See documentation at${NC} ${YELLOW}${UNDERLINE}pxl-web-vagrant.com${NC}${NC}${BLUE}.${NC}"
+# echo -e "✉️  ${BLUE}hello@pxl-web-vagrant.com${NC}"
 
 line_break
 

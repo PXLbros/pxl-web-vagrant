@@ -1,6 +1,6 @@
 const commandLineArgs = require('command-line-args');
 const { existsSync, writeFileSync } = require('fs');
-const { exec, test } = require('shelljs');
+const { exec } = require('shelljs');
 const { bold, yellow, red, cyan } = require('chalk');
 const { ask_confirm, ask_input, ask_php_version } = require('../../utils/ask');
 const log = console.log;

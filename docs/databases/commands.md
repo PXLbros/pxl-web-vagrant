@@ -1,18 +1,16 @@
 ---
-title: Databases
+title: Commands
 ---
 
-# Databases
+# Commands
 
-## Commands
+## `create_database`
 
-### `create_database`
+### Interactive
 
-#### Interactive
+### Noninteractive
 
-#### Noninteractive
-
-##### Options
+#### Options
 
 * `--driver` (Driver/type, .e.g `--driver=mysql`)
 * `--name` (Name of database, .e.g. `--name=my_database`)
@@ -23,11 +21,11 @@ create_database \
     --name=my_database
 ```
 
-### `delete_database`
+## `delete_database`
 
-#### Noninteractive
+### Noninteractive
 
-##### Options
+#### Options
 
 * `--driver` (Driver/type, .e.g `--driver=mysql`)
 * `--name` (Name of database, .e.g. `--name=my_database`)

@@ -29,14 +29,13 @@ GLOBAL_VARIABLES = {
     'VERSION': VERSION,
     'BUILD_DATE': BUILD_DATE,
 
-    'LANGUAGE': "#{vagrant_config['language-iso']}.UTF-8",
-    'LANG': "#{vagrant_config['language-iso']}.UTF-8",
-    'LC_ALL': "#{vagrant_config['language-iso']}.UTF-8",
+    'LANGUAGE': "#{vagrant_config['vm']['locale']['language-iso']}.UTF-8",
+    'LANG': "#{vagrant_config['vm']['locale']['language-iso']}.UTF-8",
+    'LC_ALL': "#{vagrant_config['vm']['locale']['language-iso']}.UTF-8",
 
     'VAGRANT_NAME': vagrant_config['vm']['name'],
-    'TIMEZONE': vagrant_config['timezone'],
+    'TIMEZONE': vagrant_config['vm']['locale']['timezone'],
 
-    'PROVISION_SHOW_COMMAND_DESCRIPTION': vagrant_config['vm']['provision']['show-command-description'],
     'PROVISION_SHOW_COMMAND': vagrant_config['vm']['provision']['show-command'],
     'PROVISION_SHOW_COMMAND_OUTPUT': vagrant_config['vm']['provision']['show-command-output'],
     'PROVISION_SHOW_COMMAND_EXECUTION_TIME': vagrant_config['vm']['provision']['show-command-execution-time'],

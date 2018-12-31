@@ -4,36 +4,35 @@ export LOG_FILE_PATH=web-servers/nginx.log
 
 . /vagrant/provision/helpers/include.sh
 
-title 'NGINX'
+title "NGINX"
 
-if [ "$NGINX_PORT" != "80" ];
-then
-    if ! grep -qF "export NGINX_PORT" /home/vagrant/.bashrc
-    then
-        exec_command "echo -e \"\nexport NGINX_PORT=$NGINX_PORT\" >> /home/vagrant/.bashrc"
-    fi
+if ! grep -qF "export NGINX_PORT" /home/vagrant/.bashrc; then
+    exec_command "echo -e \"\nexport NGINX_PORT=$NGINX_PORT\" >> /home/vagrant/.bashrc"
 fi
 
 # Install NGINX
-highlight_text 'Install NGINX...'
-exec_command sudo apt-get install nginx -y
+highlight_text "Install NGINX..."
+exec_command "sudo apt-get install nginx -y"
 
-if [ -x "$(command -v nginx)" ];
-then
+if [ -x "$(command -v nginx)" ]; then
     # Give Vagrant permission to edit NGINX site configuration files
-    highlight_text 'Give Vagrant user permission to NGINX /etc/nginx/sites-available directory...'
-    exec_command sudo chown -R vagrant:vagrant /etc/nginx/sites-available
+    highlight_text "Give Vagrant user permission to NGINX /etc/nginx/sites-available directory..."
+    exec_command "sudo chown -R vagrant:vagrant /etc/nginx/sites-available"
 
     # Update port in default site
-    if [ "$NGINX_PORT" != "80" ];
-    then
-        if [ ! -z "$PORT" ]
-        then
+    if [ "$NGINX_PORT" != "80" ]; then
+        if [ ! -z "$PORT" ]; then
             exec_command "sed -i \"s/80/$PORT/g\" /etc/nginx/sites-available/default"
         fi
     fi
 
+    # Delete Apache home page if Apache is not installed
+    if [[ ! -x "$(command -v apache)" ]]; then
+        highlight_text "Delete default Apache home page file..."
+        exec_command "sudo rm /var/www/html/index.html"
+    fi
+
     # Restart NGINX
-    highlight_text 'Restart NGINX...'
+    highlight_text "Restart NGINX..."
     exec_command "sudo service nginx start"
 fi

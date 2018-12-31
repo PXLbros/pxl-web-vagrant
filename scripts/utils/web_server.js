@@ -11,10 +11,14 @@ function get_config_dir(web_server) {
     throw new Error(`Invalid web server "${web_server}".`);
 }
 
+function get_config_file_path(web_server, config_filename) {
+    return `${get_config_dir(web_server)}/${config_filename}`;
+}
+
 module.exports = {
     get_installed_web_servers() {
         const is_apache_installed = (exec('apachectl -v', { silent: true }).code === 0);
-        const is_nginx_installed = (exec('which nginx -v', { silent: true }).code === 0);
+        const is_nginx_installed = (exec('which nginx', { silent: true }).code === 0);
 
         let web_servers = [];
 
@@ -31,9 +35,9 @@ module.exports = {
 
     get_config_filename(web_server, hostname) {
         if (web_server === 'apache') {
-            return hostname;
-        } else if (web_server === 'nginx') {
             return `${hostname}.conf`;
+        } else if (web_server === 'nginx') {
+            return hostname;
         }
 
         throw new Error(`Invalid web server "${web_server}".`);
@@ -41,9 +45,7 @@ module.exports = {
 
     get_config_dir,
 
-    get_config_filepath(web_server, config_filename) {
-        return `${get_config_dir(web_server)}/${config_filename}`;
-    },
+    get_config_file_path,
 
     get_web_server_title(web_server) {
         if (web_server === 'apache') {
@@ -107,7 +109,9 @@ module.exports = {
         if (web_server === 'apache') {
             exec(`sudo a2ensite ${config_filename}`, { silent: true });
         } else if (web_server === 'nginx') {
-            exec(`sudo ln -s ${get_config_dir('nginx', config_filename)} /etc/nginx/sites-enabled/`, { silent: true });
+            console.log('RUN:');
+            console.log(get_config_file_path('nginx', config_filename));
+            exec(`sudo ln -s ${get_config_file_path('nginx', config_filename)} /etc/nginx/sites-enabled/`, { silent: true });
         } else {
             throw new Error(`Invalid web server "${web_server}".`);
         }

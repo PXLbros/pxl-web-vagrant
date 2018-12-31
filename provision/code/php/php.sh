@@ -31,7 +31,7 @@ for PHP_VERSION in "${PHP_VERSIONS[@]}"; do
     exec_command "apt-get -y install php$PHP_VERSION"
 
     # Install common modules
-    for PHP_COMMON_MODULE in "${PHP_COMMON_MODULE[@]}"; do
+    for PHP_COMMON_MODULE in "${PHP_COMMON_MODULES[@]}"; do
         exec_command "apt-get -y install php$PHP_VERSION-$PHP_COMMON_MODULE"
     done
 
@@ -43,8 +43,7 @@ for PHP_VERSION in "${PHP_VERSIONS[@]}"; do
             exec_command "apt-get install php-dev libmcrypt-dev php-pear -y"
             exec_command "pecl channel-update pecl.php.net"
 
-            if ! pecl list | grep mcrypt
-            then
+            if ! pecl list | grep mcrypt; then
                 exec_command "pecl install mcrypt-1.0.1"
             fi
 
@@ -62,6 +61,8 @@ for PHP_VERSION in "${PHP_VERSIONS[@]}"; do
         if [ -z $PHP_USER_MODULES ]; then
             highlight_text "Install user modules..."
 
+            PHP_USER_MODULES=($PHP_USER_MODULES)
+
             for PHP_USER_MODULE in "${PHP_USER_MODULES[@]}"; do
                 exec_command "apt-get install -y $PHP_USER_MODULE"
             done
@@ -71,8 +72,7 @@ done
 
 for PHP_VERSION in "${PHP_VERSIONS[@]}"
 do
-    if [ -x "$(command -v php$PHP_VERSION)" ];
-    then
+    if [ -x "$(command -v php$PHP_VERSION)" ]; then
         highlight_text "Fix PHP $PHP_VERSION permissions..."
 
         PHP_WWW_CONF_FILE=/etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
@@ -103,8 +103,7 @@ if [ -x "$(command -v php)" ];
 then
     # Restart Apache
     if [ "$APACHE" == "true" ]; then
-        highlight_text 'Restart Apache...'
-
+        highlight_text "Restart Apache..."
         exec_command service apache2 restart
     fi
 

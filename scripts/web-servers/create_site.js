@@ -3,7 +3,7 @@ const { existsSync } = require('fs');
 const { exec } = require('shelljs');
 const { bold, yellow, red, cyan } = require('chalk');
 const { ask_confirm, ask_input, ask_options, ask_php_version, ask_web_server } = require('../utils/ask');
-const { enable_web_server_site, generate_virtual_host_config, get_config_filename, get_config_filepath, get_web_server_title, reload_web_server, save_virtual_host_config } = require('../utils/web_server.js');
+const { enable_web_server_site, generate_virtual_host_config, get_config_filename, get_config_file_path, get_web_server_title, reload_web_server, save_virtual_host_config } = require('../utils/web_server.js');
 const log = console.log;
 
 const options = commandLineArgs([
@@ -24,7 +24,7 @@ async function main() {
     let overwrite = options['overwrite'];
 
     const configuration_file_name = get_config_filename(web_server, hostname);
-    const configuration_file_path = get_config_filepath(web_server, hostname);
+    const configuration_file_path = get_config_file_path(web_server, hostname);
 
     if (existsSync(configuration_file_path) && !overwrite) {
         if (!await ask_confirm(`${web_server_title} virtual host configuration file "${configuration_file_name}" already exist, do you want to overwrite it?`, false)) {

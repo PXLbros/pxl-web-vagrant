@@ -29,7 +29,12 @@ alias ls='ls -lGah --color=auto'
 alias grep='grep --color=auto'
 
 # /etc/hosts
-alias edit_hosts='sudo vim /etc/hosts'"
+alias edit_hosts='sudo vim /etc/hosts'
+
+# Sites
+alias create_site='node $SCRIPTS_DIR/web-servers/create_site.js'
+alias edit_site='node $SCRIPTS_DIR/web-servers/edit_site.js'
+alias delete_site='node $SCRIPTS_DIR/web-servers/delete_site.js'"
 
 if [ "$APACHE" == "true" ]
 then
@@ -57,6 +62,7 @@ alias restart_nginx='sudo service nginx restart'
 alias stop_nginx='sudo service nginx stop'
 alias nginx_status='sudo service nginx status'
 alias reload_nginx='sudo service nginx reload'
+alias edit_nginx_conf='sudo vim /etc/nginx/nginx.conf'
 alias create_nginx_site='node $SCRIPTS_DIR/web-servers/nginx/create_site.js'
 alias edit_nginx_site='node $SCRIPTS_DIR/web-servers/nginx/edit_site.js'
 alias delete_nginx_site='node $SCRIPTS_DIR/web-servers/nginx/delete_site.js'"

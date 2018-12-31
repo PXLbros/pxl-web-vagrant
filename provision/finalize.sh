@@ -10,7 +10,7 @@ exec_command "sudo apt-get autoremove -yf"
 print_provisioning_stats
 
 # Clear provisioning stats file
-# clear_provisioning_stats
+clear_provisioning_stats
 
 # Remove .command_output file
 rm /vagrant/.command_output

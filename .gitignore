@@ -1,8 +1,8 @@
 /logs/
 node_modules/
 /projects/
+/boilerplates/user
 /provision/user
-/provision/shell/scripts/yarn.lock
 /scripts/yarn.lock
 /config.yaml
 /.provisioning

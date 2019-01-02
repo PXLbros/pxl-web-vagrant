@@ -4,6 +4,7 @@ const { exec } = require('shelljs');
 const { bold, yellow, red, cyan } = require('chalk');
 const { ask_confirm, ask_input, ask_options, ask_php_version, ask_web_server } = require('../utils/ask');
 const { enable_web_server_site, generate_virtual_host_config, get_config_filename, get_config_file_path, get_web_server_title, reload_web_server, save_virtual_host_config } = require('../utils/web_server.js');
+const { remove_last_directory } = require('../utils/str');
 const log = console.log;
 
 const options = commandLineArgs([
@@ -11,6 +12,7 @@ const options = commandLineArgs([
     { name: 'hostname', type: String },
     { name: 'public-dir', type: String },
     { name: 'php', type: String },
+    { name: 'boilerplate', type: String },
     { name: 'overwrite', type: Boolean, defaultOption: false }
 ]);
 
@@ -21,6 +23,7 @@ async function main() {
     const hostname = (options['hostname'] || await ask_input('What is the hostname? (e.g. domain.loc)'));
     const public_dir = (options['public-dir'] || await ask_input('What is the public directory?', `/vagrant/projects/${hostname}`));
     const php_version = (!options['php'] && await ask_confirm('Does the project use PHP?') ? await ask_php_version() : (options['php'] ? options['php'] : null));
+    const boilerplate = options['boilerplate'];
     let overwrite = options['overwrite'];
 
     const configuration_file_name = get_config_filename(web_server, hostname);
@@ -45,6 +48,21 @@ async function main() {
 
     // Add /etc/hosts entry
     exec(`sudo hostile set 127.0.0.1 ${hostname}`, { silent: true });
+
+    // Install boilerplate
+    if (boilerplate) {
+        try {
+            const boilerplate_installer = require(`/vagrant/scripts/boilerplates/default/${boilerplate}/.pxl/install`);
+
+            await boilerplate_installer.install();
+        } catch (boilerplate_error) {
+            console.log(boilerplate_error);
+            
+            log(red(boilerplate_error.message));
+        }
+
+        // exec(`node /vagrant/scripts/boilerplates/default/${boilerplate}/.pxl/install.js --hostname=${hostname} --project-dir=${remove_last_directory(public_dir)}`);
+    }
 
     // Show success message
     log(yellow(`${web_server_title} site added!\n`));

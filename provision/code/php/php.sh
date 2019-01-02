@@ -31,6 +31,7 @@ for PHP_VERSION in "${PHP_VERSIONS[@]}"; do
     exec_command "apt-get -y install php$PHP_VERSION"
 
     # Install common modules
+    highlight_text "Install PHP $PHP_VERSION modules..."
     for PHP_COMMON_MODULE in "${PHP_COMMON_MODULES[@]}"; do
         exec_command "apt-get -y install php$PHP_VERSION-$PHP_COMMON_MODULE"
     done
@@ -57,12 +58,9 @@ for PHP_VERSION in "${PHP_VERSIONS[@]}"; do
 
         # Install user modules
         if [[ ! -z $PHP_USER_MODULES ]]; then
-            highlight_text "Install user modules..."
+            highlight_text "Install PHP $PHP_VERSION user modules..."
 
             PHP_USER_MODULES=($PHP_USER_MODULES)
-
-            echo "PHP_USER_MODULES:"
-            echo $PHP_USER_MODULES
 
             for PHP_USER_MODULE in "${PHP_USER_MODULES[@]}"; do
                 exec_command "apt-get install -y php$PHP_VERSION-$PHP_USER_MODULE"

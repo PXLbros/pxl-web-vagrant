@@ -4,7 +4,7 @@ export LOG_FILE_PATH=databases/mysql.log
 
 . /vagrant/provision/helpers/include.sh
 
-title 'MySQL'
+title "MySQL"
 
 MYSQL_CONFIG_PATH=/etc/mysql/mysql.conf.d/mysqld.cnf
 
@@ -14,8 +14,7 @@ MYSQL_ROOT_PASSWORD=root
 MYSQL_USER_NAME=vagrant
 MYSQL_USER_PASSWORD=vagrant
 
-if ! grep -qF "MYSQL_USER_NAME" /home/vagrant/.bashrc
-then
+if ! grep -qF "MYSQL_USER_NAME" /home/vagrant/.bashrc; then
     exec_command "echo -e \"\nexport MYSQL_USER_NAME=$MYSQL_USER_NAME\nexport MYSQL_USER_PASSWORD=$MYSQL_USER_PASSWORD\" >> /home/vagrant/.bashrc"
 fi
 
@@ -28,7 +27,7 @@ if [ ! -x "$(command -v mysql)" ]; then
     exec_command debconf-set-selections <<< "mysql-server mysql-server/root_password_again password $MYSQL_ROOT_PASSWORD"
 
     ## Install MySQL
-    highlight_text 'Install MySQL...'
+    highlight_text "Install MySQL..."
 
     exec_command apt-get install -y mysql-server
 

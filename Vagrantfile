@@ -4,8 +4,11 @@
 require 'find'
 require 'yaml'
 require 'json'
+require 'pp'
 
 VAGRANT_DIR = File.dirname(File.expand_path(__FILE__))
+
+require "#{VAGRANT_DIR}/libs/deep_merge/deep_merge_hash.rb"
 
 # Get default config
 default_config = YAML.load_file("#{VAGRANT_DIR}/config.default.yaml")
@@ -14,7 +17,8 @@ default_config = YAML.load_file("#{VAGRANT_DIR}/config.default.yaml")
 if File.file?("#{VAGRANT_DIR}/config.yaml")
     user_config = YAML.load_file("#{VAGRANT_DIR}/config.yaml")
 
-    vagrant_config = default_config.merge(user_config)
+    #vagrant_config = default_config.merge(user_config)
+    vagrant_config = default_config.deep_merge!(user_config)
 else
     vagrant_config = default_config
 end
@@ -129,26 +133,24 @@ Vagrant.configure('2') do |config|
         web_server_port_in = 80
 
         vagrant_config['web-servers'].each do |web_server_name, web_server_vagrant_config|
-            if web_server_vagrant_config['enabled'] == true
-                if web_server_name === 'apache'
-                    port_out = (web_server_vagrant_config['port'] || 7001)
+            if web_server_name === 'apache'
+                port_out = (web_server_vagrant_config['port'] || 7001)
 
-                    GLOBAL_VARIABLES['APACHE_PORT'] = web_server_port_in
-                elsif web_server_name === 'nginx'
-                    port_out = (web_server_vagrant_config['port'] || 7002)
+                GLOBAL_VARIABLES['APACHE_PORT'] = web_server_port_in
+            elsif web_server_name === 'nginx'
+                port_out = (web_server_vagrant_config['port'] || 7002)
 
-                    GLOBAL_VARIABLES['NGINX_PORT'] = web_server_port_in
-                end
-
-                # Install web server
-                config.vm.provision 'shell', name: "Web Server: #{web_server_name}", path: "#{VAGRANT_DIR}/provision/web-servers/#{web_server_name}.sh", privileged: false, run: 'once', env: GLOBAL_VARIABLES
-
-                # Bind web server port
-                config.vm.network :forwarded_port, guest: web_server_port_in, host: port_out
-
-                # Increment port number
-                web_server_port_in += 1
+                GLOBAL_VARIABLES['NGINX_PORT'] = web_server_port_in
             end
+
+            # Install web server
+            config.vm.provision 'shell', name: "Web Server: #{web_server_name}", path: "#{VAGRANT_DIR}/provision/web-servers/#{web_server_name}.sh", privileged: false, run: 'once', env: GLOBAL_VARIABLES
+
+            # Bind web server port
+            config.vm.network :forwarded_port, guest: web_server_port_in, host: port_out
+
+            # Increment port number
+            web_server_port_in += 1
         end
     end
 

@@ -1,10 +1,10 @@
 #!/bin/bash
 
-export LOG_FILE_PATH=/vagrant/logs/databases/mysql.log
+export LOG_FILE_PATH=databases/mysql.log
 
 . /vagrant/provision/helpers/include.sh
 
-title 'MySQL'
+title "MySQL"
 
 MYSQL_CONFIG_PATH=/etc/mysql/mysql.conf.d/mysqld.cnf
 
@@ -14,46 +14,56 @@ MYSQL_ROOT_PASSWORD=root
 MYSQL_USER_NAME=vagrant
 MYSQL_USER_PASSWORD=vagrant
 
-if ! grep -qF "MYSQL_USER_NAME" /home/vagrant/.bashrc
-then
-    debug_command "echo -e \"\nexport MYSQL_USER_NAME=$MYSQL_USER_NAME\nexport MYSQL_USER_PASSWORD=$MYSQL_USER_PASSWORD\" >> /home/vagrant/.bashrc"
+if ! grep -qF "MYSQL_USER_NAME" /home/vagrant/.bashrc; then
+    exec_command "echo -e \"\nexport MYSQL_USER_NAME=$MYSQL_USER_NAME\nexport MYSQL_USER_PASSWORD=$MYSQL_USER_PASSWORD\" >> /home/vagrant/.bashrc"
 fi
 
-if [ ! -x "$(command -v mysql)" ]; # If MySQL isn't installed
-then
+# If MySQL isn't installed
+if [ ! -x "$(command -v mysql)" ]; then
     # Set root password
-    info_text "Set MySQL root password to \"$MYSQL_ROOT_PASSWORD\"..."
+    highlight_text "Set MySQL root password..."
 
-    debug_command debconf-set-selections <<< "mysql-server mysql-server/root_password password $MYSQL_ROOT_PASSWORD"
-    debug_command debconf-set-selections <<< "mysql-server mysql-server/root_password_again password $MYSQL_ROOT_PASSWORD"
+    exec_command debconf-set-selections <<< "mysql-server mysql-server/root_password password $MYSQL_ROOT_PASSWORD"
+    exec_command debconf-set-selections <<< "mysql-server mysql-server/root_password_again password $MYSQL_ROOT_PASSWORD"
 
     ## Install MySQL
-    info_text 'Install MySQL...'
+    highlight_text "Install MySQL..."
 
-    debug_command apt-get install -y mysql-server
+    exec_command apt-get install -y mysql-server
 
     if [ -x "$(command -v mysql)" ];
     then
         # Create user
-        info_text "Create MySQL Vagrant user \"$MYSQL_USER_NAME\" with password \"$MYSQL_USER_PASSWORD\"..."
+        highlight_text "Create MySQL Vagrant user..."
 
-        debug_command "echo \"CREATE USER IF NOT EXISTS '$MYSQL_USER_NAME'@'localhost' IDENTIFIED BY '$MYSQL_USER_PASSWORD';\" | mysql -u $MYSQL_ROOT_USER --password=\"$MYSQL_ROOT_PASSWORD\""
-        debug_command "echo \"CREATE USER IF NOT EXISTS '$MYSQL_USER_NAME'@'%' IDENTIFIED BY '$MYSQL_USER_PASSWORD';\" | mysql -u $MYSQL_ROOT_USER --password=\"$MYSQL_ROOT_PASSWORD\""
-        debug_command "echo \"GRANT ALL PRIVILEGES ON *.* TO '$MYSQL_USER_NAME'@'localhost';\" | mysql -u $MYSQL_ROOT_USER --password=\"$MYSQL_ROOT_PASSWORD\""
-        debug_command "echo \"GRANT ALL PRIVILEGES ON *.* TO '$MYSQL_USER_NAME'@'%';\" | mysql -u $MYSQL_ROOT_USER --password=\"$MYSQL_ROOT_PASSWORD\""
-        debug_command "echo \"FLUSH PRIVILEGES;\" | mysql -u $MYSQL_ROOT_USER --password=\"$MYSQL_ROOT_PASSWORD\""
+        exec_command "echo \"CREATE USER IF NOT EXISTS '$MYSQL_USER_NAME'@'localhost' IDENTIFIED BY '$MYSQL_USER_PASSWORD';\" | mysql -u $MYSQL_ROOT_USER --password=\"$MYSQL_ROOT_PASSWORD\""
+        exec_command "echo \"CREATE USER IF NOT EXISTS '$MYSQL_USER_NAME'@'%' IDENTIFIED BY '$MYSQL_USER_PASSWORD';\" | mysql -u $MYSQL_ROOT_USER --password=\"$MYSQL_ROOT_PASSWORD\""
+        exec_command "echo \"GRANT ALL PRIVILEGES ON *.* TO '$MYSQL_USER_NAME'@'localhost';\" | mysql -u $MYSQL_ROOT_USER --password=\"$MYSQL_ROOT_PASSWORD\""
+        exec_command "echo \"GRANT ALL PRIVILEGES ON *.* TO '$MYSQL_USER_NAME'@'%';\" | mysql -u $MYSQL_ROOT_USER --password=\"$MYSQL_ROOT_PASSWORD\""
+        exec_command "echo \"FLUSH PRIVILEGES;\" | mysql -u $MYSQL_ROOT_USER --password=\"$MYSQL_ROOT_PASSWORD\""
 
         # Enable remote connections
-        info_text 'Enable remote connections to MySQL...'
+        highlight_text 'Enable remote connections to MySQL...'
 
-        debug_command sed -i \'s/^bind-address/#bind-address/\' $MYSQL_CONFIG_PATH
-        debug_command sed -i \'s/^skip-external-locking/#skip-external-locking/\' $MYSQL_CONFIG_PATH
+        exec_command sed -i \'s/^bind-address/#bind-address/\' $MYSQL_CONFIG_PATH
+        exec_command sed -i \'s/^skip-external-locking/#skip-external-locking/\' $MYSQL_CONFIG_PATH
 
         # Restart MySQL
-        info_text 'Restart MySQL...'
+        highlight_text "Restart MySQL..."
 
-        debug_command service mysql restart
+        exec_command service mysql restart
     fi
 else
-    warning_text 'Already installed.'
+    warning_text "Already installed."
+fi
+
+# Install PHP module
+if [ -x "$(command -v mysql)" ]; then
+    PHP_VERSIONS=($PHP_VERSIONS)
+
+    highlight_text "Install PHP MySQL module..."
+
+    for PHP_VERSION in "${PHP_VERSIONS[@]}"; do
+        exec_command "apt-get install -y php$PHP_VERSION-mysql"
+    done
 fi

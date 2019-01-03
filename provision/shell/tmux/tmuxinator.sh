@@ -1,28 +1,28 @@
 #!/bin/bash
 
-export LOG_FILE_PATH=/vagrant/logs/tmuxinator.log
+export LOG_FILE_PATH=tmux/tmuxinator.log
 
 . /vagrant/provision/helpers/include.sh
 
 title 'tmuxinator'
 
 # Update Ruby
-info_text 'Update Ruby...'
+highlight_text 'Update Ruby...'
 
-debug_command 'sudo apt-add-repository -y ppa:brightbox/ruby-ng'
-debug_command 'sudo apt-get -y update'
-debug_command 'sudo apt-get install -y rubygems ruby-dev'
+exec_command 'sudo apt-add-repository -y ppa:brightbox/ruby-ng'
+exec_command 'sudo apt-get -y update'
+exec_command 'sudo apt-get install -y rubygems ruby-dev'
 
 # Install tmuxinator
-info_text 'Install tmuxinator...'
+highlight_text 'Install tmuxinator...'
 
-debug_command 'sudo gem install tmuxinator'
+exec_command 'sudo gem install tmuxinator'
 
 # Create tmuxinator directory
-debug_command "mkdir -p $HOME/.config/tmuxinator"
+exec_command "mkdir -p $HOME/.config/tmuxinator"
 
 # Create "Home" tmuxinator project
-HOME_TMUXINATOR_CONTENTS="name: \"$VM_NAME\"
+HOME_TMUXINATOR_CONTENTS="name: \"$VAGRANT_NAME\"
 root: ~/
 
 windows:
@@ -63,7 +63,7 @@ then
 fi
 
 # Save tmuxinator "Home" project
-debug_command "echo -e \"$HOME_TMUXINATOR_CONTENTS\" > $HOME/.config/tmuxinator/home.yml"
+exec_command "echo -e \"$HOME_TMUXINATOR_CONTENTS\" > $HOME/.config/tmuxinator/home.yml"
 
 # Set to open tmuxinator "Home" project upon login
 # if ! grep -qF "tmuxinator start home" $HOME/.bashrc

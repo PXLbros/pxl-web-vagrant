@@ -36,15 +36,15 @@ title: Apache
 
 ##### Options
 
-* `--hostname` (Server hostname, .e.g `--hostname=my-site.loc`)
-* `--public-dir` (Site public directory, .e.g. `--public-dir=/vagrant/projects/my-site.loc/public`)
+* `--hostname` (Server hostname, .e.g `--hostname=test.loc`)
+* `--public-dir` (Site public directory, .e.g. `--public-dir=/vagrant/projects/test.loc/public`)
 * `--php` (Enable PHP, .e.g `--php=7.3`)
 * `--overwrite` (Overwrite existing configuration)
 
 ```shell
 create_apache_site \
-    --hostname=my-site.loc \
-    --public-dir=/vagrant/projects/my-site.loc/public \
+    --hostname=test.loc \
+    --public-dir=/vagrant/projects/test.loc/public \
     --php=7.3
 ```
 
@@ -58,14 +58,14 @@ create_apache_site \
 
 ##### Options
 
-* `--hostname` (Server hostname, .e.g `--hostname=my-site.loc`)
-* `--public-dir` (Site public directory, .e.g. `--public-dir=/vagrant/projects/my-site.loc/public`)
+* `--hostname` (Server hostname, .e.g `--hostname=test.loc`)
+* `--public-dir` (Site public directory, .e.g. `--public-dir=/vagrant/projects/test.loc/public`)
 * `--php` (Enable PHP, .e.g `--php=7.3`)
 
 ```shell
 create_apache_site \
-    --hostname=my-site.loc \
-    --public-dir=/vagrant/projects/my-site.loc/public \
+    --hostname=test.loc \
+    --public-dir=/vagrant/projects/test.loc/public \
     --php=7.3
     --overwrite
 ```
@@ -80,14 +80,14 @@ Yet to be implemented.
 
 ##### Options
 
-* `--hostname` (Server hostname, .e.g `--hostname=my-site.loc`)
-* `--public-dir` (Site public directory, .e.g. `--public-dir=/vagrant/projects/my-site.loc/public`)
+* `--hostname` (Server hostname, .e.g `--hostname=test.loc`)
+* `--public-dir` (Site public directory, .e.g. `--public-dir=/vagrant/projects/test.loc/public`)
 * `--php` (Enable PHP, .e.g `--php=7.3`)
 
 ```shell
 create_apache_site \
-    --hostname=my-site.loc \
-    --public-dir=/vagrant/projects/my-site.loc/public \
+    --hostname=test.loc \
+    --public-dir=/vagrant/projects/test.loc/public \
     --php=7.3
 ```
 

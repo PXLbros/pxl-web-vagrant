@@ -3,7 +3,7 @@
 Welcome to **PXL Web Vagrant** - a Ubuntu Vagrant environment for web development.
 
 * Open source :100:
-    * Help make **PXL Web Vagrant** better [pull request](https://github.com/PXLbros/pxl-web-vagrant)
+    * Help make **PXL Web Vagrant** better. ([GitHub](https://github.com/PXLbros/pxl-web-vagrant/CONTRIBUTE.md))
 * Easy powerful configuration through [`config.yaml`](/configuration.html#config-yaml)
 * PHP
     * Version 5.6 & 7.0-7.3

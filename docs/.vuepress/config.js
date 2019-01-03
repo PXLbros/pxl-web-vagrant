@@ -31,6 +31,13 @@ module.exports = {
                 ]
             },
             {
+                title: 'Sites',
+                collapsable: false,
+                children: [
+                    ['/sites/commands', 'Commands']
+                ]
+            },
+            {
                 title: 'Web Servers',
                 collapsable: false,
                 children: [
@@ -50,7 +57,7 @@ module.exports = {
                 title: 'Databases',
                 collapsable: false,
                 children: [
-                    ['/databases/', 'Introduction'],
+                    ['/databases/commands', 'Commands'],
                     ['/databases/mysql', 'MySQL'],
                     ['/databases/mongodb', 'MongoDB']
                 ]
@@ -60,21 +67,20 @@ module.exports = {
                 collapsable: false,
                 children: [
                     ['/shell/liquidprompt', 'Liquid Prompt'],
-                    ['/shell/tmux', 'tmux'],
-                    ['/shell/tmuxinator', 'tmuxinator']
+                    ['/shell/tmux', 'tmux']
                 ]
             },
-            {
-                title: 'Projects',
-                collapsable: false,
-                children: [
-                    ['/projects/', 'Introduction'],
-                    ['/projects/configuration', 'Configuration'],
-                    ['/projects/create-new', 'Create New Project'],
-                    ['/projects/add-existing', 'Add Existing Project'],
-                    ['/projects/commands', 'Commands'],
-                ]
-            }
+            // {
+            //     title: 'Projects',
+            //     collapsable: false,
+            //     children: [
+            //         ['/projects/', 'Introduction'],
+            //         ['/projects/configuration', 'Configuration'],
+            //         ['/projects/create-new', 'Create New Project'],
+            //         ['/projects/add-existing', 'Add Existing Project'],
+            //         ['/projects/commands', 'Commands'],
+            //     ]
+            // }
         ]
     }
 };

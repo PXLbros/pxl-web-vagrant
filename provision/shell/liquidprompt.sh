@@ -1,29 +1,28 @@
 #!/bin/bash
 
-export LOG_FILE_PATH=/vagrant/logs/shell/liquidprompt.log
+export LOG_FILE_PATH=shell/liquidprompt.log
 
 . /vagrant/provision/helpers/include.sh
 
-title 'LiquidPrompt'
+title "LiquidPrompt"
 
 # Install Liquid Prompt
 if [ ! -d ~/liquidprompt ]
 then
-    info_text "Clone LiquidPrompt Git repository..."
-
-    debug_command "git clone https://github.com/nojhan/liquidprompt.git \$HOME/liquidprompt"
+    highlight_text "Clone LiquidPrompt Git repository..."
+    exec_command "git clone https://github.com/nojhan/liquidprompt.git \$HOME/liquidprompt"
 fi
 
 # Set to automatically run
 if ! grep -qF "source ~/liquidprompt/liquidprompt" $HOME/.bashrc
 then
-    info_text "Set to automatically run LiquidPrompt..."
-
-    debug_command "echo -e \"\n[[ \\$- = *i* ]] && source ~/liquidprompt/liquidprompt\" >> \$HOME/.bashrc"
+    highlight_text "Set to automatically run LiquidPrompt..."
+    exec_command "echo -e \"\n[[ \\$- = *i* ]] && source ~/liquidprompt/liquidprompt\" >> \$HOME/.bashrc"
 fi
 
 # Create configuration file
-debug_command "echo \"# Maximal value under which the battery level is displayed
+highlight_text "Create configuration file..."
+exec_command "echo \"# Maximal value under which the battery level is displayed
 # Recommended value is 75
 LP_BATTERY_THRESHOLD=75
 

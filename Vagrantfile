@@ -61,6 +61,8 @@ GLOBAL_VARIABLES = {
     'APC': (vagrant_config['code']['php']['cache']['apc']['enabled'] ? true : false)
 }
 
+pp GLOBAL_VARIABLES
+
 Vagrant.configure('2') do |config|
     # Validate
     if vagrant_config['vm']['name'].empty?

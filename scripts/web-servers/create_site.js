@@ -10,6 +10,7 @@ const options = commandLineArgs([
     { name: 'web-server', type: String },
     { name: 'hostname', type: String },
     { name: 'public-dir', type: String },
+    { name: 'git-repo', type: String },
     { name: 'php', type: String },
     { name: 'overwrite', type: Boolean, defaultOption: false }
 ]);
@@ -21,6 +22,15 @@ async function main() {
     const hostname = (options['hostname'] || await ask_input('What is the hostname? (e.g. domain.loc)'));
     const public_dir = (options['public-dir'] || await ask_input('What is the public directory?', `/vagrant/projects/${hostname}`));
     const php_version = (!options['php'] && await ask_confirm('Does the project use PHP?') ? await ask_php_version() : (options['php'] ? options['php'] : null));
+    
+    let git_repo = options['git-repo'];
+    
+    if (!git_repo) {
+        if (await ask_confirm('Create project from existing Git repository?')) {
+            git_repo = await ask_input('What is the Git SSH repository? (e.g. git@github.com:Organization/project-name.git)');
+        }
+    }
+
     let overwrite = options['overwrite'];
 
     const configuration_file_name = get_config_filename(web_server, hostname);

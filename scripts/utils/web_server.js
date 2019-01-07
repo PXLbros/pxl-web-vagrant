@@ -1,5 +1,6 @@
-const { writeFileSync } = require('fs');
+const { existsSync, writeFileSync } = require('fs');
 const { exec } = require('shelljs');
+const { get_filename_from_path } = require('./str');
 
 function get_config_dir(web_server) {
     if (web_server === 'apache') {
@@ -57,8 +58,12 @@ module.exports = {
         throw new Error(`Invalid web server "${web_server}".`);
     },
 
-    save_virtual_host_config(file_path, web_server, hostname, public_dir, php_version = null) {
+    save_virtual_host_config(file_path, web_server, hostname, public_dir, php_version = null, overwrite = false) {
+        const config_filename = get_filename_from_path(file_path);
+
         let contents;
+
+        let config_to_delete_path;
 
         if (web_server === 'apache') {
             contents = `<VirtualHost *:${process.env.APACHE_PORT}>
@@ -79,6 +84,12 @@ module.exports = {
             contents += `</VirtualHost>`;
 
             contents += '\n\n# vim: syntax=apache';
+
+            if (overwrite) {
+                config_to_delete_path = file_path;
+
+                exec(`sudo a2dissite ${config_filename}`, { silent: true });
+            }
         } else if (web_server === 'nginx') {
             contents = `server {
     listen ${process.env.NGINX_PORT};
@@ -99,6 +110,14 @@ module.exports = {
             }
 
             contents += '\n}';
+
+            if (overwrite) {
+                config_to_delete_path = `/etc/nginx/sites-enabled/${config_filename}`;
+            }
+        }
+
+        if (overwrite && existsSync(config_to_delete_path)) {
+            exec(`sudo rm ${config_to_delete_path}`);
         }
 
         // Save file
@@ -123,5 +142,11 @@ module.exports = {
         } else {
             throw new Error(`Invalid web server "${web_server}".`);
         }
+    },
+
+    is_public_directory(path) {
+        let last_directory = path.split('/').reverse()[0];
+
+        return ['public', 'public_html', 'html'].includes(last_directory);
     }
 };

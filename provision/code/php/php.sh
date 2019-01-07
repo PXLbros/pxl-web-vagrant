@@ -120,13 +120,10 @@ fi
 
 # Delete Apache home page if Apache is not installed
 if [[ ! -x "$(command -v apache)" ]]; then
-    highlight_text "Delete default Apache home page file..."
-
     DEFAULT_APACHE_HOME_PAGE_FILE=/var/www/html/index.html
 
     if [ -f $DEFAULT_APACHE_HOME_PAGE_FILE ]; then
+        highlight_text "Delete default Apache home page file..."
         exec_command "sudo rm $DEFAULT_APACHE_HOME_PAGE_FILE"
-    else
-        echo "APACHE DEFAULT HOME PAGE FILE DOES NOT EXIST!"
     fi
 fi

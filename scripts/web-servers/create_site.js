@@ -1,18 +1,23 @@
 const commandLineArgs = require('command-line-args');
 const { existsSync } = require('fs');
 const { exec } = require('shelljs');
-const { bold, yellow, red, cyan } = require('chalk');
-const { ask_confirm, ask_input, ask_options, ask_php_version, ask_web_server } = require('../utils/ask');
-const { enable_web_server_site, generate_virtual_host_config, get_config_filename, get_config_file_path, get_web_server_title, reload_web_server, save_virtual_host_config } = require('../utils/web_server.js');
+const { bold, cyan, green, red, yellow } = require('chalk');
+const { format } = require('date-fns');
+const { ask_confirm, ask_input, ask_php_version, ask_web_server } = require('../utils/ask');
+const { remove_last_directory } = require('../utils/str');
+const { is_public_directory } = require('../utils/web_server');
+const { enable_web_server_site, get_config_filename, get_config_file_path, get_web_server_title, reload_web_server, save_virtual_host_config } = require('../utils/web_server.js');
 const log = console.log;
 
 const options = commandLineArgs([
     { name: 'web-server', type: String },
     { name: 'hostname', type: String },
+    { name: 'site-dir', type: String },
     { name: 'public-dir', type: String },
     { name: 'git-repo', type: String },
     { name: 'php', type: String },
-    { name: 'overwrite', type: Boolean, defaultOption: false }
+    { name: 'overwrite', type: Boolean },
+    { name: 'no-backup', type: Boolean }
 ]);
 
 async function main() {
@@ -21,8 +26,8 @@ async function main() {
 
     const hostname = (options['hostname'] || await ask_input('What is the hostname? (e.g. domain.loc)'));
     const public_dir = (options['public-dir'] || await ask_input('What is the public directory?', `/vagrant/projects/${hostname}`));
-    const php_version = (!options['php'] && await ask_confirm('Does the project use PHP?') ? await ask_php_version() : (options['php'] ? options['php'] : null));
-    
+    let site_dir = (options['site-dir'] || public_dir);
+
     let git_repo = options['git-repo'];
     
     if (!git_repo) {
@@ -31,7 +36,17 @@ async function main() {
         }
     }
 
-    let overwrite = options['overwrite'];
+    if (git_repo) {
+        const default_site_dir = (is_public_directory(public_dir) ? remove_last_directory(public_dir) : public_dir);
+        
+        if (!options['site-dir']) {
+            site_dir = (await ask_input('What is the site root directory?', default_site_dir));
+        }
+    }
+
+    const php_version = (!options['php'] && await ask_confirm('Does the project use PHP?') ? await ask_php_version() : (options['php'] ? options['php'] : null));
+
+    let overwrite = (options['overwrite'] || false);
 
     const configuration_file_name = get_config_filename(web_server, hostname);
     const configuration_file_path = get_config_file_path(web_server, hostname);
@@ -44,8 +59,29 @@ async function main() {
         overwrite = true;
     }
 
+    // Site directory already exist
+    if (existsSync(site_dir) && overwrite) {
+        // Take backup
+        if (!options['no-backup'] || options['no-backup'] !== true) {
+            const backup_dir = `${site_dir}_${format(new Date(), 'YYYY-MM-DD_H-mm-ss')}`;
+
+            exec(`sudo mv ${site_dir} ${backup_dir}`, { silent: true });
+
+            log(yellow(`Backed up existing directory ${site_dir} at ${backup_dir}.`));
+        } else {
+            // No backup, delete existing site directory
+            exec(`sudo rm -rf ${site_dir}`);
+        }
+    }
+
+    // Clone
+    log(yellow(`Cloning Git repository ${git_repo} to ${site_dir}...`));
+
+    const git_clone_result = exec(`git clone ${git_repo} ${site_dir}`);
+    const git_clone_error = (git_clone_result.code !== 0);
+
     // Save virtual host configuration file
-    save_virtual_host_config(configuration_file_path, web_server, hostname, public_dir, php_version);
+    save_virtual_host_config(configuration_file_path, web_server, hostname, public_dir, php_version, overwrite);
 
     // Enable web server site
     enable_web_server_site(web_server, configuration_file_name);
@@ -63,6 +99,10 @@ async function main() {
 
     if (php_version) {
         log(`${cyan(bold('PHP Version:'))} ${php_version}`);
+    }
+
+    if (git_repo && git_clone_error) {
+        log(`${cyan(bold('Git:'))} ${red(`Error (${git_clone_result.stderr})`)}`);
     }
 }
 

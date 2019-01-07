@@ -8,7 +8,7 @@ require 'pp'
 
 VAGRANT_DIR = File.dirname(File.expand_path(__FILE__))
 
-require "#{VAGRANT_DIR}/libs/deep_merge/deep_merge_hash.rb"
+#require "#{VAGRANT_DIR}/libs/deep_merge/deep_merge_hash.rb"
 
 # Get default config
 default_config = YAML.load_file("#{VAGRANT_DIR}/config.default.yaml")
@@ -17,8 +17,8 @@ default_config = YAML.load_file("#{VAGRANT_DIR}/config.default.yaml")
 if File.file?("#{VAGRANT_DIR}/config.yaml")
     user_config = YAML.load_file("#{VAGRANT_DIR}/config.yaml")
 
-    #vagrant_config = default_config.merge(user_config)
-    vagrant_config = default_config.deep_merge!(user_config)
+    vagrant_config = default_config.merge(user_config)
+    #vagrant_config = default_config.deep_merge!(user_config)
 else
     vagrant_config = default_config
 end
@@ -60,8 +60,6 @@ GLOBAL_VARIABLES = {
     'MEMCACHED': (vagrant_config['code']['php']['cache']['memcached']['enabled'] ? true : false),
     'APC': (vagrant_config['code']['php']['cache']['apc']['enabled'] ? true : false)
 }
-
-pp GLOBAL_VARIABLES
 
 Vagrant.configure('2') do |config|
     # Validate

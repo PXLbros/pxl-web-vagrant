@@ -1,40 +1,27 @@
 const commandLineArgs = require('command-line-args');
-const { exec } = require('shelljs');
 const { yellow, red } = require('chalk');
-const { ask_input } = require('../utils/ask');
-const { choose } = require('../utils/choose');
+const { ask_create_database } = require('../utils/ask');
+const { create: create_database } = require('../utils/database');
 const log = console.log;
 
 const options = commandLineArgs([
     { name: 'driver', type: String },
-    { name: 'name', type: String },
-    { name: 'non-interactive', type: Boolean, defaultOption: false }
+    { name: 'name', type: String }
 ]);
 
 async function main() {
-    const driver = (options.driver || await choose('What is the database driver?', [
-        {
-            name: 'MySQL',
-            value: 'mysql'
-        }
-    ]));
+    const database = await ask_create_database(options['driver'], options['name']);
 
-    const name = (options.name || await ask_input('What is the name of the database? (e.g. my_database)'));
-
-    let create_database_error = null;
-
-    if (driver === 'mysql') {
-        const create_database_result = exec(`mysql -u${process.env.MYSQL_USER_NAME} -p${process.env.MYSQL_USER_PASSWORD} -e "CREATE DATABASE ${name};"`, { silent: true });
-
-        if (create_database_result.code !== 0) {
-            create_database_error = create_database_result;
-        }
+    if (!database) {
+        return;
     }
 
-    if (!create_database_error) {
-        log(yellow(`Database "${name}" has been created!`));
-    } else {
-        log(red(`Could not create database "${name}".`));
+    try {
+        create_database(database.driver, database.name);
+
+        log(yellow(`Database "${database.name}" has been created!`));
+    } catch (create_database_error) {
+        log(red(create_database_error));
     }
 }
 

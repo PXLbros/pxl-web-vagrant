@@ -88,7 +88,9 @@ module.exports = {
             if (overwrite) {
                 config_to_delete_path = file_path;
 
-                exec(`sudo a2dissite ${config_filename}`, { silent: true });
+                if (existsSync(config_to_delete_path)) {
+                    exec(`sudo a2dissite ${config_filename}`, { silent: true });
+                }
             }
         } else if (web_server === 'nginx') {
             contents = `server {
@@ -117,7 +119,7 @@ module.exports = {
         }
 
         if (overwrite && existsSync(config_to_delete_path)) {
-            exec(`sudo rm ${config_to_delete_path}`);
+            exec(`sudo rm ${config_to_delete_path}`, { silent: true });
         }
 
         // Save file

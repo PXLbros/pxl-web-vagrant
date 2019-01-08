@@ -3,9 +3,10 @@ const { existsSync } = require('fs');
 const { exec } = require('shelljs');
 const { bold, cyan, green, red, yellow } = require('chalk');
 const { format } = require('date-fns');
-const { ask_confirm, ask_input, ask_php_version, ask_web_server } = require('../utils/ask');
+const { ask_confirm, ask_input, ask_php_version, ask_web_server, ask_create_database } = require('../utils/ask');
 const { remove_last_directory } = require('../utils/str');
 const { is_public_directory } = require('../utils/web_server');
+const { create: create_database } = require('../utils/database');
 const { enable_web_server_site, get_config_filename, get_config_file_path, get_web_server_title, reload_web_server, save_virtual_host_config } = require('../utils/web_server.js');
 const log = console.log;
 
@@ -16,6 +17,8 @@ const options = commandLineArgs([
     { name: 'public-dir', type: String },
     { name: 'git-repo', type: String },
     { name: 'php', type: String },
+    { name: 'database-driver', type: String },
+    { name: 'database-name', type: String },
     { name: 'overwrite', type: Boolean },
     { name: 'no-backup', type: Boolean }
 ]);
@@ -32,7 +35,7 @@ async function main() {
     
     if (!git_repo) {
         if (await ask_confirm('Create project from existing Git repository?')) {
-            git_repo = await ask_input('What is the Git SSH repository? (e.g. git@github.com:Organization/project-name.git)');
+            git_repo = (await ask_input('What is the Git SSH repository? (e.g. git@github.com:Organization/project-name.git)'));
         }
     }
 
@@ -45,6 +48,25 @@ async function main() {
     }
 
     const php_version = (!options['php'] && await ask_confirm('Does the project use PHP?') ? await ask_php_version() : (options['php'] ? options['php'] : null));
+
+    let create_database_error = null;
+    let database_driver = (options['database-driver'] || null);
+    let database_name = (options['database-name'] || null);
+
+    if ((!database_driver || !database_name) && await ask_confirm('Do you want to create a database?')) {
+        const database = (await ask_create_database(database_driver, database_name));
+
+        database_driver = database.driver;
+        database_name = database.name;
+    }
+
+    if (database_driver && database_name) {
+        try {
+            create_database(database_driver, database_name);
+        } catch (create_database_error) {
+            create_database_error = create_database_error;
+        }
+    }
 
     let overwrite = (options['overwrite'] || false);
 
@@ -59,26 +81,37 @@ async function main() {
         overwrite = true;
     }
 
-    // Site directory already exist
-    if (existsSync(site_dir) && overwrite) {
-        // Take backup
-        if (!options['no-backup'] || options['no-backup'] !== true) {
-            const backup_dir = `${site_dir}_${format(new Date(), 'YYYY-MM-DD_H-mm-ss')}`;
+    // If site directory already exist
+    if (existsSync(site_dir)) {
+        // If cloning Git repository and site directory already exist
+        if (overwrite && git_repo) {
+            // Take backup
+            if (!options['no-backup'] || options['no-backup'] !== true) {
+                const backup_dir = `${site_dir}_${format(new Date(), 'YYYY-MM-DD_H-mm-ss')}`;
 
-            exec(`sudo mv ${site_dir} ${backup_dir}`, { silent: true });
+                exec(`sudo mv ${site_dir} ${backup_dir}`, { silent: true });
 
-            log(yellow(`Backed up existing directory ${site_dir} at ${backup_dir}.`));
-        } else {
-            // No backup, delete existing site directory
-            exec(`sudo rm -rf ${site_dir}`);
+                log(yellow(`Backed up existing directory ${site_dir} at ${backup_dir}.`));
+            } else {
+                // No backup, delete existing site directory
+                exec(`sudo rm -rf ${site_dir}`);
+            }
+        }
+    } else {
+        if (!existsSync(public_dir)) {
+            exec(`mkdir -p ${public_dir}`);
         }
     }
 
     // Clone
-    log(yellow(`Cloning Git repository ${git_repo} to ${site_dir}...`));
+    let git_clone_error;
 
-    const git_clone_result = exec(`git clone ${git_repo} ${site_dir}`);
-    const git_clone_error = (git_clone_result.code !== 0);
+    if (git_repo) {
+        log(yellow(`Cloning Git repository ${git_repo} to ${site_dir}...`));
+
+        const git_clone_result = exec(`git clone ${git_repo} ${site_dir}`);
+        git_clone_error = (git_clone_result.code !== 0);
+    }
 
     // Save virtual host configuration file
     save_virtual_host_config(configuration_file_path, web_server, hostname, public_dir, php_version, overwrite);
@@ -103,6 +136,10 @@ async function main() {
 
     if (git_repo && git_clone_error) {
         log(`${cyan(bold('Git:'))} ${red(`Error (${git_clone_result.stderr})`)}`);
+    }
+
+    if (create_database_error) {
+        log(`${cyan(bold('Database:'))} ${red(`${create_database_error}`)}`);
     }
 }
 

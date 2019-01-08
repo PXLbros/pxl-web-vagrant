@@ -1,5 +1,4 @@
-const { lstatSync, readdirSync } = require('fs');
-const { join } = require('path');
+const { readdirSync } = require('fs');
 const { prompt } = require('inquirer');
 const { blue } = require('chalk');
 const { find_pxl_projects, get_pxl_config_title_inline } = require('./pxl');

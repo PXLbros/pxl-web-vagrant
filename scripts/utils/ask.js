@@ -21,23 +21,22 @@ async function ask_input(question, default_value = null) {
     return prompt_result.value;
 }
 
+async function ask_confirm(question, default_value = true) {
+    const prompt_result = await prompt([
+        {
+            type: 'confirm',
+            name: 'value',
+            message: question,
+            default: default_value
+        }
+    ]);
+
+    return prompt_result.value;
+}
+
 module.exports = {
-    async ask_input(question, default_value = null) {
-        return await ask_input(question, default_value);
-    },
-
-    async ask_confirm(question, default_value = true) {
-        const prompt_result = await prompt([
-            {
-                type: 'confirm',
-                name: 'value',
-                message: question,
-                default: default_value
-            }
-        ]);
-
-        return prompt_result.value;
-    },
+    ask_input,
+    ask_confirm,
 
     async ask_git_branch() {
         const branches_str = exec('git branch', { silent: true });
@@ -92,17 +91,16 @@ module.exports = {
             {
                 type: 'fuzzypath',
                 name: 'path',
-                pathFilter: (isDirectory, nodePath) => isDirectory,
-                // pathFilter :: (Bool, String) -> Bool
-                // pathFilter allows to filter FS nodes by type and path
-                rootPath: '/vagrant/projects',
-                // rootPath :: String
-                // Root search directory
+                pathFilter: (isDirectory, nodePath) => {
+                    if (nodePath.indexOf('node_modules') !== -1 || nodePath.indexOf('vendor') !== -1 || nodePath.indexOf('.git') !== -1) {
+                        return false;
+                    }
+
+                    return isDirectory;
+                },
+                rootPath: '/vagrant/projects/pxl/universal/website',
                 message: 'Select a target directory for your component:',
-                // default: '/',
-                suggestOnly: false,
-                // suggestOnly :: Bool
-                // Restrict prompt answer to available choices or use them as suggestions
+                suggestOnly: false
             }
         ]);
     },
@@ -114,5 +112,23 @@ module.exports = {
                 value: web_server.toLowerCase()
             };
         }));
+    },
+
+    async ask_create_database(driver, name) {
+        if (!driver) {
+            driver = await choose('What database driver?', [{
+                name: 'MySQL',
+                value: 'mysql'
+            }]);
+        }
+
+        if (!name) {
+            name = await ask_input('Enter database name:');
+        }
+
+        return {
+            driver,
+            name
+        };
     }
 };

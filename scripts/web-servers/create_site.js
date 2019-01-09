@@ -71,7 +71,7 @@ async function main() {
     let overwrite = (options['overwrite'] || false);
 
     const configuration_file_name = get_config_filename(web_server, hostname);
-    const configuration_file_path = get_config_file_path(web_server, hostname);
+    const configuration_file_path = get_config_file_path(web_server, configuration_file_name);
 
     if (existsSync(configuration_file_path) && !overwrite) {
         if (!await ask_confirm(`${web_server_title} virtual host configuration file "${configuration_file_name}" already exist, do you want to overwrite it?`, false)) {
@@ -110,7 +110,7 @@ async function main() {
         log(yellow(`Cloning Git repository ${git_repo} to ${site_dir}...`));
 
         const git_clone_result = exec(`git clone ${git_repo} ${site_dir}`);
-        git_clone_error = (git_clone_result.code !== 0);
+        git_clone_error = (git_clone_result.code !== 0 ? git_clone_result.stderrr : null);
     }
 
     // Save virtual host configuration file
@@ -135,7 +135,7 @@ async function main() {
     }
 
     if (git_repo && git_clone_error) {
-        log(`${cyan(bold('Git:'))} ${red(`Error (${git_clone_result.stderr})`)}`);
+        log(`${cyan(bold('Git:'))} ${red(`Error (${git_clone_error})`)}`);
     }
 
     if (create_database_error) {

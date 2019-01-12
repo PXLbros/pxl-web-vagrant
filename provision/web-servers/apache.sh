@@ -4,9 +4,9 @@ export LOG_FILE_PATH=web-servers/apache.log
 
 . /vagrant/provision/helpers/include.sh
 
-title "Apache"
-
 if [ "$APACHE" == "true" ]; then
+    title "Apache"
+
     if ! grep -qF "export APACHE_PORT" $HOME/.bashrc; then
         exec_command "echo -e \"\nexport APACHE_PORT=$APACHE_PORT\" >> $HOME/.bashrc"
     fi

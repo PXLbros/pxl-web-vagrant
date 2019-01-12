@@ -22,7 +22,7 @@ if [ -x "$(command -v tmux)" ]; then
         exit
     fi
 
-    highlight_text "Remove existing tmux (v$CURRENT_TMUX_VERSION)..."
+    highlight_text "Existing tmux version v$CURRENT_TMUX_VERSION is outdated, remove..."
 
     exec_command "sudo apt-get -y remove tmux"
 fi

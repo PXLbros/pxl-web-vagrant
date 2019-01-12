@@ -5,8 +5,9 @@ export LOG_FILE_PATH=shell/bash_profile.log
 . /vagrant/provision/helpers/include.sh
 
 SCRIPTS_DIR="/vagrant/scripts"
+SCRIPTS_SITES_DIR="$SCRIPTS_DIR/sites"
 
-title 'bash_profile'
+title "bash_profile"
 
 BASH_PROFILE_CONTENTS="# Source ~/.bashrc
 [[ -s \"$HOME/.bashrc\" ]] && source \"$HOME/.bashrc\"
@@ -32,9 +33,9 @@ alias grep='grep --color=auto'
 alias edit_hosts='sudo vim /etc/hosts'
 
 # Sites
-alias create_site='node $SCRIPTS_DIR/web-servers/create_site.js'
-alias edit_site='node $SCRIPTS_DIR/web-servers/edit_site.js'
-alias delete_site='node $SCRIPTS_DIR/web-servers/delete_site.js'"
+alias create_site='node $SCRIPTS_SITES_DIR/create_site.js'
+alias edit_site='node $SCRIPTS_SITES_DIR/edit_site.js'
+alias delete_site='node $SCRIPTS_SITES_DIR/delete_site.js'"
 
 if [ "$APACHE" == "true" ]
 then
@@ -47,9 +48,9 @@ alias stop_apache='sudo service apache2 stop'
 alias reload_apache='sudo service apache2 reload'
 alias apache_status='sudo service apache2 status'
 alias edit_apache_conf='sudo vim /etc/apache2/apache2.conf'
-alias create_apache_site='node $SCRIPTS_DIR/web-servers/apache/create_site.js'
-alias edit_apache_site='node $SCRIPTS_DIR/web-servers/apache/edit_site.js'
-alias delete_apache_site='node $SCRIPTS_DIR/web-servers/apache/delete_site.js'"
+alias create_apache_site='create_site --web-server=apache'
+alias edit_apache_site='edit_site --web-server=apache'
+alias delete_apache_site='delete_site --web-server=apache'"
 fi
 
 if [ "$NGINX" == "true" ]
@@ -63,9 +64,9 @@ alias stop_nginx='sudo service nginx stop'
 alias nginx_status='sudo service nginx status'
 alias reload_nginx='sudo service nginx reload'
 alias edit_nginx_conf='sudo vim /etc/nginx/nginx.conf'
-alias create_nginx_site='node $SCRIPTS_DIR/web-servers/nginx/create_site.js'
-alias edit_nginx_site='node $SCRIPTS_DIR/web-servers/nginx/edit_site.js'
-alias delete_nginx_site='node $SCRIPTS_DIR/web-servers/nginx/delete_site.js'"
+alias create_nginx_site='create_site --web-server=nginx'
+alias edit_nginx_site='edit_site --web-server=nginx'
+alias delete_nginx_site='delete_site --web-server=nginx'"
 fi
 
 BASH_PROFILE_CONTENTS="${BASH_PROFILE_CONTENTS}
@@ -82,7 +83,9 @@ then
 alias start_mysql='sudo service mysql start'
 alias stop_mysql='sudo service mysql stop'
 alias restart_mysql='sudo service mysql restart'
-alias mysql_status='sudo service mysql status'"
+alias mysql_status='sudo service mysql status'
+alias create_mysql_database='create_database --driver=mysql'
+alias delete_mysql_database='delete_database --driver=mysql'"
 fi
 
 if [ "$MONGODB" == "true" ]
@@ -93,7 +96,9 @@ then
 alias start_mongodb='sudo service mongodb start'
 alias stop_mongodb='sudo service mongodb stop'
 alias restart_mongodb='sudo service mongodb restart'
-alias mongodb_status='sudo service mysql status'"
+alias mongodb_status='sudo service mysql status'
+alias create_mongodb_database='create_database --driver=mongodb'
+alias delete_mongodb_database='delete_database --driver=mongodb'"
 fi
 
 # Save .bash_profile

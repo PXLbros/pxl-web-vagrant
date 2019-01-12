@@ -38,6 +38,7 @@ GLOBAL_VARIABLES = {
     'LC_ALL': "#{vagrant_config['vm']['locale']['language-iso']}.UTF-8",
 
     'VAGRANT_NAME': vagrant_config['vm']['name'],
+    'IP_ADDRESS': vagrant_config['vm']['ip'],
     'TIMEZONE': vagrant_config['vm']['locale']['timezone'],
 
     'PROVISION_SHOW_COMMAND': vagrant_config['vm']['provision']['show-command'],

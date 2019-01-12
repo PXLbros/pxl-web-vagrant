@@ -40,13 +40,15 @@ print_provisioning_stats() {
     local num_total=$((num_successful + num_errors))
 
     if [ "$num_errors" == "1" ]; then
+        local was_word="was"
         local error_word="error"
     else
+        local was_word="were"
         local error_word="errors"
     fi
 
     if (( num_errors > 0 )); then
-        error_text "There were $num_errors $error_word of $num_total total commands."
+        error_text "There $was_word $num_errors $error_word of $num_total total commands."
         error_text "See logs/ folder for more details."
     else
         highlight_text "\nPXL Web Vagrant has been provisioned.\nStart by running command \"vagrant ssh\"."

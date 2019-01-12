@@ -25,24 +25,23 @@ exec_command "mkdir -p $HOME/.config/tmuxinator"
 HOME_TMUXINATOR_CONTENTS="name: \"$VAGRANT_NAME\"
 root: ~/
 
-windows:
-  - Home:"
+windows:"
 
 if [ "$APACHE" = "true" ];
 then
     HOME_TMUXINATOR_CONTENTS="${HOME_TMUXINATOR_CONTENTS}
-- Apache Sites:
-    - sudo su -
-    - cd /etc/apache2/sites-available
-- Apache Log:
-    root: /var/log/apache2
-    panes:
-      - access_log:
-        - sudo su -
-        - tail -f access.log
-      - error_log:
-        - sudo su -
-        - tail -f error.log"
+  - Apache Sites:
+      - sudo su -
+      - cd /etc/apache2/sites-available
+  - Apache Log:
+      root: /var/log/apache2
+      panes:
+        - access_log:
+          - sudo su -
+          - tail -f access.log 2> /dev/null
+        - error_log:
+          - sudo su -
+          - tail -f error.log 2> /dev/null"
 fi
 
 if [ "$NGINX" = "true" ];
@@ -56,10 +55,10 @@ then
     panes:
       - access_log:
         - sudo su -
-        - tail -f access.log
+        - tail -f access.log 2> /dev/null
       - error_log:
         - sudo su -
-        - tail -f error.log"
+        - tail -f error.log 2> /dev/null"
 fi
 
 # Save tmuxinator "Home" project

@@ -1,8 +1,9 @@
 const commandLineArgs = require('command-line-args');
 const { existsSync } = require('fs');
 const { exec } = require('shelljs');
-const { bold, cyan, green, red, yellow } = require('chalk');
+const { bold, cyan, red, yellow } = require('chalk');
 const { format } = require('date-fns');
+const { load_pxl_config_from_dir } = require('../utils/pxl');
 const { ask_confirm, ask_input, ask_php_version, ask_web_server, ask_create_database } = require('../utils/ask');
 const { remove_last_directory } = require('../utils/str');
 const { is_public_directory } = require('../utils/web_server');
@@ -47,27 +48,6 @@ async function main() {
         }
     }
 
-    const php_version = (!options['php'] && await ask_confirm('Does the project use PHP?') ? await ask_php_version() : (options['php'] ? options['php'] : null));
-
-    let create_database_error = null;
-    let database_driver = (options['database-driver'] || null);
-    let database_name = (options['database-name'] || null);
-
-    if ((!database_driver || !database_name) && await ask_confirm('Do you want to create a database?')) {
-        const database = (await ask_create_database(database_driver, database_name));
-
-        database_driver = database.driver;
-        database_name = database.name;
-    }
-
-    if (database_driver && database_name) {
-        try {
-            create_database(database_driver, database_name);
-        } catch (create_database_error) {
-            create_database_error = create_database_error;
-        }
-    }
-
     let overwrite = (options['overwrite'] || false);
 
     const configuration_file_name = get_config_filename(web_server, hostname);
@@ -97,10 +77,6 @@ async function main() {
                 exec(`sudo rm -rf ${site_dir}`);
             }
         }
-    } else {
-        if (!existsSync(public_dir)) {
-            exec(`mkdir -p ${public_dir}`);
-        }
     }
 
     // Clone
@@ -111,6 +87,42 @@ async function main() {
 
         const git_clone_result = exec(`git clone ${git_repo} ${site_dir}`);
         git_clone_error = (git_clone_result.code !== 0 ? git_clone_result.stderrr : null);
+
+        if (!git_clone_error) {
+            // Check for .pxl/config.yaml file
+            try {
+                load_pxl_config_from_dir(site_dir);
+
+                const ask_pxl_config = (await ask_confirm(`Found PXL Web Vagrant configuration, do you want to continue?`));
+            } catch (load_pxl_config_error) {
+            }
+        }
+    } else {
+        // If not from Git repo, create site & public directory
+        if (!existsSync(public_dir)) {
+            exec(`mkdir -p ${public_dir}`);
+        }
+    }
+
+    const php_version = (!options['php'] && await ask_confirm('Does the project use PHP?') ? await ask_php_version() : (options['php'] ? options['php'] : null));
+
+    let create_database_error = null;
+    let database_driver = (options['database-driver'] || null);
+    let database_name = (options['database-name'] || null);
+
+    if ((!database_driver || !database_name) && await ask_confirm('Do you want to create a database?')) {
+        const database = (await ask_create_database(database_driver, database_name));
+
+        database_driver = database.driver;
+        database_name = database.name;
+    }
+
+    if (database_driver && database_name) {
+        try {
+            create_database(database_driver, database_name);
+        } catch (create_database_error) {
+            create_database_error = create_database_error;
+        }
     }
 
     // Save virtual host configuration file
@@ -126,7 +138,7 @@ async function main() {
     exec(`sudo hostile set 127.0.0.1 ${hostname}`, { silent: true });
 
     // Show success message
-    log(yellow(`${web_server_title} site added!\n`));
+    log(yellow(`\n${web_server_title} site added!\n`));
     log(`${cyan(bold('Hostname:'))} ${hostname}`);
     log(`${cyan(bold('Public Directory:'))} ${public_dir}`);
 

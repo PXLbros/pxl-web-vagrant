@@ -3,7 +3,7 @@
   "description": "A Ubuntu Vagrant environment for web development.",
   "version": "1.0.0",
   "license": "ISC",
-  "author": "PXL Agency",
+  "author": "Dennis Nygren",
   "scripts": {
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",

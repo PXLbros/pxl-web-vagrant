@@ -197,4 +197,8 @@ Vagrant.configure('2') do |config|
 
     # Finalize
     config.vm.provision 'shell', name: 'Finalize', path: "#{VAGRANT_DIR}/provision/finalize.sh", privileged: false, env: GLOBAL_VARIABLES, run: 'once'
+
+    # SSH Keys
+    config.vm.provision 'file', source: '~/.ssh/id_rsa.pub', destination: '~/.ssh/id_rsa.pub'
+    config.vm.provision 'shell', inline: 'cat ~vagrant/.ssh/id_rsa.pub >> ~vagrant/.ssh/authorized_keys'
 end

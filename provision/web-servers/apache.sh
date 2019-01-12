@@ -67,7 +67,7 @@ else
         exec_command "sudo service apache2 stop"
 
         # Uninstall Apache
-        exec_command "sudo apt-get purge -y apache2 apache2-utils apache2.2-bin apache2-common"
+        exec_command "sudo apt-get purge -y apache2 apache2-utils"
         exec_command "sudo apt-get autoremove -y"
     fi
 fi

@@ -2,7 +2,7 @@
   "name": "pxl-web-vagrant-scripts",
   "version": "1.0.0",
   "description": "PXL Web Vagrant scripts.",
-  "author": "PXL Agency",
+  "author": "Dennis Nygren",
   "license": "ISC",
   "devDependencies": {
     "chalk": "^2.4.1",

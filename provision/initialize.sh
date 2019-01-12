@@ -23,13 +23,7 @@ echo -e "${BLUE}https://github.com/PXLbros/pxl-web-vagrant${NC}"
 
 line_break
 
-echo -e "${YELLOW}${VAGRANT_NAME} (${IP_ADDRESS})${NC}"
-
-# line_break
-
-# echo -e "🇺🇸  ${BLUE}Made by${NC} ${YELLOW}PXL Agency (Los Angeles, USA)${NC}"
-# echo -e "🌎 ${BLUE}See documentation at${NC} ${YELLOW}${UNDERLINE}pxl-web-vagrant.com${NC}${NC}${BLUE}.${NC}"
-# echo -e "✉️  ${BLUE}hello@pxl-web-vagrant.com${NC}"
+echo -e "${BLUE}${ITALIC}${VAGRANT_NAME}${NC} (${IP_ADDRESS})${NC}"
 
 line_break
 

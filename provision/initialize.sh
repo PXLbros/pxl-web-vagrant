@@ -23,7 +23,8 @@ echo -e "${BLUE}https://github.com/PXLbros/pxl-web-vagrant${NC}"
 
 line_break
 
-echo -e "${BLUE}${ITALIC}${VAGRANT_NAME}${NC} (${IP_ADDRESS})${NC}"
+echo -e "${BLUE}${VAGRANT_NAME}${NC}"
+echo -e "${BLUE}${IP_ADDRESS}${NC}"
 
 line_break
 

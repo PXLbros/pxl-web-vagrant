@@ -11,6 +11,7 @@ vm:
         show-command-output: false
         show-command-execution-time: true
         show-command-exit-code: false
+        abort-on-error: false
 web-servers:
     apache:
         enabled: true

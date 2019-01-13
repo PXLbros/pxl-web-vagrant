@@ -10,7 +10,7 @@ module.exports = {
         return new_path.join('/');
     },
     
-    get_filename_from_path(path) {
+    getFilenameFromPath(path) {
         return path.substring(path.lastIndexOf('/') + 1);
     }
 };

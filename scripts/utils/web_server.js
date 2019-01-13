@@ -1,6 +1,6 @@
 const { existsSync, writeFileSync } = require('fs');
 const { exec } = require('shelljs');
-const { get_filename_from_path } = require('./str');
+const { getFilenameFromPath } = require('./str');
 
 function get_config_dir(web_server) {
     if (web_server === 'apache') {
@@ -59,7 +59,7 @@ module.exports = {
     },
 
     save_virtual_host_config(file_path, web_server, hostname, public_dir, php_version = null, overwrite = false) {
-        const config_filename = get_filename_from_path(file_path);
+        const config_filename = getFilenameFromPath(file_path);
 
         let contents;
 

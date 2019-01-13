@@ -12,5 +12,5 @@ print_provisioning_stats
 # Clear provisioning stats file
 clear_provisioning_stats
 
-# Remove .command_output file
-rm /vagrant/.command_output
+# Remove current command temporary file
+rm /vagrant/logs/provision/.current

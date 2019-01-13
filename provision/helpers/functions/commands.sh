@@ -20,13 +20,13 @@ exec_command() {
 
     # Execute command
     if [ "$PROVISION_SHOW_COMMAND_OUTPUT" == "true" ]; then
-        eval "$command" | tee /vagrant/.command_output
+        eval "$command" | tee /vagrant/logs/provision/.current
     else
-        eval "$command" &> /vagrant/.command_output
+        eval "$command" &> /vagrant/logs/provision/.current
     fi
 
     local command_exit_code=$?
-    local command_output=$(cat /vagrant/.command_output)
+    local command_output=$(cat /vagrant/logs/provision/.current)
 
     # Save command ouput to log file
     echo -e "\nOutput:\n$command_output" >> $LOG_FILE_PATH
@@ -42,6 +42,11 @@ exec_command() {
         update_provisioning_stats error
 
         NUM_ERRORS=$((NUM_ERRORS+1))
+
+        # Abort on error
+        if [ "$PROVISION_ABORT_ON_ERROR" == "true" ]; then
+            exit $command_exit_code
+        fi
     fi
 
     # Calculate total execution time

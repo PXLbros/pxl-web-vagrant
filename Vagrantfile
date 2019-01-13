@@ -45,6 +45,7 @@ GLOBAL_VARIABLES = {
     'PROVISION_SHOW_COMMAND_OUTPUT': vagrant_config['vm']['provision']['show-command-output'],
     'PROVISION_SHOW_COMMAND_EXECUTION_TIME': vagrant_config['vm']['provision']['show-command-execution-time'],
     'PROVISION_SHOW_COMMAND_EXIT_CODE': vagrant_config['vm']['provision']['show-command-exit-code'],
+    'PROVISION_ABORT_ON_ERROR': vagrant_config['vm']['provision']['abort-on-error'],
 
     'APACHE': vagrant_config['web-servers']['apache']['enabled'],
     'NGINX': vagrant_config['web-servers']['nginx']['enabled'],

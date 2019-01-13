@@ -1,11 +1,12 @@
-const { cd, exec, mkdir, pwd, test } = require('shelljs');
-const { appendFileSync, existsSync, readFileSync, unlinkSync, writeFileSync } = require('fs');
-const { blue, bold, italic, gray, green, red } = require('chalk');
+const { exec, mkdir, test } = require('shelljs');
+const { existsSync, readFileSync, writeFileSync } = require('fs');
+const { bold, gray, green, red } = require('chalk');
 const slugify = require('slugify');
 const yaml = require('js-yaml');
-const log = console.log;
 const { ask_confirm, ask_input } = require('./ask');
 const { remove_last_directory, remove_trailing_slash } = require('./str');
+const { error_line, title_line } = require('./log');
+const log = console.log;
 
 function get_pxl_config_file_path_from_dir(dir) {
     return `${dir}/config.yaml`;
@@ -20,16 +21,9 @@ function validate_pxl_config(pxl_config) {
 }
 
 function pxl_config_exist(dir) {
-    dir = remove_trailing_slash(dir);
+    const config_file_path = get_pxl_config_file_path_from_dir(remove_trailing_slash(dir));
 
-    // const config_dir = `${dir}/.pxl`;
-    const config_file_path = get_pxl_config_file_path_from_dir(dir);
-
-    // if (!test('-d', config_dir)) {
-    //     return false;
-    // }
-
-    return test('-f', config_file_path);
+    return existsSync(config_file_path);
 }
 
 function load_pxl_config_from_dir(dir) {
@@ -38,6 +32,11 @@ function load_pxl_config_from_dir(dir) {
     }
 
     const pxl_config_file_path = get_pxl_config_file_path_from_dir(remove_trailing_slash(dir));
+
+    if (!existsSync(pxl_config_file_path)) {
+        return null;
+    }
+
     const pxl_config = load_pxl_config(pxl_config_file_path);
 
     return pxl_config;
@@ -51,9 +50,24 @@ function load_pxl_config(pxl_config_file_path) {
             throw new Error(`Could not load PXL Web Vagrant configuration file "${pxl_config_file_path}".`);
         }
 
+        const pxl_config_dir = remove_last_directory(pxl_config_file_path);
+
         validate_pxl_config(pxl_config);
 
-        pxl_config.dir = remove_last_directory(remove_last_directory(pxl_config_file_path));
+        pxl_config['site-dir'] = remove_last_directory(pxl_config_dir);
+        pxl_config['public-site-dir'] = pxl_config['public-dir'] ? `${pxl_config['site-dir']}/${pxl_config['public-dir']}` : pxl_config.site_dir;
+
+        // Check for install/uninstall script
+        const install_script_path = `${pxl_config_dir}/install.js`;
+        const uninstall_script_path = `${pxl_config_dir}/install.js`;
+
+        if (existsSync(install_script_path)) {
+            pxl_config.install_script = true;
+        }
+
+        if (existsSync(uninstall_script_path)) {
+            pxl_config.uninstall_script = true;
+        }
 
         return pxl_config;
     } catch (e) {
@@ -108,28 +122,34 @@ function find_pxl_configs(dir, filter_type = null) {
 
 function print_pxl_config(pxl_config) {
     try {
-        log(`${bold('Site Name:')} ${pxl_config.name}`);
+        title_line('Site Name', pxl_config.name);
 
-        if (typeof pxl_config.network === 'object' && typeof pxl_config.network.hostname === 'string') {
-            log(`${bold('Hostname:')} ${pxl_config.network.hostname}`);
+        if (typeof pxl_config !== 'object') {
+            throw new Error();
+        }
+
+         if (typeof pxl_config.hostname === 'string') {
+            title_line('Hostname', pxl_config.network.hostname);
         }
 
         if (typeof pxl_config['web-server'] === 'string') {
-            log(`${bold('Web Server:')} ${pxl_config['web-server']}`);
+            title_line('Web Server', pxl_config['web-server']);
+        }
+
+        if (typeof pxl_config['code'] === 'object' && typeof pxl_config['code'].php) {
+            title_line('PHP', pxl_config['code'].php);
         }
 
         if (typeof pxl_config['database'] === 'object') {
-            log(`${bold('Database Driver:')} ${pxl_config['database'].driver}`);
-            log(`${bold('Database Name:')} ${pxl_config['database'].name}`);
+            title_line('Database Driver', pxl_config['database'].driver);
+            title_line('Database Name', pxl_config['database'].name);
         }
 
-        if (typeof pxl_config['code'] === 'object') {
-            if (typeof pxl_config['code'].php === 'string') {
-                log(`${bold('PHP:')} ${pxl_config['code'].php}`);
-            }
+        if (pxl_config['install-script'] === true) {
+            title_line('Install Script', pxl_config['install-script']);
         }
     } catch (e) {
-        log(red(`Could not parse PXL Web Vagrant configuration file.`));
+        error(`Could not parse PXL Web Vagrant configuration file.`);
     }
 }
 
@@ -215,7 +235,7 @@ module.exports = {
     },
 
     load_pxl_config_from_dir(dir) {
-        load_pxl_config_from_dir(dir);
+        return load_pxl_config_from_dir(dir);
     },
 
     load_pxl_config(path) {

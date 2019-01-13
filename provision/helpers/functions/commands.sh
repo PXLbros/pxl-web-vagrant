@@ -45,6 +45,8 @@ exec_command() {
 
         # Abort on error
         if [ "$PROVISION_ABORT_ON_ERROR" == "true" ]; then
+            echo "Aborted due to error."
+
             exit $command_exit_code
         fi
     fi

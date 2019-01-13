@@ -8,13 +8,15 @@ const { get_installed_web_servers } = require('./web_server');
 
 inquirer.registerPrompt('fuzzypath', require('inquirer-fuzzy-path'));
 
-async function ask_input(question, default_value = null) {
+async function ask_input(question, default_value = null, prefix = '', suffix = '') {
     const prompt_result = await prompt([
         {
             type: 'input',
             name: 'value',
             message: question,
-            default: default_value
+            default: default_value,
+            prefix: prefix,
+            suffix: suffix
         }
     ]);
 
@@ -67,19 +69,28 @@ module.exports = {
         const is_directory = source => lstatSync(source).isDirectory();
         const get_directories = source => readdirSync(source).map(name => join(source, name)).filter(is_directory);
 
+        let choices = get_directories('/etc/php').map(php_directory => {
+            const php_version = php_directory.substring(9);
+
+            return {
+                name: php_version,
+                value: php_version
+            };
+        });
+
+        choices.push({
+            name: 'None',
+            value: null
+        });
+
+        choices = choices.reverse()
+
         const prompt_result = await prompt([
             {
                 type: 'list',
                 name: 'value',
-                message: 'What PHP version?',
-                choices: get_directories('/etc/php').map(php_directory => {
-                    const php_version = php_directory.substring(9);
-
-                    return {
-                        name: php_version,
-                        value: php_version
-                    };
-                }).reverse()
+                message: 'Which PHP version to use?',
+                choices: choices
             }
         ]);
 

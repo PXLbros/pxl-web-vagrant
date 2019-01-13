@@ -18,7 +18,10 @@ line_break
 
 blue_text 'v$VERSION (Built on $BUILD_DATE)'
 
-blue_text \"$VAGRANT_NAME\" ($IP_ADDRESS)
+line_break
+
+blue_text '$VAGRANT_NAME'
+blue_text '$IP_ADDRESS'
 
 line_break"
 

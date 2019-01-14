@@ -35,7 +35,8 @@ alias edit_hosts='sudo vim /etc/hosts'
 # Sites
 alias create_site='node $SCRIPTS_SITES_DIR/create_site.js'
 alias edit_site='node $SCRIPTS_SITES_DIR/edit_site.js'
-alias delete_site='node $SCRIPTS_SITES_DIR/delete_site.js'"
+alias delete_site='node $SCRIPTS_SITES_DIR/delete_site.js'
+alias install_site='node $SCRIPTS_SITES_DIR/install_site.js'"
 
 if [ "$APACHE" == "true" ]
 then

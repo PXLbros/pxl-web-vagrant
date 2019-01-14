@@ -5,7 +5,9 @@ const slugify = require('slugify');
 const yaml = require('js-yaml');
 const { ask_confirm, ask_input } = require('./ask');
 const { remove_last_directory, remove_trailing_slash } = require('./str');
-const { error_line, title_line } = require('./log');
+const { error_line, highlight_line, line_break, title_line } = require('./log');
+const { create: create_database, exists: database_exists } = require('../utils/database');
+const { enable_web_server_site, get_config_filename, get_config_file_path, reload_web_server, save_virtual_host_config } = require('../utils/web_server.js');
 const log = console.log;
 
 function get_pxl_config_file_path_from_dir(dir) {
@@ -62,11 +64,11 @@ function load_pxl_config(pxl_config_file_path) {
         const uninstall_script_path = `${pxl_config_dir}/install.js`;
 
         if (existsSync(install_script_path)) {
-            pxl_config.install_script = true;
+            pxl_config['install-script'] = install_script_path;
         }
 
         if (existsSync(uninstall_script_path)) {
-            pxl_config.uninstall_script = true;
+            pxl_config['uninstall-script'] = uninstall_script_path;
         }
 
         return pxl_config;
@@ -129,7 +131,7 @@ function print_pxl_config(pxl_config) {
         }
 
          if (typeof pxl_config.hostname === 'string') {
-            title_line('Hostname', pxl_config.network.hostname);
+            title_line('Hostname', pxl_config.hostname);
         }
 
         if (typeof pxl_config['web-server'] === 'string') {
@@ -149,7 +151,8 @@ function print_pxl_config(pxl_config) {
             title_line('Install Script', pxl_config['install-script']);
         }
     } catch (e) {
-        error(`Could not parse PXL Web Vagrant configuration file.`);
+        console.log(e);
+        error_line(`Could not parse PXL Web Vagrant configuration file.`);
     }
 }
 
@@ -304,6 +307,54 @@ module.exports = {
             exec(`PROJECT_DIR=${project.dir} tmuxinator start --project-config=${tmuxinator_file_path}`);
         } else {
             console.log(`no tmuxinator found, just show info: ${project.dir}`);
+        }
+    },
+
+    install_from_pxl_config(pxl_config, overwrite_web_server = true) {
+        if (pxl_config['web-server']) {
+            const configuration_file_name = get_config_filename(pxl_config['web-server'], pxl_config['hostname']);
+            const configuration_file_path = get_config_file_path(pxl_config['web-server'], configuration_file_name);
+
+            // Save virtual host configuration file
+            save_virtual_host_config(configuration_file_path, pxl_config['web-server'], pxl_config['hostname'], pxl_config['public-site-dir'], pxl_config['code']['php'] || null, overwrite_web_server);
+
+            // Enable web server site
+            enable_web_server_site(pxl_config['web-server'], configuration_file_name);
+
+            // Reload web server service
+            reload_web_server(pxl_config['web-server']);
+
+            // Add /etc/hosts entry
+            exec(`sudo hostile set 127.0.0.1 ${pxl_config['hostname']}`, { silent: true });
+        }
+
+        if (pxl_config.database) {
+            if (database_exists(pxl_config.database.driver, pxl_config.database.name)) {
+                error_line(`Database "${pxl_config.database.name}" already exist.`);
+            } else {
+                try {
+                    create_database(pxl_config.database.driver, pxl_config.database.name);
+            
+                    highlight_line(`Database "${database.name}" has been created!`);
+                } catch (create_database_error) {
+                    error_line(create_database_error.message);
+                }
+            }
+
+            line_break();
+        }
+
+        if (pxl_config['install-script']) {
+            if (existsSync(pxl_config['install-script'])) {
+                highlight_line(`Running install script ${pxl_config['install-script']}...`);
+
+                const install_script_class = require(pxl_config['install-script']);
+                const install_script = new install_script_class(pxl_config);
+
+                install_script.install();
+            } else {
+                error_line(`Could not find install script at ${pxl_config['install-script']}.`);
+            }
         }
     }
 };

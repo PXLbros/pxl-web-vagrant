@@ -6,6 +6,10 @@ module.exports = {
         log(`${chalk[color](chalk[color](`${title}:`))} ${value}`);
     },
 
+    highlight_line(text) {
+        log(chalk.yellow(text));
+    },
+
     error_line(message) {
         log(chalk.red(message));
     },

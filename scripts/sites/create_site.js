@@ -3,13 +3,13 @@ const { existsSync } = require('fs');
 const { exec } = require('shelljs');
 const { bold, blue, cyan, red, yellow } = require('chalk');
 const { format } = require('date-fns');
-const { load_pxl_config_from_dir, print_pxl_config } = require('../utils/pxl');
+const { install_from_pxl_config, load_pxl_config_from_dir, print_pxl_config } = require('../utils/pxl');
 const { ask_confirm, ask_input, ask_php_version, ask_web_server, ask_create_database } = require('../utils/ask');
 const { is_public_directory } = require('../utils/web_server');
 const { remove_trailing_slash } = require('../utils/str');
 const { create: create_database } = require('../utils/database');
 const { enable_web_server_site, get_config_filename, get_config_file_path, get_web_server_title, reload_web_server, save_virtual_host_config } = require('../utils/web_server.js');
-const { line_break } = require('../utils/log');
+const { error_line, line_break } = require('../utils/log');
 const log = console.log;
 
 const options = commandLineArgs([
@@ -22,10 +22,14 @@ const options = commandLineArgs([
     { name: 'database-driver', type: String },
     { name: 'database-name', type: String },
     { name: 'overwrite', type: Boolean },
-    { name: 'no-backup', type: Boolean }
+    { name: 'no-backup', type: Boolean },
+    { name: 'force', type: Boolean }
 ]);
 
 async function main() {
+    const no_backup = (options['no-backup'] || false);
+    const force = (options['force'] || false);
+
     const web_server = (options['web-server'] || await ask_web_server('What web server should be used?'));
     const web_server_title = get_web_server_title(web_server);
 
@@ -81,7 +85,7 @@ async function main() {
         // If cloning Git repository and site directory already exist
         if (overwrite && git_repo) {
             // Take backup
-            if (!options['no-backup'] || options['no-backup'] !== true) {
+            if (!no_backup || no_backup !== true) {
                 const backup_dir = `${site_dir}_${format(new Date(), 'YYYY-MM-DD_H-mm-ss')}`;
 
                 exec(`sudo mv ${site_dir} ${backup_dir}`, { silent: true });
@@ -111,6 +115,9 @@ async function main() {
                 const pxl_config = load_pxl_config_from_dir(`${site_dir}/.pxl`);
 
                 if (pxl_config) {
+                    pxl_config.hostname = hostname;
+                    pxl_config['web-server'] = 'nginx';
+
                     line_break();
 
                     log(yellow('Found PXL Web Vagrant configuration:'));
@@ -119,14 +126,12 @@ async function main() {
 
                     log();
 
-                    const ask_pxl_config = (await ask_confirm(`Do you want to install?`));
-
-                    if (ask_pxl_config) {
-                        console.log('IMPORT PXL .pxl stuff');
+                    if (!force && await ask_confirm(`Do you want to install?`)) {
+                        install_from_pxl_config(pxl_config);
                     }
                 }
             } catch (load_pxl_config_error) {
-                log(red(load_pxl_config_error));
+                error_line(load_pxl_config_error);
             }
         }
     } else {
@@ -136,14 +141,13 @@ async function main() {
         }
     }
 
-    // const php_version = (!options['php'] && await ask_confirm('Does the project use PHP?') ? await ask_php_version() : (options['php'] ? options['php'] : null));
-    const php_version = (!options['php'] || await ask_php_version());
+    const php_version = (options['php'] || await ask_php_version());
 
     let create_database_error = null;
     let database_driver = (options['database-driver'] || null);
     let database_name = (options['database-name'] || null);
 
-    if ((!database_driver || !database_name) && await ask_confirm('Do you want to create a database?')) {
+    if ((options['database-driver'] !== '' && options['database-name'] !== '') && (!database_driver || !database_name) && await ask_confirm('Do you want to create a database?')) {
         const database = (await ask_create_database(database_driver, database_name));
 
         database_driver = database.driver;
@@ -187,17 +191,31 @@ async function main() {
         log(`${cyan(bold('Database:'))} ${red(`${create_database_error}`)}`);
     }
 
-    let command_str = `create_site \
---web-server=${web_server} \\\n
---hostname=${hostname} \\\n
---site-dir=${site_dir} \\\n
---public-dir=${public_dir} \\\n
---git-repo=${git_repo} \\\n
---php=${php_version} \\\n
---database-driver=${database_driver} \\\n
---database-name=${database_name} \\\n
---overwrite=${overwrite} \\\n
---no-backup=${no_backup} \\\n`;
+    // create_site \
+    //     --web-server=nginx \
+    //     --hostname=test.loc \
+    //     --site-dir=/vagrant/projects/test.loc \
+    //     --public-dir=/vagrant/projects/test.loc/public \
+    //     --git-repo=git@github.com:DennisNygren/vagrant-test.git \
+    //     --php=7.3 \
+    //     --database-driver=null \
+    //     --database-name=null \
+    //     --overwrite \
+    //     --no-backup \
+    //     --force
+
+    let command_str = `create_site \\
+    --web-server=${web_server} \\
+    --hostname=${hostname} \\
+    --site-dir=${site_dir} \\
+    --public-dir=${public_dir} \\
+    --git-repo=${git_repo} \\
+    --php=${php_version} \\
+    --database-driver=${database_driver} \\
+    --database-name=${database_name} \\
+    ${overwrite ? '--overwrite \\' : ''}
+    ${no_backup ? '--no-backup \\' : ''}
+    ${force ? '--force \\' : ''}`;
 
     log(`\n${cyan(bold('Command:'))}`);
     log(command_str);

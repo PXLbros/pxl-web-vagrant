@@ -20,8 +20,9 @@ blue_text 'v$VERSION (Built on $BUILD_DATE)'
 
 line_break
 
-blue_text '$VAGRANT_NAME'
-blue_text '$IP_ADDRESS'
+cyan_text 'Vagrant Machine:'
+cyan_text 'Name: $VAGRANT_NAME'
+cyan_text 'IP: $IP_ADDRESS'
 
 line_break"
 

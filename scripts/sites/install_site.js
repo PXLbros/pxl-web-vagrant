@@ -2,16 +2,18 @@ const commandLineArgs = require('command-line-args');
 const { get_current_dir } = require('../utils/file');
 const { ask_input, ask_confirm } = require('../utils/ask');
 const { yellow } = require('chalk');
-const { load_pxl_config_from_dir, print_pxl_config } = require('../utils/pxl');
-const { error_line, line_break } = require('../utils/log');
-const { create: create_database } = require('../utils/database');
+const { install_from_pxl_config, load_pxl_config_from_dir, print_pxl_config } = require('../utils/pxl');
+const { error_line, line_break, title_line } = require('../utils/log');
 const log = console.log;
 
 const options = commandLineArgs([
-    { name: 'site-dir', type: String }
+    { name: 'site-dir', type: String },
+    { name: 'force', type: Boolean }
 ]);
 
 async function main() {
+    const force = (options['force'] || false);
+
     try {
         let pxl_config;
         
@@ -45,6 +47,19 @@ async function main() {
             throw new Error('Could not find PXL Web Vagrant configuration file.');
         }
 
+        let hostname;
+
+        if (options['hostname']) {
+            hostname = options['hostname'];
+        } else if (pxl_config.hostname) {
+            hostname = pxl_config.hostname;
+        } else {
+            hostname = await ask_input('What is the hostname? (e.g. domain.loc)');
+        }
+
+        pxl_config.hostname = hostname;
+        pxl_config['web-server'] = 'nginx';
+
         line_break();
 
         log(yellow('Found PXL Web Vagrant configuration:'));
@@ -53,19 +68,27 @@ async function main() {
 
         line_break();
 
-        const ask_pxl_config = (await ask_confirm(`Do you want to install?`));
+        let do_install;
 
-        if (ask_pxl_config) {
-            if (pxl_config.database) {
-                try {
-                    create_database(pxl_config.database.driver, pxl_config.database.name);
-            
-                    log(yellow(`Database "${database.name}" has been created!`));
-                } catch (create_database_error) {
-                    error_line(create_database_error.message);
-                }
+        if (force) {
+            do_install = true;
+        } else {
+            do_install = await ask_confirm(`Do you want to install?`);
+
+            if (!do_install) {
+                return;
             }
         }
+
+        if (do_install) {
+            install_from_pxl_config(pxl_config);
+        }
+
+        line_break();
+
+        log(yellow('Site installed!'));
+        title_line('Hostname', hostname);
+        line_break();
     } catch (load_pxl_config_error) {
         error_line(load_pxl_config_error.message);
     }

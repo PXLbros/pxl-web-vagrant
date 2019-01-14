@@ -26,10 +26,10 @@ cyan_text 'IP: $IP_ADDRESS'
 
 line_break"
 
-if [ -f "/vagrant/.config/tmuxinator/home.yml" ]; then
-    WELCOME_MESSAGE="${WELCOME_MESSAGE}Run \"tmuxinator start home\" to start.
-line_break"
-fi
+# if [ -f "/vagrant/.config/tmuxinator/home.yml" ]; then
+#     WELCOME_MESSAGE="${WELCOME_MESSAGE}Run \"tmuxinator start home\" to start.
+# line_break"
+# fi
 
 # Disable default welcome message
 highlight_text "Disable default welcome message..."

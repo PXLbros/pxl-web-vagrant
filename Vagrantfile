@@ -118,11 +118,12 @@ Vagrant.configure('2') do |config|
     # tmux
     if vagrant_config['shell']['tmux']['enabled']
         config.vm.provision 'shell', name: 'tmux', path: "#{VAGRANT_DIR}/provision/shell/tmux/tmux.sh", run: 'once', privileged: false, env: GLOBAL_VARIABLES
+        config.vm.provision 'shell', name: 'tmux-resurrect', path: "#{VAGRANT_DIR}/provision/shell/tmux/tmux-resurrect.sh", run: 'once', privileged: false, env: GLOBAL_VARIABLES
 
         # tmuxinator
-        if vagrant_config['shell']['tmux']['tmuxinator']['enabled']
-            config.vm.provision 'shell', name: 'tmuxinator', path: "#{VAGRANT_DIR}/provision/shell/tmux/tmuxinator.sh", run: 'once', privileged: false, env: GLOBAL_VARIABLES
-        end
+        # if vagrant_config['shell']['tmux']['tmuxinator']['enabled']
+        #     config.vm.provision 'shell', name: 'tmuxinator', path: "#{VAGRANT_DIR}/provision/shell/tmux/tmuxinator.sh", run: 'once', privileged: false, env: GLOBAL_VARIABLES
+        # end
     end
 
     # Liquid Prompt

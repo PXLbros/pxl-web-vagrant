@@ -23,7 +23,6 @@ echo -e "${BLUE}https://github.com/PXLbros/pxl-web-vagrant${NC}"
 
 line_break
 
-echo -e "${CYAN}Vagrant Machine:${NC}"
 echo -e "${CYAN}Name: ${VAGRANT_NAME}${NC}"
 echo -e "${CYAN}IP: ${IP_ADDRESS}${NC}"
 

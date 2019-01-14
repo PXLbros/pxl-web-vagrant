@@ -14,7 +14,7 @@ exec_command "git clone https://github.com/tmux-plugins/tmux-resurrect $TMUX_RES
 
 # Append to .tmux.conf
 highlight_text "Append run-shell to .tmux.conf file..."
-exec_command "echo \"run-shell run-shell $TMUX_RESURRECT_DIR/resurrect.tmux\" >> $HOME/.tmux.conf"
+exec_command "echo \"run-shell $TMUX_RESURRECT_DIR/resurrect.tmux\" >> $HOME/.tmux.conf"
 
 # Reload tmux configuration
 highlight_text "Reload tmux configuration..."

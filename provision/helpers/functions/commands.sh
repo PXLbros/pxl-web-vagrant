@@ -95,3 +95,11 @@ exec_command() {
 
     echo -e "\n$LOG_LINE_SEPARATOR\n" >> $LOG_FILE_PATH
 }
+
+add_ppa() {
+    grep -h "^deb.*$1" /etc/apt/sources.list.d/* > /dev/null 2>&1
+
+    if [ $? -ne 0 ]; then
+        exec_command "sudo add-apt-repository -y ppa:$1"
+    fi
+}

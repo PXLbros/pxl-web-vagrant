@@ -49,7 +49,6 @@ module.exports = {
                 title: 'Code',
                 collapsable: false,
                 children: [
-                    ['/code/', 'Introduction'],
                     ['/code/php', 'PHP']
                 ]
             },

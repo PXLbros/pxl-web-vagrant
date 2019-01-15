@@ -22,6 +22,8 @@ title: NGINX
 
 ### `stop_nginx`
 
+### `nginx_status`
+
 ### `reload_nginx`
 
 ### `create_nginx_site`

@@ -9,7 +9,7 @@ const { is_public_directory } = require('../utils/web_server');
 const { remove_trailing_slash } = require('../utils/str');
 const { create: create_database } = require('../utils/database');
 const { enable_web_server_site, get_config_filename, get_config_file_path, get_web_server_title, reload_web_server, save_virtual_host_config } = require('../utils/web_server.js');
-const { error_line, line_break } = require('../utils/log');
+const { error_line, highlight_line, line_break } = require('../utils/log');
 const log = console.log;
 
 const options = commandLineArgs([
@@ -18,12 +18,14 @@ const options = commandLineArgs([
     { name: 'site-dir', type: String },
     { name: 'public-dir', type: String },
     { name: 'git-repo', type: String },
+    { name: 'git-branch', type: String },
     { name: 'php', type: String },
     { name: 'database-driver', type: String },
     { name: 'database-name', type: String },
     { name: 'overwrite', type: Boolean },
     { name: 'no-backup', type: Boolean },
-    { name: 'force', type: Boolean }
+    { name: 'force', type: Boolean },
+    { name: 'show-command', type: Boolean }
 ]);
 
 async function main() {
@@ -53,13 +55,14 @@ async function main() {
 
             public_dir = `${site_dir}/${public_dir_input}`;
 
-            log(yellow(public_dir));
+            // log(yellow(public_dir));
         }
     }
 
     // const default_site_dir = (is_public_directory(public_dir) ? remove_last_directory(public_dir) : public_dir);
 
     let git_repo = options['git-repo'];
+    let git_branch = (options['git-branch'] || null);
     
     if (!git_repo) {
         if (await ask_confirm('Create project from existing Git repository?')) {
@@ -69,54 +72,61 @@ async function main() {
 
     let overwrite = (options['overwrite'] || false);
 
-    const configuration_file_name = get_config_filename(web_server, hostname);
-    const configuration_file_path = get_config_file_path(web_server, configuration_file_name);
+    let configuration_file_name;
+    let configuration_file_path;
 
-    if (existsSync(configuration_file_path) && !overwrite) {
-        if (!await ask_confirm(`${web_server_title} virtual host configuration file "${configuration_file_name}" already exist, do you want to overwrite it?`, false)) {
-            return;
-        }
-
-        overwrite = true;
-    }
-
-    // If site directory already exist
-    if (existsSync(site_dir)) {
-        // If cloning Git repository and site directory already exist
-        if (overwrite && git_repo) {
-            // Take backup
-            if (!no_backup || no_backup !== true) {
-                const backup_dir = `${site_dir}_${format(new Date(), 'YYYY-MM-DD_H-mm-ss')}`;
-
-                exec(`sudo mv ${site_dir} ${backup_dir}`, { silent: true });
-
-                log(yellow(`Backed up existing directory ${site_dir} at ${backup_dir}.`));
-            } else {
-                // No backup, delete existing site directory
-                exec(`sudo rm -rf ${site_dir}`);
-            }
-        }
-    }
-
-    // Clone
     let git_clone_error;
 
-    if (git_repo) {
+    let pxl_config;
+    
+    let php_version = (options['php'] || null);
+
+    let database_driver;
+    let database_name;
+    let create_database_error = null;
+
+    // If site directory already exist, take backup/delete existing
+    if (existsSync(site_dir)) {            
+        // Take backup
+        if (!no_backup || no_backup !== true) {
+            const backup_dir = `${site_dir}_${format(new Date(), 'YYYY-MM-DD_H-mm-ss')}`;
+
+            exec(`sudo mv ${site_dir} ${backup_dir}`, { silent: true });
+
+            log(yellow(`Backed up existing directory ${site_dir} at ${backup_dir}.`));
+        } else {
+            // No backup, delete existing site directory
+            exec(`sudo rm -rf ${site_dir}`);
+        }
+    }
+
+    if (git_repo) {    
         line_break();
 
         log(blue(`Cloning Git repository ${git_repo} to ${site_dir}...`));
 
-        const git_clone_result = exec(`git clone ${git_repo} ${site_dir}`);
+        // Clone Git repository
+        const git_clone_result = exec(`git clone ${git_repo}${git_branch ? ` --branch=${git_branch}` : ''} ${site_dir}`, { silent: true });
         git_clone_error = (git_clone_result.code !== 0 ? git_clone_result.stderrr : null);
 
         if (!git_clone_error) {
+            highlight_line('Git repository cloned!');
+
             // Check for .pxl/config.yaml file
             try {
-                const pxl_config = load_pxl_config_from_dir(`${site_dir}/.pxl`);
+                pxl_config = load_pxl_config_from_dir(`${site_dir}/.pxl`);
 
                 if (pxl_config) {
-                    pxl_config.hostname = hostname;
-                    pxl_config['web-server'] = 'nginx';
+                    if (pxl_config.code && pxl_config.code.php) {
+                        php_version = pxl_config.code.php;
+                    }
+
+                    if (pxl_config.database) {
+                        database_driver = pxl_config.database.driver;
+                        database_name = pxl_config.database.name;
+                    }
+
+                    public_dir = pxl_config['public-site-dir'];
 
                     line_break();
 
@@ -124,10 +134,10 @@ async function main() {
 
                     print_pxl_config(pxl_config);
 
-                    log();
+                    line_break();
 
-                    if (!force && await ask_confirm(`Do you want to install?`)) {
-                        install_from_pxl_config(pxl_config);
+                    if (force || (!force && await ask_confirm(`Do you want to install?`))) {
+                        install_from_pxl_config(pxl_config); // TODO: Instead of doing this, just get variables instead and run commands below?
                     }
                 }
             } catch (load_pxl_config_error) {
@@ -141,13 +151,28 @@ async function main() {
         }
     }
 
-    const php_version = (options['php'] || await ask_php_version());
+    configuration_file_name = get_config_filename(web_server, hostname);
+    configuration_file_path = get_config_file_path(web_server, configuration_file_name);
 
-    let create_database_error = null;
-    let database_driver = (options['database-driver'] || null);
-    let database_name = (options['database-name'] || null);
+    if (existsSync(configuration_file_path) && !overwrite) {
+        if (!await ask_confirm(`${web_server_title} virtual host configuration file "${configuration_file_name}" already exist, do you want to overwrite it?`, false)) {
+            return;
+        }
+    }
 
-    if ((options['database-driver'] !== '' && options['database-name'] !== '') && (!database_driver || !database_name) && await ask_confirm('Do you want to create a database?')) {
+    if (!php_version) {
+        php_version = (options['php'] || await ask_php_version());
+    }
+
+    if (!database_driver) {
+        database_driver = (options['database-driver'] || null);
+    }
+
+    if (!database_name) {
+        database_name = (options['database-name'] || null);
+    }
+
+    if (!pxl_config && (options['database-driver'] !== '' && options['database-name'] !== '') && (!database_driver || !database_name) && await ask_confirm('Do you want to create a database?')) {
         const database = (await ask_create_database(database_driver, database_name));
 
         database_driver = database.driver;
@@ -155,12 +180,16 @@ async function main() {
     }
 
     if (database_driver && database_name) {
-        try {
-            create_database(database_driver, database_name);
-        } catch (create_database_error) {
-            create_database_error = create_database_error;
+        if (database_exists(database_driver, database_name)) {
+            error_line(`${get_database_driver_title(pxl_config.database.driver)} Database "${pxl_config.database.name}" already exist.`);
+        } else {
+            try {
+                create_database(database_driver, database_name);
+            } catch (create_database_error) {
+                create_database_error = create_database_error;
+            }
         }
-    }
+    }   
 
     // Save virtual host configuration file
     save_virtual_host_config(configuration_file_path, web_server, hostname, public_dir, php_version, overwrite);
@@ -174,13 +203,13 @@ async function main() {
     // Add /etc/hosts entry
     exec(`sudo hostile set 127.0.0.1 ${hostname}`, { silent: true });
 
-    // Show success message
+    // Show summary
     log(yellow(`\n${web_server_title} site added!\n`));
     log(`${cyan(bold('Hostname:'))} ${hostname}`);
     log(`${cyan(bold('Public Directory:'))} ${public_dir}`);
 
     if (php_version) {
-        log(`${cyan(bold('PHP Version:'))} ${php_version}`);
+        log(`${cyan(bold('PHP:'))} ${php_version}`);
     }
 
     if (git_repo && git_clone_error) {
@@ -191,34 +220,23 @@ async function main() {
         log(`${cyan(bold('Database:'))} ${red(`${create_database_error}`)}`);
     }
 
-    // create_site \
-    //     --web-server=nginx \
-    //     --hostname=test.loc \
-    //     --site-dir=/vagrant/projects/test.loc \
-    //     --public-dir=/vagrant/projects/test.loc/public \
-    //     --git-repo=git@github.com:DennisNygren/vagrant-test.git \
-    //     --php=7.3 \
-    //     --database-driver=null \
-    //     --database-name=null \
-    //     --overwrite \
-    //     --no-backup \
-    //     --force
+    if (options['show-command']) {
+        let command_str = `create_site \\
+        --web-server=${web_server} \\
+        --hostname=${hostname} \\
+        --site-dir=${site_dir} \\
+        --public-dir=${public_dir} \\
+        --git-repo=${git_repo} \\
+        --php=${php_version} \\
+        --database-driver=${database_driver} \\
+        --database-name=${database_name} \\
+        ${overwrite ? '--overwrite \\' : ''}
+        ${no_backup ? '--no-backup \\' : ''}
+        ${force ? '--force \\' : ''}`;
 
-    let command_str = `create_site \\
-    --web-server=${web_server} \\
-    --hostname=${hostname} \\
-    --site-dir=${site_dir} \\
-    --public-dir=${public_dir} \\
-    --git-repo=${git_repo} \\
-    --php=${php_version} \\
-    --database-driver=${database_driver} \\
-    --database-name=${database_name} \\
-    ${overwrite ? '--overwrite \\' : ''}
-    ${no_backup ? '--no-backup \\' : ''}
-    ${force ? '--force \\' : ''}`;
-
-    log(`\n${cyan(bold('Command:'))}`);
-    log(command_str);
+        log(`\n${cyan(bold('Command:'))}`);
+        log(command_str);
+    }
 }
 
 main();

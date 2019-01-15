@@ -20,13 +20,13 @@ exec_command() {
 
     # Execute command
     if [ "$PROVISION_SHOW_COMMAND_OUTPUT" == "true" ]; then
-        eval "$command" | tee /vagrant/logs/provision/.current
+        eval "$command" | tee $PROVISIONING_COMMAND_FILE_PATH
     else
-        eval "$command" &> /vagrant/logs/provision/.current
+        eval "$command" &> $PROVISIONING_COMMAND_FILE_PATH
     fi
 
     local command_exit_code=$?
-    local command_output=$(cat /vagrant/logs/provision/.current)
+    local command_output=$(cat $PROVISIONING_COMMAND_FILE_PATH)
 
     # Save command ouput to log file
     echo -e "\nOutput:\n$command_output" >> $LOG_FILE_PATH

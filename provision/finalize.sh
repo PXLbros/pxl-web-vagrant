@@ -13,4 +13,4 @@ print_provisioning_stats
 clear_provisioning_stats
 
 # Remove current command temporary file
-rm /vagrant/logs/provision/.current
+rm $PROVISIONING_COMMAND_FILE_PATH

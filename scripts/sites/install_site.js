@@ -58,7 +58,7 @@ async function main() {
         }
 
         pxl_config.hostname = hostname;
-        pxl_config['web-server'] = 'nginx';
+        pxl_config['web-server'] = (web_server || 'nginx');
 
         line_break();
 

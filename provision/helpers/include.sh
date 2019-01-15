@@ -2,7 +2,8 @@
 
 LOG_LINE_SEPARATOR="----------------------------------------------------------------------------------------------------"
 
-PROVISIONING_STATS_FILE_PATH=/vagrant/.provisioning
+PROVISIONING_STATS_FILE_PATH=/vagrant/logs/provision/.stats
+PROVISIONING_COMMAND_FILE_PATH=/vagrant/logs/provision/.command
 
 LOGS_DIR=/vagrant/logs
 PROVISIONS_LOG_DIR=$LOGS_DIR/provision

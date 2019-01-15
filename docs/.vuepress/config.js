@@ -69,18 +69,7 @@ module.exports = {
                     ['/shell/liquidprompt', 'Liquid Prompt'],
                     ['/shell/tmux', 'tmux']
                 ]
-            },
-            // {
-            //     title: 'Projects',
-            //     collapsable: false,
-            //     children: [
-            //         ['/projects/', 'Introduction'],
-            //         ['/projects/configuration', 'Configuration'],
-            //         ['/projects/create-new', 'Create New Project'],
-            //         ['/projects/add-existing', 'Add Existing Project'],
-            //         ['/projects/commands', 'Commands'],
-            //     ]
-            // }
+            }
         ]
     }
 };

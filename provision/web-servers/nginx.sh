@@ -32,7 +32,7 @@ if [ "$NGINX" == "true" ]; then
         exec_command "sudo service nginx start"
     fi
 else
-    if [ ! -x "$(command -v nginx)" ]; then
+    if [ -x "$(command -v nginx)" ]; then
         highlight_text "Uninstall NGINX..."
 
         # Stop NGINX

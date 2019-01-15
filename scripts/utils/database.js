@@ -25,5 +25,14 @@ module.exports = {
         }
     },
 
-    exists: database_exists
+    exists: database_exists,
+
+    get_driver_title(driver) {
+        switch (driver) {
+            case 'mysql':
+                return 'MySQL';
+            case 'mongodb':
+                return 'MongoDB';
+        }
+    }
 }

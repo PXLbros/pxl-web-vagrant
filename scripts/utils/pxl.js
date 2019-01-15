@@ -6,7 +6,7 @@ const yaml = require('js-yaml');
 const { ask_confirm, ask_input } = require('./ask');
 const { remove_last_directory, remove_trailing_slash } = require('./str');
 const { error_line, highlight_line, line_break, title_line } = require('./log');
-const { create: create_database, exists: database_exists } = require('../utils/database');
+const { create: create_database, exists: database_exists, get_driver_title: get_database_driver_title } = require('../utils/database');
 const { enable_web_server_site, get_config_filename, get_config_file_path, reload_web_server, save_virtual_host_config } = require('../utils/web_server.js');
 const log = console.log;
 
@@ -330,12 +330,12 @@ module.exports = {
 
         if (pxl_config.database) {
             if (database_exists(pxl_config.database.driver, pxl_config.database.name)) {
-                error_line(`Database "${pxl_config.database.name}" already exist.`);
+                error_line(`${get_database_driver_title(pxl_config.database.driver)} Database "${pxl_config.database.name}" already exist.`);
             } else {
                 try {
                     create_database(pxl_config.database.driver, pxl_config.database.name);
             
-                    highlight_line(`Database "${database.name}" has been created!`);
+                    highlight_line(`Database "${pxl_config.database.name}" has been created!`);
                 } catch (create_database_error) {
                     error_line(create_database_error.message);
                 }

@@ -1,5 +1,5 @@
 const { existsSync } = require('fs');
-const { cp, exec } = require('shelljs');
+const { cd, cp, exec } = require('shelljs');
 
 class InstallHelper
 {
@@ -10,6 +10,8 @@ class InstallHelper
     }
 
     install() {
+        // Go to site directory before installing
+        cd(this.pxl_config['site-dir']);
     }
 
     php(command) {

@@ -16,13 +16,13 @@ figlet PXL Web Vagrant
 
 line_break
 
-blue_text \"v$VERSION (Built on $BUILD_DATE)\"
-blue_text \"https://github.com/PXLbros/pxl-web-vagrant\"
+blue_text 'v$VERSION (Built on $BUILD_DATE)'
+blue_text 'https://github.com/PXLbros/pxl-web-vagrant'
 
 line_break
 
-cyan_text \"Name: $VAGRANT_NAME\"
-cyan_text \"IP: $IP_ADDRESS\"
+cyan_text 'Name: $VAGRANT_NAME'
+cyan_text 'IP: $IP_ADDRESS'
 
 line_break"
 

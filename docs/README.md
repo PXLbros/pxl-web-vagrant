@@ -17,7 +17,7 @@ Welcome to **PXL Web Vagrant** - a Ubuntu Vagrant environment for web developmen
 * Databases
     * MySQL
     * MongoDB
-    * Built-in helper commands for creating and deleting databases, .e.g [`create_database`](/databases/#create-database) and [`delete_database`](/databases/#delete-database)
+    * Built-in helper commands for creating and deleting databases, .e.g [`create_database`](/databases/#create) and [`delete_database`](/databases/#delete)
 * Caching
     * Redis
 * Shell

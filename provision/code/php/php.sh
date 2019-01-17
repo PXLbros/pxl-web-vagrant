@@ -24,8 +24,6 @@ highlight_text "Install PHP dependencies..."
 exec_command "apt-get -y install software-properties-common"
 
 add_ppa ondrej/apache2 ondrej/php
-# exec_command "add-apt-repository -y ppa:ondrej/apache2"
-# exec_command "add-apt-repository -y ppa:ondrej/php"
 
 exec_command "apt-get update -y"
 

@@ -34,7 +34,7 @@ alias edit_hosts='sudo vim /etc/hosts'
 
 # Sites
 alias create_site='node $SCRIPTS_SITES_DIR/create_site.js'
-alias edit_site='node $SCRIPTS_SITES_DIR/edit_site.js'
+alias edit_site_conf='node $SCRIPTS_SITES_DIR/edit_site_conf.js'
 alias delete_site='node $SCRIPTS_SITES_DIR/delete_site.js'
 alias install_site='node $SCRIPTS_SITES_DIR/install_site.js'"
 
@@ -50,7 +50,7 @@ alias reload_apache='sudo service apache2 reload'
 alias apache_status='sudo service apache2 status'
 alias edit_apache_conf='sudo vim /etc/apache2/apache2.conf'
 alias create_apache_site='create_site --web-server=apache'
-alias edit_apache_site='edit_site --web-server=apache'
+alias edit_apache_site_conf='edit_site_conf --web-server=apache'
 alias delete_apache_site='delete_site --web-server=apache'"
 fi
 
@@ -66,7 +66,7 @@ alias nginx_status='sudo service nginx status'
 alias reload_nginx='sudo service nginx reload'
 alias edit_nginx_conf='sudo vim /etc/nginx/nginx.conf'
 alias create_nginx_site='create_site --web-server=nginx'
-alias edit_nginx_site='edit_site --web-server=nginx'
+alias edit_nginx_site_conf='edit_site_conf --web-server=nginx'
 alias delete_nginx_site='delete_site --web-server=nginx'"
 fi
 

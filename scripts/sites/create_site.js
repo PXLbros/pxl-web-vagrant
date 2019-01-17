@@ -4,11 +4,11 @@ const { exec } = require('shelljs');
 const { bold, blue, cyan, red, yellow } = require('chalk');
 const { format } = require('date-fns');
 const { install_from_pxl_config, load_pxl_config_from_dir, print_pxl_config } = require('../utils/pxl');
-const { ask_confirm, ask_input, ask_php_version, ask_web_server, ask_create_database } = require('../utils/ask');
+const { ask_confirm, ask_input, ask_php_version, ask_create_database } = require('../utils/ask');
 const { is_public_directory } = require('../utils/web_server');
 const { remove_trailing_slash } = require('../utils/str');
 const { create: create_database } = require('../utils/database');
-const { enable_web_server_site, get_config_filename, get_config_file_path, get_web_server_title, reload_web_server, save_virtual_host_config } = require('../utils/web_server.js');
+const { ask_web_server, enable_web_server_site, get_config_filename, get_config_file_path, get_installed_web_servers, get_web_server_title, reload_web_server, save_virtual_host_config } = require('../utils/web_server.js');
 const { error_line, highlight_line, line_break } = require('../utils/log');
 const log = console.log;
 
@@ -29,14 +29,28 @@ const options = commandLineArgs([
 ]);
 
 async function main() {
+    exec('figlet create_site');
+    line_break();
+
     const no_backup = (options['no-backup'] || false);
     const force = (options['force'] || false);
 
-    const web_server = (options['web-server'] || await ask_web_server('What web server should be used?'));
+    const installed_web_servers = get_installed_web_servers();
+    
+    let web_server = options['web-server'];
+    
+    if (!web_server) {
+        if (installed_web_servers.length === 1) {
+            web_server = installed_web_servers[0].value;
+        } else {
+            web_server = await ask_web_server('What web server should be used?');
+        }
+    }
+
     const web_server_title = get_web_server_title(web_server);
 
-    const hostname = (options['hostname'] || await ask_input('What is the hostname? (e.g. domain.loc)'));
-    let site_dir = (options['site-dir'] || await ask_input('What is the site directory?', `/vagrant/projects/${hostname}`));
+    const hostname = (options['hostname'] || await ask_input('Enter hostname (e.g. domain.loc):'));
+    let site_dir = (options['site-dir'] || await ask_input('Enter site directory:', `/vagrant/projects/${hostname}`));
 
     // Make sure site_dir doesn't have a trailing slash
     site_dir = remove_trailing_slash(site_dir);
@@ -48,7 +62,7 @@ async function main() {
     } else if (is_public_directory(site_dir)) {
         public_dir = site_dir;
     } else {
-        let public_dir_input = await ask_input('What is the public site directory? (leave empty for same as site directory)');
+        let public_dir_input = await ask_input(`Enter public site directory (leave empty for ${site_dir}):`);
 
         if (public_dir_input) {
             public_dir_input = remove_trailing_slash(public_dir_input);
@@ -65,8 +79,8 @@ async function main() {
     let git_branch = (options['git-branch'] || null);
     
     if (!git_repo) {
-        if (await ask_confirm('Create project from existing Git repository?')) {
-            git_repo = (await ask_input('What is the Git SSH repository? (e.g. git@github.com:Organization/project-name.git)'));
+        if (await ask_confirm('Create from existing Git repository?')) {
+            git_repo = (await ask_input('Enter Git SSH repository (e.g. git@github.com:Organization/project-name.git):'));
         }
     }
 
@@ -107,42 +121,46 @@ async function main() {
 
         // Clone Git repository
         const git_clone_result = exec(`git clone ${git_repo}${git_branch ? ` --branch=${git_branch}` : ''} ${site_dir}`, { silent: true });
-        git_clone_error = (git_clone_result.code !== 0 ? git_clone_result.stderrr : null);
+        git_clone_error = (git_clone_result.code !== 0 ? git_clone_result.stderr : null);
 
-        if (!git_clone_error) {
-            highlight_line('Git repository cloned!');
+        if (git_clone_error) {
+            error_line(git_clone_error);
 
-            // Check for .pxl/config.yaml file
-            try {
-                pxl_config = load_pxl_config_from_dir(`${site_dir}/.pxl`);
+            return;
+        }
 
-                if (pxl_config) {
-                    if (pxl_config.code && pxl_config.code.php) {
-                        php_version = pxl_config.code.php;
-                    }
+        highlight_line('Git repository cloned!');
 
-                    if (pxl_config.database) {
-                        database_driver = pxl_config.database.driver;
-                        database_name = pxl_config.database.name;
-                    }
+        // Check for .pxl/config.yaml file
+        try {
+            pxl_config = load_pxl_config_from_dir(`${site_dir}/.pxl`);
 
-                    public_dir = pxl_config['public-site-dir'];
-
-                    line_break();
-
-                    log(yellow('Found PXL Web Vagrant configuration:'));
-
-                    print_pxl_config(pxl_config);
-
-                    line_break();
-
-                    if (force || (!force && await ask_confirm(`Do you want to install?`))) {
-                        install_from_pxl_config(pxl_config); // TODO: Instead of doing this, just get variables instead and run commands below?
-                    }
+            if (pxl_config) {
+                if (pxl_config.code && pxl_config.code.php) {
+                    php_version = pxl_config.code.php;
                 }
-            } catch (load_pxl_config_error) {
-                error_line(load_pxl_config_error);
+
+                if (pxl_config.database) {
+                    database_driver = pxl_config.database.driver;
+                    database_name = pxl_config.database.name;
+                }
+
+                public_dir = pxl_config['public-site-dir'];
+
+                line_break();
+
+                log(yellow('Found PXL Web Vagrant configuration:'));
+
+                print_pxl_config(pxl_config);
+
+                line_break();
+
+                if (force || (!force && await ask_confirm(`Do you want to install?`))) {
+                    install_from_pxl_config(pxl_config); // TODO: Instead of doing this, just get variables instead and run commands below?
+                }
             }
+        } catch (load_pxl_config_error) {
+            error_line(load_pxl_config_error);
         }
     } else {
         // If not from Git repo, create site & public directory

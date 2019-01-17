@@ -2,62 +2,83 @@ const commandLineArgs = require('command-line-args');
 const { existsSync } = require('fs');
 const { exec } = require('shelljs');
 const { yellow, red } = require('chalk');
-const { ask_confirm } = require('../../utils/ask');
-const { choose_files_from_dir } = require('../../utils/choose');
+const { ask_confirm } = require('../utils/ask');
+const { choose_files_from_dir } = require('../utils/choose');
+const { error_line } = require('../utils/log');
+const { get_web_server_title, get_installed_web_servers, get_sites_config_dir } = require('../utils/web_server');
 const log = console.log;
 
 const options = commandLineArgs([
+    { name: 'web-server', type: String },
     { name: 'hostname', type: String },
     { name: 'non-interactive', type: Boolean, defaultOption: false }
 ]);
 
 async function main() {
-    let selected_nginx_site_configuration_file;
+    const installed_web_servers = get_installed_web_servers();
+    
+    let web_server = options['web-server'];
+    
+    if (!web_server) {
+        if (installed_web_servers.length === 1) {
+            web_server = installed_web_servers[0].value;
+        } else {
+            web_server = await ask_web_server('What web server should be used?');
+        }
+    }
+
+    const web_server_title = get_web_server_title(web_server);
+    const web_server_sites_conf_dir = get_sites_config_dir(web_server);
+
+    let selected_site_configuration_file;
 
     if (options['hostname']) {
-        selected_apache_site_configuration_file = `${options['hostname']}.conf`;
+        selected_site_configuration_file = `${options['hostname']}.conf`;
     } else {
-        selected_apache_site_configuration_file = await choose_files_from_dir('/etc/apache2/sites-available', 'Which Apache site do you want to delete?');
+        selected_site_configuration_file = await choose_files_from_dir(web_server_sites_conf_dir, `Which ${web_server_title} site do you want to delete?`);
     }
 
-    const selected_apache_site_configuration_file_path = `/etc/apache2/sites-available/${selected_apache_site_configuration_file}`;
+    const selected_site_configuration_file_path = `${web_server_sites_conf_dir}/${selected_site_configuration_file}`;
 
-    if (!existsSync(selected_apache_site_configuration_file_path)) {
-        log(red(`Could not find Apache site configuration "${selected_apache_site_configuration_file}".`));
+    if (!existsSync(selected_site_configuration_file_path)) {
+        error_line(`Could not find ${web_server_title} site configuration "${selected_site_configuration_file}".`);
 
         return;
     }
 
-    if (!options['non-interactive'] && !await ask_confirm(`Are you sure you want to delete Apache site "${selected_apache_site_configuration_file}"?`)) {
+    if (!options['non-interactive'] && !await ask_confirm(`Are you sure you want to delete ${web_server_title} site "${selected_site_configuration_file}"?`)) {
         return;
     }
-
-    // Disable Apache site
-    exec(`sudo a2dissite ${selected_apache_site_configuration_file}`, { silent: true });
 
     // Read hostname from site configuration file
-    const get_server_name_result = exec(`awk '/ServerName/ {print $2}' ${selected_apache_site_configuration_file_path}`, { silent: true })
-    const hostname = (get_server_name_result.code === 0 && get_server_name_result.stdout ? get_server_name_result.stdout.trim() : null);
+    let hostname;
 
-    const get_server_name_result = exec(`awk '/server_name/ {print $2}' ${selected_nginx_site_configuration_file_path}`, { silent: true })
-    const hostname = (get_server_name_result.code === 0 && get_server_name_result.stdout ? get_server_name_result.stdout.trim().slice(0, -1) : null);
+    if (web_server === 'apache') {
+        // Disable Apache site
+        exec(`sudo a2dissite ${selected_site_configuration_file}`, { silent: true });
+
+        const get_server_name_result = exec(`awk '/ServerName/ {print $2}' ${selected_site_configuration_file_path}`, { silent: true })
+        hostname = (get_server_name_result.code === 0 && get_server_name_result.stdout ? get_server_name_result.stdout.trim() : null);
+    } else if (web_server === 'nginx') {
+        const get_server_name_result = exec(`awk '/server_name/ {print $2}' ${selected_nginx_site_configuration_file_path}`, { silent: true })
+        hostname = (get_server_name_result.code === 0 && get_server_name_result.stdout ? get_server_name_result.stdout.trim().slice(0, -1) : null);
+
+        // exec(`sudo rm ${selected_nginx_site_configuration_enabled_file_path}`);
+    }
+
+    // Delete sites available configuration file
+    exec(`sudo rm ${selected_site_configuration_file_path}`);
 
     // Delete /etc/hosts entry
     if (hostname !== null) {
         exec(`sudo hostile remove ${hostname}`, { silent: true });
     }
 
-    // Delete sites available configuration file
-    exec(`sudo rm ${selected_apache_site_configuration_file_path}`);
-
-    exec(`sudo rm ${selected_nginx_site_configuration_enabled_file_path}`);
-    exec(`sudo rm ${selected_nginx_site_configuration_file_path}`);
-
     // Restart
     exec('sudo service apache2 reload', { silent: true });
     exec('sudo service nginx restart', { silent: true });
 
-    log(yellow(`Apache/NGINX site "${hostname}" deleted!`));
+    log(yellow(`${web_server_title} site "${hostname}" deleted!`));
 }
 
 main();

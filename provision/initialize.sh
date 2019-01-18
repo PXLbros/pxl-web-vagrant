@@ -23,11 +23,6 @@ echo -e "${BLUE}https://github.com/PXLbros/pxl-web-vagrant${NC}"
 
 line_break
 
-echo -e "${CYAN}Name: ${VAGRANT_NAME}${NC}"
-echo -e "${CYAN}IP: ${IP_ADDRESS}${NC}"
-
-line_break
-
 # Initialize logs
 if [ -d /vagrant/logs ]; then
     # Delete log files in log folder

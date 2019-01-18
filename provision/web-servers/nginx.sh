@@ -4,9 +4,9 @@ export LOG_FILE_PATH=web-servers/nginx.log
 
 . /vagrant/provision/helpers/include.sh
 
-title "NGINX"
-
 if [ "$NGINX" == "true" ]; then
+    title "NGINX"
+
     if ! grep -qF "export NGINX_PORT" /home/vagrant/.bashrc; then
         exec_command "echo -e \"\nexport NGINX_PORT=$NGINX_PORT\" >> /home/vagrant/.bashrc"
     fi
@@ -33,6 +33,8 @@ if [ "$NGINX" == "true" ]; then
     fi
 else
     if [ -x "$(command -v nginx)" ]; then
+        title "NGINX"
+
         highlight_text "Uninstall NGINX..."
 
         # Stop NGINX

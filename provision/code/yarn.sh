@@ -18,8 +18,6 @@ highlight_text "Install Yarn..."
 exec_command "sudo apt-get install yarn -y"
 
 # Global packages
-highlight_text "Install global packages..."
-
 GLOBAL_PACKAGES=(
     "hostile"
     "ngrok"
@@ -27,6 +25,7 @@ GLOBAL_PACKAGES=(
 
 for GLOBAL_PACKAGE in "${GLOBAL_PACKAGES[@]}"
 do
+    highlight_text "Install $GLOBAL_PACKAGE..."
     exec_command "sudo yarn global add $GLOBAL_PACKAGE"
 done
 

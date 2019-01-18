@@ -48,7 +48,7 @@ async function main() {
     } else if (is_public_directory(site_dir)) {
         public_dir = site_dir;
     } else {
-        let public_dir_input = await ask_input('What is the public site directory? (leave empty for same as site directory)');
+        let public_dir_input = await ask_input('What is the public site directory? (leave empty for same as site directory)'); // TODO: Can we wait with this question till after cloning git? Because it'll say in .pxl config file from clone if
 
         if (public_dir_input) {
             public_dir_input = remove_trailing_slash(public_dir_input);
@@ -107,42 +107,48 @@ async function main() {
 
         // Clone Git repository
         const git_clone_result = exec(`git clone ${git_repo}${git_branch ? ` --branch=${git_branch}` : ''} ${site_dir}`, { silent: true });
-        git_clone_error = (git_clone_result.code !== 0 ? git_clone_result.stderrr : null);
+        git_clone_error = (git_clone_result.code !== 0 ? git_clone_result.stderr : null);
 
-        if (!git_clone_error) {
-            highlight_line('Git repository cloned!');
+        if (git_clone_error) {
+            error_line(git_clone_error);
 
-            // Check for .pxl/config.yaml file
-            try {
-                pxl_config = load_pxl_config_from_dir(`${site_dir}/.pxl`);
+            return;
+        }
 
-                if (pxl_config) {
-                    if (pxl_config.code && pxl_config.code.php) {
-                        php_version = pxl_config.code.php;
-                    }
+        highlight_line(`Git repository cloned to ${site_dir}.`);
+        
+        console.log(git_clone_result);
 
-                    if (pxl_config.database) {
-                        database_driver = pxl_config.database.driver;
-                        database_name = pxl_config.database.name;
-                    }
+        // Check for .pxl/config.yaml file
+        try {
+            pxl_config = load_pxl_config_from_dir(`${site_dir}/.pxl`);
 
-                    public_dir = pxl_config['public-site-dir'];
-
-                    line_break();
-
-                    log(yellow('Found PXL Web Vagrant configuration:'));
-
-                    print_pxl_config(pxl_config);
-
-                    line_break();
-
-                    if (force || (!force && await ask_confirm(`Do you want to install?`))) {
-                        install_from_pxl_config(pxl_config); // TODO: Instead of doing this, just get variables instead and run commands below?
-                    }
+            if (pxl_config) {
+                if (pxl_config.code && pxl_config.code.php) {
+                    php_version = pxl_config.code.php;
                 }
-            } catch (load_pxl_config_error) {
-                error_line(load_pxl_config_error);
+
+                if (pxl_config.database) {
+                    database_driver = pxl_config.database.driver;
+                    database_name = pxl_config.database.name;
+                }
+
+                public_dir = pxl_config['public-site-dir'];
+
+                line_break();
+
+                log(yellow('Found PXL Web Vagrant configuration:'));
+
+                print_pxl_config(pxl_config);
+
+                line_break();
+
+                if (force || (!force && await ask_confirm(`Do you want to install?`))) {
+                    install_from_pxl_config(pxl_config); // TODO: Instead of doing this, just get variables instead and run commands below?
+                }
             }
+        } catch (load_pxl_config_error) {
+            error_line(load_pxl_config_error);
         }
     } else {
         // If not from Git repo, create site & public directory

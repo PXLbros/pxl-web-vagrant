@@ -104,7 +104,6 @@ async function main() {
 
     let database_driver;
     let database_name;
-    let create_database_error = null;
 
     // If site directory already exist, take backup/delete existing
     if (existsSync(site_dir)) {            
@@ -161,6 +160,7 @@ async function main() {
                     database_driver = pxl_config.database.driver;
                     database_name = pxl_config.database.name;
                 }
+                console.log('HEEEEEEEEEEEEEEEEEEELLLLLLLLLLLO!', pxl_config['public-site-dir']);
 
                 public_dir = pxl_config['public-site-dir'];
 
@@ -214,14 +214,14 @@ async function main() {
         database_name = database.name;
     }
 
-    if (database_driver && database_name) {
+    if (!pxl_config && database_driver && database_name) {
         if (database_exists(database_driver, database_name)) {
             error_line(`${get_database_driver_title(database_driver)} Database "${database_name}" already exist.`);
         } else {
             try {
                 create_database(database_driver, database_name);
             } catch (create_database_error) {
-                create_database_error = create_database_error;
+                // create_database_error = create_database_error;
             }
         }
     }   
@@ -253,7 +253,7 @@ async function main() {
     }
 
     // Show summary
-    log(yellow(`\n${web_server_title} site added!\n`));
+    log(yellow(`${web_server_title} site added!\n`));
     log(`${cyan(bold('Hostname:'))} ${hostname}`);
     log(`${cyan(bold('Site Directory:'))} ${site_dir}`);
     log(`${cyan(bold('Public Directory:'))} ${public_dir}`);

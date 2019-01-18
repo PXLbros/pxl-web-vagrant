@@ -108,7 +108,7 @@ module.exports = {
 
                     return isDirectory;
                 },
-                rootPath: '/vagrant/projects/pxl/universal/website',
+                // rootPath: '/vagrant/projects/pxl/universal/website',
                 message: 'Select a target directory for your component:',
                 suggestOnly: false
             }

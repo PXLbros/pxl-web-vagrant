@@ -31,6 +31,8 @@ async function main() {
     spawn((process.env.EDITOR || 'vi'), [`${web_server_sites_config_dir}/${selected_site_configuration_file}`], {
         stdio: 'inherit'
     });
+
+    // TODO: Ask to restart server (tried but editor got glithcy)
 }
 
 main();

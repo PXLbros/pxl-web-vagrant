@@ -1,11 +1,10 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-require 'find'
 require 'yaml'
 require 'json'
-require 'pp'
 
+VAGRANTFILE_API_VERSION ||= '2'
 VAGRANT_DIR = File.dirname(File.expand_path(__FILE__))
 
 #require "#{VAGRANT_DIR}/libs/deep_merge/deep_merge_hash.rb"
@@ -29,6 +28,7 @@ package_json = JSON.parse(File.read("#{VAGRANT_DIR}/package.json"))
 VERSION = package_json['version']
 BUILD_DATE = `git log -1 --format=%cd | tr -d '\n'`
 
+# Set global variables
 GLOBAL_VARIABLES = {
     'VERSION': VERSION,
     'BUILD_DATE': BUILD_DATE,
@@ -63,7 +63,9 @@ GLOBAL_VARIABLES = {
     'APC': (vagrant_config['code']['php']['cache']['apc']['enabled'] ? true : false)
 }
 
-Vagrant.configure('2') do |config|
+Vagrant.require_version '>= 2.1.0'
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Validate
     if vagrant_config['vm']['name'].empty?
         puts 'Vagrant name must not be empty.'

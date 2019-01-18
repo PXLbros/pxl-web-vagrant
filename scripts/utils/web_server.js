@@ -1,8 +1,10 @@
 const { existsSync, writeFileSync } = require('fs');
 const { exec } = require('shelljs');
+const { choose } = require('./choose');
 const { getFilenameFromPath } = require('./str');
+const { choose_files_from_dir } = require('./choose');
 
-function get_config_dir(web_server) {
+function get_sites_config_dir(web_server) {
     if (web_server === 'apache') {
         return '/etc/apache2/sites-available';
     } else if (web_server === 'nginx') {
@@ -13,26 +15,44 @@ function get_config_dir(web_server) {
 }
 
 function get_config_file_path(web_server, config_filename) {
-    return `${get_config_dir(web_server)}/${config_filename}`;
+    return `${get_sites_config_dir(web_server)}/${config_filename}`;
+}
+
+function get_web_server_title(web_server) {
+    if (web_server === 'apache') {
+        return 'Apache';
+    } else if (web_server === 'nginx') {
+        return 'NGINX';
+    }
+
+    throw new Error(`Invalid web server "${web_server}".`);
+}
+
+function get_installed_web_servers() {
+    const is_apache_installed = (exec('apachectl -v', { silent: true }).code === 0);
+    const is_nginx_installed = (exec('which nginx', { silent: true }).code === 0);
+
+    let web_servers = [];
+
+    if (is_apache_installed) {
+        web_servers.push({
+            value: 'apache',
+            name: 'Apache'
+        });
+    }
+
+    if (is_nginx_installed) {
+        web_servers.push({
+            value: 'nginx',
+            name: 'NGINX'
+        });
+    }
+
+    return web_servers;
 }
 
 module.exports = {
-    get_installed_web_servers() {
-        const is_apache_installed = (exec('apachectl -v', { silent: true }).code === 0);
-        const is_nginx_installed = (exec('which nginx', { silent: true }).code === 0);
-
-        let web_servers = [];
-
-        if (is_apache_installed) {
-            web_servers.push('Apache');
-        }
-
-        if (is_nginx_installed) {
-            web_servers.push('NGINX');
-        }
-
-        return web_servers;
-    },
+    get_installed_web_servers,
 
     get_config_filename(web_server, hostname) {
         if (web_server === 'apache') {
@@ -44,19 +64,11 @@ module.exports = {
         throw new Error(`Invalid web server "${web_server}".`);
     },
 
-    get_config_dir,
+    get_sites_config_dir,
 
     get_config_file_path,
 
-    get_web_server_title(web_server) {
-        if (web_server === 'apache') {
-            return 'Apache';
-        } else if (web_server === 'nginx') {
-            return 'NGINX';
-        }
-
-        throw new Error(`Invalid web server "${web_server}".`);
-    },
+    get_web_server_title,
 
     save_virtual_host_config(file_path, web_server, hostname, public_dir, php_version = null, overwrite = false) {
         const config_filename = getFilenameFromPath(file_path);
@@ -150,5 +162,13 @@ module.exports = {
         let last_directory = path.split('/').reverse()[0];
 
         return ['public', 'public_html', 'html'].includes(last_directory);
+    },
+
+    async ask_site_configuration_file(web_server) {
+        return await choose_files_from_dir(get_sites_config_dir(web_server), `Which ${get_web_server_title(web_server)} virtual host configuration file do you want to edit?`);
+    },
+
+    ask_web_server(question) {
+        return choose(question, get_installed_web_servers());
     }
 };

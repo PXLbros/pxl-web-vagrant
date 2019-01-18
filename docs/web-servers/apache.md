@@ -24,9 +24,15 @@ title: Apache
 
 ### `reload_apache`
 
-### `apache_sites`
+### `apache_status`
+
+### `edit_apache_conf`
 
 ### `create_apache_site`
+
+### `edit_apache_site`
+
+### `delete_apache_site`
 
 #### Interactive
 

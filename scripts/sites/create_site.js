@@ -4,11 +4,11 @@ const { exec } = require('shelljs');
 const { bold, blue, cyan, red, yellow } = require('chalk');
 const { format } = require('date-fns');
 const { install_from_pxl_config, load_pxl_config_from_dir, print_pxl_config } = require('../utils/pxl');
-const { ask_confirm, ask_input, ask_php_version, ask_web_server, ask_create_database } = require('../utils/ask');
+const { ask_confirm, ask_input, ask_php_version, ask_create_database } = require('../utils/ask');
 const { is_public_directory } = require('../utils/web_server');
 const { remove_trailing_slash } = require('../utils/str');
-const { create: create_database } = require('../utils/database');
-const { enable_web_server_site, get_config_filename, get_config_file_path, get_web_server_title, reload_web_server, save_virtual_host_config } = require('../utils/web_server.js');
+const { create: create_database, exists: database_exists } = require('../utils/database');
+const { ask_web_server, enable_web_server_site, get_config_filename, get_config_file_path, get_installed_web_servers, get_web_server_title, reload_web_server, save_virtual_host_config } = require('../utils/web_server.js');
 const { error_line, highlight_line, line_break } = require('../utils/log');
 const log = console.log;
 
@@ -29,14 +29,28 @@ const options = commandLineArgs([
 ]);
 
 async function main() {
+    exec('figlet create site');
+    line_break();
+
     const no_backup = (options['no-backup'] || false);
     const force = (options['force'] || false);
 
-    const web_server = (options['web-server'] || await ask_web_server('What web server should be used?'));
+    const installed_web_servers = get_installed_web_servers();
+    
+    let web_server = options['web-server'];
+    
+    if (!web_server) {
+        if (installed_web_servers.length === 1) {
+            web_server = installed_web_servers[0].value;
+        } else {
+            web_server = await ask_web_server('What web server should be used?');
+        }
+    }
+
     const web_server_title = get_web_server_title(web_server);
 
-    const hostname = (options['hostname'] || await ask_input('What is the hostname? (e.g. domain.loc)'));
-    let site_dir = (options['site-dir'] || await ask_input('What is the site directory?', `/vagrant/projects/${hostname}`));
+    const hostname = (options['hostname'] || await ask_input('Enter hostname (e.g. domain.loc):'));
+    let site_dir = (options['site-dir'] || await ask_input('Enter site directory:', `/vagrant/projects/${hostname}`));
 
     // Make sure site_dir doesn't have a trailing slash
     site_dir = remove_trailing_slash(site_dir);
@@ -48,7 +62,11 @@ async function main() {
     } else if (is_public_directory(site_dir)) {
         public_dir = site_dir;
     } else {
+<<<<<<< HEAD
         let public_dir_input = await ask_input('What is the public site directory? (leave empty for same as site directory)'); // TODO: Can we wait with this question till after cloning git? Because it'll say in .pxl config file from clone if
+=======
+        let public_dir_input = await ask_input(`Enter public site directory (leave empty for ${site_dir}):`);
+>>>>>>> 7ed42b8d45f476189ca0e756dbd3e103539b9b86
 
         if (public_dir_input) {
             public_dir_input = remove_trailing_slash(public_dir_input);
@@ -65,8 +83,8 @@ async function main() {
     let git_branch = (options['git-branch'] || null);
     
     if (!git_repo) {
-        if (await ask_confirm('Create project from existing Git repository?')) {
-            git_repo = (await ask_input('What is the Git SSH repository? (e.g. git@github.com:Organization/project-name.git)'));
+        if (await ask_confirm('Create from existing Git repository?')) {
+            git_repo = (await ask_input('Enter Git SSH repository (e.g. git@github.com:Organization/project-name.git):'));
         }
     }
 
@@ -91,9 +109,11 @@ async function main() {
         if (!no_backup || no_backup !== true) {
             const backup_dir = `${site_dir}_${format(new Date(), 'YYYY-MM-DD_H-mm-ss')}`;
 
-            exec(`sudo mv ${site_dir} ${backup_dir}`, { silent: true });
+            if (await ask_confirm(`Site directory ${site_dir} already exists, do you want to take a backup of it?`)) {
+                exec(`sudo mv ${site_dir} ${backup_dir}`, { silent: true });
 
-            log(yellow(`Backed up existing directory ${site_dir} at ${backup_dir}.`));
+                log(yellow(`Backed up existing directory ${site_dir} to ${backup_dir}.`));
+            }
         } else {
             // No backup, delete existing site directory
             exec(`sudo rm -rf ${site_dir}`);
@@ -115,9 +135,13 @@ async function main() {
             return;
         }
 
+<<<<<<< HEAD
         highlight_line(`Git repository cloned to ${site_dir}.`);
         
         console.log(git_clone_result);
+=======
+        highlight_line('Git repository cloned.');
+>>>>>>> 7ed42b8d45f476189ca0e756dbd3e103539b9b86
 
         // Check for .pxl/config.yaml file
         try {
@@ -226,7 +250,7 @@ async function main() {
         log(`${cyan(bold('Database:'))} ${red(`${create_database_error}`)}`);
     }
 
-    if (options['show-command']) {
+    if (true || options['show-command']) {
         let command_str = `create_site \\
         --web-server=${web_server} \\
         --hostname=${hostname} \\

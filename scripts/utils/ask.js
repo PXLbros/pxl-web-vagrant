@@ -4,7 +4,6 @@ const { prompt } = require('inquirer');
 const { exec } = require('shelljs');
 const inquirer = require('inquirer');
 const { choose } = require('./choose.js');
-const { get_installed_web_servers } = require('./web_server');
 
 inquirer.registerPrompt('fuzzypath', require('inquirer-fuzzy-path'));
 
@@ -114,15 +113,6 @@ module.exports = {
                 suggestOnly: false
             }
         ]);
-    },
-
-    ask_web_server(question) {
-        return choose(question, get_installed_web_servers().map(web_server => {
-            return {
-                name: web_server,
-                value: web_server.toLowerCase()
-            };
-        }));
     },
 
     async ask_create_database(driver, name) {

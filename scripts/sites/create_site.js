@@ -62,11 +62,7 @@ async function main() {
     } else if (is_public_directory(site_dir)) {
         public_dir = site_dir;
     } else {
-<<<<<<< HEAD
         let public_dir_input = await ask_input('What is the public site directory? (leave empty for same as site directory)'); // TODO: Can we wait with this question till after cloning git? Because it'll say in .pxl config file from clone if
-=======
-        let public_dir_input = await ask_input(`Enter public site directory (leave empty for ${site_dir}):`);
->>>>>>> 7ed42b8d45f476189ca0e756dbd3e103539b9b86
 
         if (public_dir_input) {
             public_dir_input = remove_trailing_slash(public_dir_input);

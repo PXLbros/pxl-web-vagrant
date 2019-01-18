@@ -135,13 +135,7 @@ async function main() {
             return;
         }
 
-<<<<<<< HEAD
         highlight_line(`Git repository cloned to ${site_dir}.`);
-        
-        console.log(git_clone_result);
-=======
-        highlight_line('Git repository cloned.');
->>>>>>> 7ed42b8d45f476189ca0e756dbd3e103539b9b86
 
         // Check for .pxl/config.yaml file
         try {

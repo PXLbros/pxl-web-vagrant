@@ -64,7 +64,7 @@ module.exports = {
         return prompt_result.value;
     },
 
-    async ask_php_version() {
+    async ask_php_version(question, no_text = 'No') {
         const is_directory = source => lstatSync(source).isDirectory();
         const get_directories = source => readdirSync(source).map(name => join(source, name)).filter(is_directory);
 
@@ -78,7 +78,7 @@ module.exports = {
         });
 
         choices.push({
-            name: 'None',
+            name: no_text,
             value: null
         });
 
@@ -88,7 +88,7 @@ module.exports = {
             {
                 type: 'list',
                 name: 'value',
-                message: 'Which PHP version to use?',
+                message: question || 'Use PHP?',
                 choices: choices
             }
         ]);

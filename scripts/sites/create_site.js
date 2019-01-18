@@ -3,16 +3,16 @@ const { existsSync } = require('fs');
 const { exec } = require('shelljs');
 const { bold, blue, cyan, red, yellow } = require('chalk');
 const { format } = require('date-fns');
-const { install_from_pxl_config, load_pxl_config_from_dir, print_pxl_config } = require('../utils/pxl');
+const { create_pxl_config_in_dir, install_from_pxl_config, load_pxl_config_from_dir, print_pxl_config } = require('../utils/pxl');
 const { ask_confirm, ask_input, ask_php_version, ask_create_database } = require('../utils/ask');
 const { is_public_directory } = require('../utils/web_server');
 const { remove_trailing_slash } = require('../utils/str');
-const { create: create_database, exists: database_exists } = require('../utils/database');
+const { ask_create_database_driver, create: create_database, exists: database_exists, get_driver_title: get_database_driver_title } = require('../utils/database');
 const { ask_web_server, enable_web_server_site, get_config_filename, get_config_file_path, get_installed_web_servers, get_web_server_title, reload_web_server, save_virtual_host_config } = require('../utils/web_server.js');
-const { error_line, highlight_line, line_break } = require('../utils/log');
+const { cyan_line, error_line, highlight_line, line_break } = require('../utils/log');
 const log = console.log;
 
-const options = commandLineArgs([
+const options_values = [
     { name: 'web-server', type: String },
     { name: 'hostname', type: String },
     { name: 'site-dir', type: String },
@@ -20,13 +20,20 @@ const options = commandLineArgs([
     { name: 'git-repo', type: String },
     { name: 'git-branch', type: String },
     { name: 'php', type: String },
-    { name: 'database-driver', type: String },
-    { name: 'database-name', type: String },
+    { name: 'db-driver', type: String },
+    { name: 'db-name', type: String },
     { name: 'overwrite', type: Boolean },
     { name: 'no-backup', type: Boolean },
     { name: 'force', type: Boolean },
     { name: 'show-command', type: Boolean }
-]);
+];
+
+const options = commandLineArgs(options_values.map(option => {
+    return {
+        name: option.name,
+        type: option.type
+    };
+}));
 
 async function main() {
     exec('figlet create site');
@@ -109,17 +116,24 @@ async function main() {
                 exec(`sudo mv ${site_dir} ${backup_dir}`, { silent: true });
 
                 log(yellow(`Backed up existing directory ${site_dir} to ${backup_dir}.`));
+            } else {
+                // No backup, delete existing site directory
+                exec(`sudo rm -rf ${site_dir}`);
+
+                cyan_line(`Removed existing directory ${site_dir}.`);
             }
         } else {
             // No backup, delete existing site directory
             exec(`sudo rm -rf ${site_dir}`);
+
+            cyan_line(`Removed existing directory ${site_dir}.`);
         }
     }
 
     if (git_repo) {    
         line_break();
 
-        log(blue(`Cloning Git repository ${git_repo} to ${site_dir}...`));
+        log(blue(`Cloning Git repository ${git_repo} into ${site_dir}...`));
 
         // Clone Git repository
         const git_clone_result = exec(`git clone ${git_repo}${git_branch ? ` --branch=${git_branch}` : ''} ${site_dir}`, { silent: true });
@@ -132,6 +146,7 @@ async function main() {
         }
 
         highlight_line(`Git repository cloned to ${site_dir}.`);
+        line_break();
 
         // Check for .pxl/config.yaml file
         try {
@@ -185,15 +200,15 @@ async function main() {
     }
 
     if (!database_driver) {
-        database_driver = (options['database-driver'] || null);
+        database_driver = (options['db-driver'] || null);
     }
 
     if (!database_name) {
-        database_name = (options['database-name'] || null);
+        database_name = (options['db-name'] || null);
     }
 
-    if (!pxl_config && (options['database-driver'] !== '' && options['database-name'] !== '') && (!database_driver || !database_name) && await ask_confirm('Do you want to create a database?')) {
-        const database = (await ask_create_database(database_driver, database_name));
+    if (!pxl_config && (options['db-driver'] !== '' && options['db-name'] !== '') && (!database_driver || !database_name)) {
+        const database = await ask_create_database(await ask_create_database_driver());
 
         database_driver = database.driver;
         database_name = database.name;
@@ -201,7 +216,7 @@ async function main() {
 
     if (database_driver && database_name) {
         if (database_exists(database_driver, database_name)) {
-            error_line(`${get_database_driver_title(pxl_config.database.driver)} Database "${pxl_config.database.name}" already exist.`);
+            error_line(`${get_database_driver_title(database_driver)} Database "${database_name}" already exist.`);
         } else {
             try {
                 create_database(database_driver, database_name);
@@ -223,9 +238,24 @@ async function main() {
     // Add /etc/hosts entry
     exec(`sudo hostile set 127.0.0.1 ${hostname}`, { silent: true });
 
+    if (!pxl_config) {
+        line_break();
+
+        if (force || await ask_confirm(`Do you want to save PXL Web Vagrant configuration?`)) {
+            try {
+                const pxl_config_dir = create_pxl_config_in_dir(site_dir, public_dir, php_version, database_driver, database_name);
+
+                cyan_line(`PXL Web Vagrant configuration ${pxl_config_dir} created.`);
+            } catch (create_pxl_config_error) {
+                error_line(create_pxl_config_error.message);
+            }
+        }
+    }
+
     // Show summary
     log(yellow(`\n${web_server_title} site added!\n`));
     log(`${cyan(bold('Hostname:'))} ${hostname}`);
+    log(`${cyan(bold('Site Directory:'))} ${site_dir}`);
     log(`${cyan(bold('Public Directory:'))} ${public_dir}`);
 
     if (php_version) {
@@ -236,23 +266,64 @@ async function main() {
         log(`${cyan(bold('Git:'))} ${red(`Error (${git_clone_error})`)}`);
     }
 
-    if (create_database_error) {
-        log(`${cyan(bold('Database:'))} ${red(`${create_database_error}`)}`);
+    if (database_driver) {
+        log(`${cyan(bold('Database Driver:'))} ${database_driver}`);
+    }
+
+    if (database_name) {
+        log(`${cyan(bold('Database Name:'))} ${database_name}`);
     }
 
     if (true || options['show-command']) {
-        let command_str = `create_site \\
-        --web-server=${web_server} \\
-        --hostname=${hostname} \\
-        --site-dir=${site_dir} \\
-        --public-dir=${public_dir} \\
-        --git-repo=${git_repo} \\
-        --php=${php_version} \\
-        --database-driver=${database_driver} \\
-        --database-name=${database_name} \\
-        ${overwrite ? '--overwrite \\' : ''}
-        ${no_backup ? '--no-backup \\' : ''}
-        ${force ? '--force \\' : ''}`;
+        let command_str = `create_site`;
+
+        if (web_server) {
+            command_str += ` \\\n\t--web-server=${web_server}`;
+        }
+
+        if (hostname) {
+            command_str += ` \\\n\t--hostname=${hostname}`;
+        }
+
+        if (site_dir) {
+            command_str += ` \\\n\t--site-dir=${site_dir}`;
+        }
+
+        if (public_dir) {
+            command_str += ` \\\n\t--public-dir=${public_dir}`;
+        }
+
+        if (git_repo) {
+            command_str += ` \\\n\t--git-repo=${git_repo}`;
+        }
+
+        if (git_branch) {
+            command_str += ` \\\n\t--git-branch=${git_branch}`;
+        }
+
+        if (php_version) {
+            command_str += ` \\\n\t--php=${php_version}`;
+        }
+
+        if (database_driver) {
+            command_str += ` \\\n\t--database-driver=${database_driver}`;
+        }
+
+        if (database_name) {
+            command_str += ` \\\n\t--db-name=${database_name}`;
+        }
+        
+        if (overwrite) {
+            command_str += ` \\\n\t--overwrite`;
+        }
+
+        if (no_backup) {
+            command_str += ` \\\n\t--no-backup`;
+        }
+
+        if (force) {
+            command_str += ` \\\n\t--force`;
+        }
 
         log(`\n${cyan(bold('Command:'))}`);
         log(command_str);

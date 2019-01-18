@@ -4,9 +4,9 @@ export LOG_FILE_PATH=code/node.log
 
 . /vagrant/provision/helpers/include.sh
 
-title 'Node'
+title "Node"
 
-highlight_text 'Install NVM...'
+highlight_text "Install NVM..."
 
 exec_command "curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash && source $HOME/.bashrc"
 

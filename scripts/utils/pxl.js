@@ -47,6 +47,7 @@ function load_pxl_config_from_dir(dir) {
 function load_pxl_config(pxl_config_file_path) {
     try {
         const pxl_config = yaml.safeLoad(readFileSync(pxl_config_file_path, 'utf8'));
+        console.log(pxl_config);
 
         if (!pxl_config) {
             throw new Error(`Could not load PXL Web Vagrant configuration file "${pxl_config_file_path}".`);
@@ -167,6 +168,43 @@ function get_pxl_config_title_inline(pxl_config) {
     // }
 
     return str;
+}
+
+function create_pxl_config_in_dir(dir, public_dir, php_version = null, database_driver = null, database_name = null) {
+    dir = remove_trailing_slash(dir);
+
+    const config_dir = `${dir}/.pxl`;
+    const config_file_path = `${config_dir}/config.yaml`;
+
+    // Create configuration directory if not exist
+    if (!test('-d', config_dir)) {
+        mkdir('-p', config_dir);
+    }
+
+    // Check if configuration file already exist
+    if (test('-d', config_file_path)) {
+        throw new Error(`PXL Web Vagrant configuration file ${config_file_path} already exist.`);
+    }
+
+    let config_contents = `site-dir: ${dir}`;
+    config_contents += `\npublic-dir: ${public_dir}`;
+
+    if (php_version) {
+        config_contents += `\ncode:\n    php: ${php_version}`;
+    }
+
+    if (database_driver && database_name) {
+        config_contents += `\ndatabase:\n    driver: ${database_driver}\n    name: ${database_name}`;
+    }
+
+    // Create configuration file
+    const create_config_result = exec(`echo "${config_contents}" > ${config_file_path}`);
+
+    if (create_config_result.code !== 0) {
+        throw new Error(`Could not create PXL Web Vagrant configuration file ${config_file_path}.`);
+    }
+
+    return config_dir;
 }
 
 function create_pxl_config(name, dir, options = {
@@ -356,5 +394,7 @@ module.exports = {
                 error_line(`Could not find install script at ${pxl_config['install-script']}.`);
             }
         }
-    }
+    },
+
+    create_pxl_config_in_dir
 };

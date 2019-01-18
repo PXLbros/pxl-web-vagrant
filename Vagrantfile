@@ -28,6 +28,9 @@ package_json = JSON.parse(File.read("#{VAGRANT_DIR}/package.json"))
 VERSION = package_json['version']
 BUILD_DATE = `git log -1 --format=%cd | tr -d '\n'`
 
+# Read user .gitconfig
+user_gitconfig = Pathname.new("#{Dir.home}/.gitconfig")
+
 # Set global variables
 GLOBAL_VARIABLES = {
     'VERSION': VERSION,
@@ -60,7 +63,9 @@ GLOBAL_VARIABLES = {
     'PHP_USER_MODULES': (vagrant_config['code']['php']['modules'] ? vagrant_config['code']['php']['modules'].join(' ') : ''),
 
     'MEMCACHED': (vagrant_config['code']['php']['cache']['memcached']['enabled'] ? true : false),
-    'APC': (vagrant_config['code']['php']['cache']['apc']['enabled'] ? true : false)
+    'APC': (vagrant_config['code']['php']['cache']['apc']['enabled'] ? true : false),
+
+    'USER_GIT_CONFIG': user_gitconfig
 }
 
 Vagrant.require_version '>= 2.1.0'
@@ -107,6 +112,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Git
     gitconfig = Pathname.new("#{Dir.home}/.gitconfig")
     config.vm.provision 'shell', name: 'Git', :inline => "echo -e '#{gitconfig.read()}' > '/home/vagrant/.gitconfig'", privileged: false, env: GLOBAL_VARIABLES if gitconfig.exist?
+    config.vm.provision 'shell', name: 'Node', path: "#{VAGRANT_DIR}/provision/code/git.sh", run: 'once', privileged: false, env: GLOBAL_VARIABLES
 
     # Node
     config.vm.provision 'shell', name: 'Node', path: "#{VAGRANT_DIR}/provision/code/node.sh", run: 'once', privileged: false, env: GLOBAL_VARIABLES

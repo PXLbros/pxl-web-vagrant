@@ -1,4 +1,5 @@
 const { exec } = require('shelljs');
+const { prompt } = require('inquirer');
 
 function database_exists(driver, name) {
     if (driver === 'mysql') {
@@ -34,5 +35,35 @@ module.exports = {
             case 'mongodb':
                 return 'MongoDB';
         }
+    },
+
+    async ask_create_database_driver(question, no_text = 'No') {
+        let choices = [];
+
+        choices.push({
+            name: no_text,
+            value: null
+        });
+
+        choices.push({
+            name: 'MySQL',
+            value: 'mysql'
+        });
+
+        choices.push({
+            name: 'MongoDB (not installed)',
+            value: 'mongodb'
+        });
+
+        const prompt_result = await prompt([
+            {
+                type: 'list',
+                name: 'value',
+                message: question || 'Create database?',
+                choices: choices
+            }
+        ]);
+
+        return prompt_result.value;
     }
 }

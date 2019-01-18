@@ -1,13 +1,29 @@
 const commandLineArgs = require('command-line-args');
+const { exec } = require('shelljs');
 const { spawn } = require('child_process');
-const { ask_site_configuration_file, ask_web_server, get_sites_config_dir } = require('../utils/web_server');
+const { line_break } = require('../utils/log');
+const { ask_site_configuration_file, ask_web_server, get_installed_web_servers, get_sites_config_dir } = require('../utils/web_server');
 
 const options = commandLineArgs([
     { name: 'web-server', type: String }
 ]);
 
 async function main() {
-    const web_server = (options['web-server'] || await ask_web_server('Which web server?'));
+    exec('figlet edit_site_conf');
+    line_break();
+
+    const installed_web_servers = get_installed_web_servers();
+    
+    let web_server = options['web-server'];
+    
+    if (!web_server) {
+        if (installed_web_servers.length === 1) {
+            web_server = installed_web_servers[0].value;
+        } else {
+            web_server = await ask_web_server('What web server should be used?');
+        }
+    }
+
     const web_server_sites_config_dir = get_sites_config_dir(web_server);
     const selected_site_configuration_file = await ask_site_configuration_file(web_server);
 

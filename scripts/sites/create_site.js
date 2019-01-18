@@ -29,7 +29,7 @@ const options = commandLineArgs([
 ]);
 
 async function main() {
-    exec('figlet create_site');
+    exec('figlet create site');
     line_break();
 
     const no_backup = (options['no-backup'] || false);
@@ -105,9 +105,11 @@ async function main() {
         if (!no_backup || no_backup !== true) {
             const backup_dir = `${site_dir}_${format(new Date(), 'YYYY-MM-DD_H-mm-ss')}`;
 
-            exec(`sudo mv ${site_dir} ${backup_dir}`, { silent: true });
+            if (await ask_confirm(`Site directory ${site_dir} already exists, do you want to take a backup of it?`)) {
+                exec(`sudo mv ${site_dir} ${backup_dir}`, { silent: true });
 
-            log(yellow(`Backed up existing directory ${site_dir} at ${backup_dir}.`));
+                log(yellow(`Backed up existing directory ${site_dir} to ${backup_dir}.`));
+            }
         } else {
             // No backup, delete existing site directory
             exec(`sudo rm -rf ${site_dir}`);
@@ -129,7 +131,7 @@ async function main() {
             return;
         }
 
-        highlight_line('Git repository cloned!');
+        highlight_line('Git repository cloned.');
 
         // Check for .pxl/config.yaml file
         try {
@@ -238,7 +240,7 @@ async function main() {
         log(`${cyan(bold('Database:'))} ${red(`${create_database_error}`)}`);
     }
 
-    if (options['show-command']) {
+    if (true || options['show-command']) {
         let command_str = `create_site \\
         --web-server=${web_server} \\
         --hostname=${hostname} \\

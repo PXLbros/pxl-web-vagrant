@@ -30,8 +30,8 @@ class InstallHelper
         cp(from, to);
     }
 
-    edit_file_line_pre(file, pre, value) {
-        exec(`sed -i s~${pre}.*$~${pre}${value}~g ${file}`);
+    edit_env_file(file, key, value) {
+        exec(`sed -i s~${key}.*$~${pre}${value}~g ${file}`);
     }
 
     yarn(command = null) {

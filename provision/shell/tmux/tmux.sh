@@ -4,7 +4,7 @@ export LOG_FILE_PATH=shell/tmux/tmux.log
 
 . /vagrant/provision/helpers/include.sh
 
-title 'tmux'
+title "tmux"
 
 TMUX_CONF_FILE=$HOME/.tmux.conf.local
 
@@ -15,8 +15,7 @@ if [ -x "$(command -v tmux)" ]; then
     CURRENT_TMUX_VERSION_SPLITTED=(${CURRENT_TMUX_VERSION_RAW//\ / })
     CURRENT_TMUX_VERSION=${CURRENT_TMUX_VERSION_SPLITTED[1]}
 
-    if [ "$CURRENT_TMUX_VERSION" == "$TMUX_VERSION" ];
-    then
+    if [ "$CURRENT_TMUX_VERSION" == "$TMUX_VERSION" ]; then
         warning_text "tmux v$TMUX_VERSION already installed."
 
         exit
@@ -38,11 +37,9 @@ exec_command "sudo make install"
 # Cleanup
 exec_command "cd && rm -rf $HOME/tmux-src"
 
-if [ "$GPAKOSZ" = "true" ]
-then
+if [ "$GPAKOSZ" = "true" ]; then
     # Install gpakosz
-    if [ ! -d "$HOME/.tmux" ] # If gpakosz isn't installed
-    then
+    if [ ! -d "$HOME/.tmux" ]; then # If gpakosz isn't installed
         highlight_text "Install gpakosz..."
 
         cd $HOME

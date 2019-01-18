@@ -14,6 +14,14 @@ module.exports = {
         log(chalk.red(message));
     },
 
+    blue_line(message) {
+        log(chalk.blue(message));
+    },
+
+    cyan_line(message) {
+        log(chalk.cyan(message));
+    },
+
     line_break() {
         log();
     }

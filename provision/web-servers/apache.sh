@@ -7,6 +7,8 @@ export LOG_FILE_PATH=web-servers/apache.log
 if [ "$APACHE" == "true" ]; then
     title "Apache"
 
+    DEFAULT_APACHE_SITE_CONF=/etc/apache2/sites-available/000-default.conf
+
     if ! grep -qF "export APACHE_PORT" $HOME/.bashrc; then
         exec_command "echo -e \"\nexport APACHE_PORT=$APACHE_PORT\" >> $HOME/.bashrc"
     fi
@@ -55,6 +57,15 @@ if [ "$APACHE" == "true" ]; then
 
     # Set error log format
     exec_command 'echo "ErrorLogFormat \"[%t] %M\"" | sudo tee --append /etc/apache2/apache2.cnf > /dev/null'
+
+    # TODO: Set PXL Web Vagrant docs as home page
+    highlight_text "Set PXL Web Vagrant documentation as home page at http://$IP_ADDRESS..."
+    exec_command "sudo sed -i 's|DocumentRoot /var/www/html|DocumentRoot /vagrant/docs/.vuepress/dist|' $DEFAULT_APACHE_SITE_CONF"
+
+    if ! grep -qF "<Directory /vagrant/docs/.vuepress/dist>" $DEFAULT_APACHE_SITE_CONF; then
+        # TODO: THE FOLLOWING DOESN'T SAVE TO THE FILE, JUST OUTPUTS IT
+        sudo sed -e '/^<VirtualHost[ ]\*:80>/,/<\/VirtualHost>/ { /<\/VirtualHost>/ i\\n\t<Directory /vagrant/docs/.vuepress/dist>\n\t\tRequire all granted\n\t</Directory>' -e '}' $DEFAULT_APACHE_SITE_CONF
+    fi
 
     # Restart Apache
     highlight_text "Restart Apache..."

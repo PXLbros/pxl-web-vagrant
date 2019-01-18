@@ -7,8 +7,8 @@ Welcome to **PXL Web Vagrant** - a Ubuntu Vagrant environment for web developmen
 * Easy powerful configuration through [`config.yaml`](/configuration.html#config-yaml)
 * PHP
     * Version 5.6 & 7.0-7.3
-    * Support for multiple versions running simultaneously
-    * Caching with Memcached and APC
+    * Support for running multiple versions simultaneously
+    * Caching with Memcached/Redis/APC
 * Node.js
 * Web servers
     * Apache
@@ -17,9 +17,7 @@ Welcome to **PXL Web Vagrant** - a Ubuntu Vagrant environment for web developmen
 * Databases
     * MySQL
     * MongoDB
-    * Built-in helper commands for creating and deleting databases, .e.g [`create_database`](/databases/#create) and [`delete_database`](/databases/#delete)
-* Caching
-    * Redis
+    * Built-in helper commands for creating and deleting databases, .e.g [`create_database`](/databases/commands.html#create-database) and [`delete_database`](/databases/commands.html#delete-database)
 * Shell
     * LiquidPrompt
     * tmux

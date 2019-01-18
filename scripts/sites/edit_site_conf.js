@@ -9,8 +9,8 @@ const options = commandLineArgs([
 ]);
 
 async function main() {
-    exec('figlet edit_site_conf');
-    line_break();
+    // exec('figlet edit site conf');
+    // line_break();
 
     const installed_web_servers = get_installed_web_servers();
     

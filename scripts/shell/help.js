@@ -1,10 +1,14 @@
-const { blue } = require('chalk');
 const { exec } = require('shelljs');
-const log = console.log;
+const { blue_line, cyan_line, line_break } = require('../utils/log');
 
 exec('figlet PXL Web Vagrant');
 
-log(blue(`v1.0.0 (Built on [DATE])`));
-log(blue('https://github.com/PXLbros/pxl-web-vagrant'));
+blue_line(`v1.0.0 (Built on [DATE])`);
+blue_line('https://github.com/PXLbros/pxl-web-vagrant');
+
+line_break();
+
+cyan_line(`Name: VAGRANT_NAME`);
+cyan_line(`IP: IP_ADDRESS`);
 
 exec('echo " "');

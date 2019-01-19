@@ -218,18 +218,42 @@ async function main() {
         php_version = boilerplate_pxl_config.code.php;
     } else if (!php_version) {
         php_version = (options['php'] || await ask_php_version());
+
+        if (boilerplate_pxl_config && boilerplate_pxl_config.code) {
+            boilerplate_pxl_config.code.php = php_version;
+        }
+
+        if (pxl_config && pxl_config.code) {
+            pxl_config.code.php = php_version;
+        }
     }
 
     if (boilerplate_pxl_config && boilerplate_pxl_config.database.driver) {
         database_driver = boilerplate_pxl_config.database.driver;
     } else if (!database_driver) {
         database_driver = (options['db-driver'] || null);
+
+        if (boilerplate_pxl_config && boilerplate_pxl_config.database) {
+            boilerplate_pxl_config.database.driver = database_driver;
+        }
+
+        if (pxl_config && pxl_config.database) {
+            pxl_config.database.driver = database_driver;
+        }
     }
 
     if (boilerplate_pxl_config && boilerplate_pxl_config.database.name) {
         database_name = boilerplate_pxl_config.database.name;
     } else if (!database_name) {
         database_name = (options['db-name'] || null);
+
+        if (boilerplate_pxl_config && boilerplate_pxl_config.database) {
+            boilerplate_pxl_config.database.name = database_name;
+        }
+
+        if (pxl_config && pxl_config.database) {
+            pxl_config.database.name = database_name;
+        }
     }
 
     if (!pxl_config && (options['db-driver'] !== '' && options['db-name'] !== '') && (!database_driver || !database_name)) {
@@ -251,7 +275,8 @@ async function main() {
 
     if (database_driver && database_name) {
         if (database_exists(database_driver, database_name)) {
-            error_line(`${get_database_driver_title(database_driver)} database "${database_name}" already exist.`);
+            error_line(`${get_database_driver_title(database_driver)} database "${database_name}" already exists.`);
+            line_break();
         } else {
             try {
                 create_database(database_driver, database_name);

@@ -1,0 +1,5 @@
+name: WordPress
+code:
+    php: 7.3
+database:
+    driver: mysql

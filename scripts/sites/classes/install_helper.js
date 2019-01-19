@@ -12,12 +12,12 @@ class InstallHelper
         this.php_cli = `php${this.pxl_config.code.php}`;
     }
 
-    install(name) {
+    install() {
         highlight_line(`Run install script ${this.pxl_config['install-script']}...`);
         line_break();
 
-        if (name) {
-            figlet(name);
+        if (this.pxl_config.name) {
+            figlet(this.pxl_config.name);
             line_break();
         }
 

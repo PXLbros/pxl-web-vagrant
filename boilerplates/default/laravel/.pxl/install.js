@@ -3,7 +3,7 @@ const { highlight_line, line_break } = require('/vagrant/scripts/utils/log');
 
 class InstallScript extends InstallHelper {
     install() {
-        super.install('Laravel');
+        super.install();
 
         // Download Laravel dependencies
         highlight_line('Download Laravel dependencies...');
@@ -38,8 +38,17 @@ class InstallScript extends InstallHelper {
         line_break();
         highlight_line('Update .env file...');
 
-        this.edit_env_file('.env', 'DB_USERNAME=', process.env.MYSQL_USER_NAME);
-        this.edit_env_file('.env', 'DB_PASSWORD=', process.env.MYSQL_USER_PASSWORD);
+        // Database
+        if (this.pxl_config.database && this.pxl_config.database.name) {
+            // Update .env file with database name
+            this.edit_env_file('.env', 'DB_NAME=', this.pxl_config.database.name);
+
+            // Run database migration
+            line_break();
+            highlight_line('Run database migration...');
+
+            this.php('artisan migrate:fresh --seed');
+        }
 
         // Install Yarn dependencies
         line_break();
@@ -50,14 +59,6 @@ class InstallScript extends InstallHelper {
         line_break();
         highlight_line('Run Yarn...');
         this.yarn('dev');
-
-        // Run database migration
-        if (this.pxl_config.database) {
-            line_break();
-            highlight_line('Run database migration...');
-
-            this.php('artisan migrate:fresh --seed');
-        }
     }
 };
 

@@ -1,8 +1,8 @@
-const yaml = require('js-yaml');
-const { existsSync, readdirSync, readFileSync } = require('fs');
+const { existsSync, readdirSync } = require('fs');
 const { ask_confirm } = require('./ask');
 const { choose } = require('./choose');
 const { getLastDirectory } = require('./str');
+const { load_pxl_config } = require('./pxl');
 
 const boilerplateUtil = {
     getBoilerplates() {
@@ -26,10 +26,12 @@ const boilerplateUtil = {
 
     getBoilerplateFromName(name, type) {
         const dir = `/vagrant/boilerplates/${type}/${name}`;
+        const install_script_path = `${dir}/.pxl/install.js`;
 
         return {
             dir: dir,
             pxl_config_file_path: `${dir}/.pxl/config.yaml`,
+            install_script: (existsSync(install_script_path) ? install_script_path : null),
             type: type
         };
     },
@@ -60,28 +62,12 @@ const boilerplateUtil = {
         return this.loadBoilerplate(selected_boilerplate);
     },
 
-    loadBoilerplate(boilerplate) {
+    loadBoilerplate(boilerplate, site_dir) {
         if (existsSync(boilerplate.pxl_config_file_path)) {
             try {
-                const pxl_config = yaml.safeLoad(readFileSync(boilerplate.pxl_config_file_path, 'utf8'));
+                const pxl_config = load_pxl_config(boilerplate.pxl_config_file_path, site_dir);
 
                 boilerplate.pxl_config = pxl_config;
-
-                // if (pxl_config['name']) {
-                //     boilerplate.name = pxl_config['name'];
-                // }
-
-                // if (pxl_config['public-dir']) {
-                //     boilerplate.public_dir = pxl_config['public-dir'];
-                // }
-
-                // if (pxl_config['code']) {
-                //     boilerplate.code = pxl_config['code'];
-                // }
-
-                // if (pxl_config['database']) {
-                //     boilerplate.database = pxl_config['database'];
-                // }
             } catch (load_pxl_config_error) {
                 console.log(load_pxl_config_error);
                 console.log(load_pxl_config_error.message);

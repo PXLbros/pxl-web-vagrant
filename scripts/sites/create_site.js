@@ -43,14 +43,6 @@ async function main() {
 
     let boilerplate_input = (options['boilerplate'] || null);
 
-    // if (boilerplate) {
-    //     let boilerplate_splitted = boilerplate.split('/');
-
-    //     if (boilerplate_splitted.length === 2) {
-
-    //     }
-    // }
-
     const no_backup = (options['no-backup'] || false);
     const force = (options['force'] || false);
 
@@ -88,15 +80,19 @@ async function main() {
         let boilerplate_type_input = 'default';
         let boilerplate_name_input = boilerplate_input;
 
-        boilerplate = await boilerplateUtil.loadBoilerplate(boilerplateUtil.getBoilerplateFromName(boilerplate_name_input, boilerplate_type_input));
-        boilerplate_pxl_config = boilerplate.pxl_config;
+        boilerplate = await boilerplateUtil.loadBoilerplate(boilerplateUtil.getBoilerplateFromName(boilerplate_name_input, boilerplate_type_input), site_dir);
     } else {
         boilerplate = await boilerplateUtil.askBoilerplate('Do you want to load from boilerplate?');
+    }
+
+    if (boilerplate && boilerplate.pxl_config) {
+        boilerplate.pxl_config['site-dir'] = site_dir;
+
         boilerplate_pxl_config = boilerplate.pxl_config;
     }
 
     if (boilerplate_pxl_config && boilerplate_pxl_config['public-dir']) {
-        public_dir = boilerplate_pxl_config['public-dir'];
+        public_dir = boilerplate_pxl_config['public-site-dir'];
     } else if (options['public-dir']) {
         public_dir = `${site_dir}/${options['public-dir']}`;
     } else if (is_public_directory(site_dir)) {
@@ -186,7 +182,6 @@ async function main() {
                     database_driver = pxl_config.database.driver;
                     database_name = pxl_config.database.name;
                 }
-                console.log('HEEEEEEEEEEEEEEEEEEELLLLLLLLLLLO!', pxl_config['public-site-dir']);
 
                 public_dir = pxl_config['public-site-dir'];
 
@@ -197,10 +192,6 @@ async function main() {
                 print_pxl_config(pxl_config);
 
                 line_break();
-
-                if (force || (!force && await ask_confirm(`Do you want to install?`))) {
-                    install_from_pxl_config(pxl_config); // TODO: Instead of doing this, just get variables instead and run commands below?
-                }
             }
         } catch (load_pxl_config_error) {
             error_line(load_pxl_config_error);
@@ -256,16 +247,13 @@ async function main() {
         }
     }
 
-    if (!pxl_config) {
-        if (database_driver && database_name) {
-            if (database_exists(database_driver, database_name)) {
-                error_line(`${get_database_driver_title(database_driver)} Database "${database_name}" already exist.`);
-            } else {
-                try {
-                    create_database(database_driver, database_name);
-                } catch (create_database_error) {
-                    // create_database_error = create_database_error;
-                }
+    if (database_driver && database_name) {
+        if (database_exists(database_driver, database_name)) {
+            error_line(`${get_database_driver_title(database_driver)} Database "${database_name}" already exist.`);
+        } else {
+            try {
+                create_database(database_driver, database_name);
+            } catch (create_database_error) {
             }
         }
     }   
@@ -286,12 +274,20 @@ async function main() {
     // Add /etc/hosts entry
     exec(`sudo hostile set 127.0.0.1 ${hostname}`, { silent: true });
 
+    if (force || (!force && await ask_confirm(`Do you want to install?`))) {
+        if (boilerplate_pxl_config) {
+            install_from_pxl_config(boilerplate_pxl_config);
+        } else if (pxl_config) {
+            install_from_pxl_config(pxl_config);
+        }
+    }
+
     if (!pxl_config) {
         line_break();
 
         if (force || await ask_confirm(`Do you want to save PXL Web Vagrant configuration?`)) {
             try {
-                const pxl_config_dir = create_pxl_config_in_dir(site_dir, public_dir, php_version, database_driver, database_name);
+                const pxl_config_dir = create_pxl_config_in_dir(site_dir, public_dir, php_version, database_driver, database_name, boilerplate);
 
                 cyan_line(`PXL Web Vagrant configuration ${pxl_config_dir} created.`);
             } catch (create_pxl_config_error) {

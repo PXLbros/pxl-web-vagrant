@@ -42,7 +42,7 @@ function load_pxl_config_from_dir(dir) {
     return pxl_config;
 }
 
-function load_pxl_config(pxl_config_file_path) {
+function load_pxl_config(pxl_config_file_path, site_dir = null) {
     try {
         const pxl_config = yaml.safeLoad(readFileSync(pxl_config_file_path, 'utf8'));
 
@@ -52,9 +52,8 @@ function load_pxl_config(pxl_config_file_path) {
 
         const pxl_config_dir = remove_last_directory(pxl_config_file_path);
 
-        validate_pxl_config(pxl_config);
-
-        pxl_config['site-dir'] = remove_last_directory(pxl_config_dir);
+        // validate_pxl_config(pxl_config);
+        pxl_config['site-dir'] = (site_dir || remove_last_directory(pxl_config_dir));
 
         let public_site_dir;
 
@@ -178,7 +177,7 @@ function get_pxl_config_title_inline(pxl_config) {
     return str;
 }
 
-function create_pxl_config_in_dir(dir, public_dir, php_version = null, database_driver = null, database_name = null) {
+function create_pxl_config_in_dir(dir, public_dir, php_version = null, database_driver = null, database_name = null, boilerplate = null) {
     dir = remove_trailing_slash(dir);
 
     const config_dir = `${dir}/.pxl`;
@@ -195,6 +194,11 @@ function create_pxl_config_in_dir(dir, public_dir, php_version = null, database_
     }
 
     let config_contents = `site-dir: ${dir}`;
+
+    if (boilerplate) {
+        config_contents += `\nboilerplate: ${boilerplate}`;
+    }
+
     config_contents += `\npublic-dir: ${public_dir}`;
 
     if (php_version) {
@@ -286,8 +290,8 @@ module.exports = {
         return load_pxl_config_from_dir(dir);
     },
 
-    load_pxl_config(path) {
-        return load_pxl_config(path);
+    load_pxl_config(path, site_dir = null) {
+        return load_pxl_config(path, site_dir);
     },
 
     print_pxl_config(pxl_config) {
@@ -356,38 +360,38 @@ module.exports = {
     },
 
     install_from_pxl_config(pxl_config, overwrite_web_server = true) {
-        if (pxl_config['web-server']) {
-            const configuration_file_name = get_config_filename(pxl_config['web-server'], pxl_config['hostname']);
-            const configuration_file_path = get_config_file_path(pxl_config['web-server'], configuration_file_name);
+        // if (pxl_config['web-server']) {
+        //     const configuration_file_name = get_config_filename(pxl_config['web-server'], pxl_config['hostname']);
+        //     const configuration_file_path = get_config_file_path(pxl_config['web-server'], configuration_file_name);
 
-            // Save virtual host configuration file
-            save_virtual_host_config(configuration_file_path, pxl_config['web-server'], pxl_config['hostname'], pxl_config['public-site-dir'], pxl_config['code']['php'] || null, overwrite_web_server);
+        //     // Save virtual host configuration file
+        //     save_virtual_host_config(configuration_file_path, pxl_config['web-server'], pxl_config['hostname'], pxl_config['public-site-dir'], pxl_config['code']['php'] || null, overwrite_web_server);
 
-            // Enable web server site
-            enable_web_server_site(pxl_config['web-server'], configuration_file_name);
+        //     // Enable web server site
+        //     enable_web_server_site(pxl_config['web-server'], configuration_file_name);
 
-            // Reload web server service
-            reload_web_server(pxl_config['web-server']);
+        //     // Reload web server service
+        //     reload_web_server(pxl_config['web-server']);
 
-            // Add /etc/hosts entry
-            exec(`sudo hostile set 127.0.0.1 ${pxl_config['hostname']}`, { silent: true });
-        }
+        //     // Add /etc/hosts entry
+        //     exec(`sudo hostile set 127.0.0.1 ${pxl_config['hostname']}`, { silent: true });
+        // }
 
-        if (pxl_config.database) {
-            if (database_exists(pxl_config.database.driver, pxl_config.database.name)) {
-                error_line(`${get_database_driver_title(pxl_config.database.driver)} Database "${pxl_config.database.name}" already exist.`);
-            } else {
-                try {
-                    create_database(pxl_config.database.driver, pxl_config.database.name);
+        // if (pxl_config.database) {
+        //     if (database_exists(pxl_config.database.driver, pxl_config.database.name)) {
+        //         error_line(`${get_database_driver_title(pxl_config.database.driver)} Database "${pxl_config.database.name}" already exist.`);
+        //     } else {
+        //         try {
+        //             create_database(pxl_config.database.driver, pxl_config.database.name);
             
-                    highlight_line(`Database "${pxl_config.database.name}" has been created!`);
-                } catch (create_database_error) {
-                    error_line(create_database_error.message);
-                }
-            }
+        //             highlight_line(`Database "${pxl_config.database.name}" has been created!`);
+        //         } catch (create_database_error) {
+        //             error_line(create_database_error.message);
+        //         }
+        //     }
 
-            line_break();
-        }
+        //     line_break();
+        // }
 
         if (pxl_config['install-script']) {
             if (existsSync(pxl_config['install-script'])) {

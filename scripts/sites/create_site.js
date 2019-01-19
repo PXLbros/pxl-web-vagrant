@@ -3,14 +3,14 @@ const { existsSync } = require('fs');
 const { exec } = require('shelljs');
 const { bold, blue, cyan, red, yellow } = require('chalk');
 const { format } = require('date-fns');
-const { create_pxl_config_in_dir, install_from_pxl_config, load_pxl_config_from_dir, print_pxl_config } = require('../utils/pxl');
+const { create_pxl_config_in_dir, run_install_script_from_pxl_config, load_pxl_config_from_dir, print_pxl_config } = require('../utils/pxl');
 const { ask_confirm, ask_input, ask_php_version, ask_create_database } = require('../utils/ask');
 const { is_public_directory } = require('../utils/web_server');
 const { remove_trailing_slash } = require('../utils/str');
 const boilerplateUtil = require('../utils/boilerplate');
 const { ask_create_database_driver, create: create_database, exists: database_exists, get_driver_title: get_database_driver_title } = require('../utils/database');
 const { ask_web_server, enable_web_server_site, get_config_filename, get_config_file_path, get_installed_web_servers, get_web_server_title, reload_web_server, save_virtual_host_config } = require('../utils/web_server.js');
-const { cyan_line, error_line, highlight_line, line_break } = require('../utils/log');
+const { cyan_line, error_line, highlight_line, line_break, success_line } = require('../utils/log');
 const log = console.log;
 
 const options_values = [
@@ -142,12 +142,14 @@ async function main() {
                 exec(`sudo rm -rf ${site_dir}`);
 
                 cyan_line(`Removed existing directory ${site_dir}.`);
+                line_break();
             }
         } else {
             // No backup, delete existing site directory
             exec(`sudo rm -rf ${site_dir}`);
 
             cyan_line(`Removed existing directory ${site_dir}.`);
+            line_break();
         }
     }
 
@@ -249,7 +251,7 @@ async function main() {
 
     if (database_driver && database_name) {
         if (database_exists(database_driver, database_name)) {
-            error_line(`${get_database_driver_title(database_driver)} Database "${database_name}" already exist.`);
+            error_line(`${get_database_driver_title(database_driver)} database "${database_name}" already exist.`);
         } else {
             try {
                 create_database(database_driver, database_name);
@@ -268,6 +270,8 @@ async function main() {
         error_line(enable_web_server_site_error.message);
     }
 
+    line_break();
+
     // Reload web server service
     reload_web_server(web_server);
 
@@ -276,9 +280,9 @@ async function main() {
 
     if (force || (!force && await ask_confirm(`Do you want to install?`))) {
         if (boilerplate_pxl_config) {
-            install_from_pxl_config(boilerplate_pxl_config);
+            run_install_script_from_pxl_config(boilerplate_pxl_config);
         } else if (pxl_config) {
-            install_from_pxl_config(pxl_config);
+            run_install_script_from_pxl_config(pxl_config);
         }
     }
 
@@ -297,7 +301,13 @@ async function main() {
     }
 
     // Show summary
-    log(yellow(`${web_server_title} site added!\n`));
+    line_break();
+
+    success_line(`Success!`);
+
+    line_break();
+
+    log(`${cyan(bold('Web Server:'))} ${web_server}`);
     log(`${cyan(bold('Hostname:'))} ${hostname}`);
     log(`${cyan(bold('Site Directory:'))} ${site_dir}`);
     log(`${cyan(bold('Public Directory:'))} ${public_dir}`);

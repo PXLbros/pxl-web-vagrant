@@ -5,20 +5,19 @@ const slugify = require('slugify');
 const yaml = require('js-yaml');
 const { ask_confirm, ask_input } = require('./ask');
 const { remove_last_directory, remove_trailing_slash } = require('./str');
-const { error_line, highlight_line, line_break, title_line } = require('./log');
-const { create: create_database, exists: database_exists, get_driver_title: get_database_driver_title } = require('../utils/database');
-const { enable_web_server_site, get_config_filename, get_config_file_path, get_public_directories, reload_web_server, save_virtual_host_config } = require('../utils/web_server.js');
+const { error_line, line_break, title_line } = require('./log');
+const { get_public_directories } = require('../utils/web_server.js');
 const log = console.log;
 
 function get_pxl_config_file_path_from_dir(dir) {
     return `${dir}/config.yaml`;
 }
 
-function validate_pxl_config(pxl_config) {
-    console.log('validate_pxl_config', pxl_config);
+// function validate_pxl_config(pxl_config) {
+//     console.log('validate_pxl_config', pxl_config);
 
-    return true;
-}
+//     return true;
+// }
 
 function pxl_config_exist(dir) {
     const config_file_path = get_pxl_config_file_path_from_dir(remove_trailing_slash(dir));
@@ -359,52 +358,21 @@ module.exports = {
         }
     },
 
-    install_from_pxl_config(pxl_config, overwrite_web_server = true) {
-        // if (pxl_config['web-server']) {
-        //     const configuration_file_name = get_config_filename(pxl_config['web-server'], pxl_config['hostname']);
-        //     const configuration_file_path = get_config_file_path(pxl_config['web-server'], configuration_file_name);
+    run_install_script_from_pxl_config(pxl_config) {
+        if (!pxl_config['install-script']) {
+            return null;
+        } else if (!existsSync(pxl_config['install-script'])) {
+            error_line(`Could not find install script at ${pxl_config['install-script']}.`);
 
-        //     // Save virtual host configuration file
-        //     save_virtual_host_config(configuration_file_path, pxl_config['web-server'], pxl_config['hostname'], pxl_config['public-site-dir'], pxl_config['code']['php'] || null, overwrite_web_server);
-
-        //     // Enable web server site
-        //     enable_web_server_site(pxl_config['web-server'], configuration_file_name);
-
-        //     // Reload web server service
-        //     reload_web_server(pxl_config['web-server']);
-
-        //     // Add /etc/hosts entry
-        //     exec(`sudo hostile set 127.0.0.1 ${pxl_config['hostname']}`, { silent: true });
-        // }
-
-        // if (pxl_config.database) {
-        //     if (database_exists(pxl_config.database.driver, pxl_config.database.name)) {
-        //         error_line(`${get_database_driver_title(pxl_config.database.driver)} Database "${pxl_config.database.name}" already exist.`);
-        //     } else {
-        //         try {
-        //             create_database(pxl_config.database.driver, pxl_config.database.name);
-            
-        //             highlight_line(`Database "${pxl_config.database.name}" has been created!`);
-        //         } catch (create_database_error) {
-        //             error_line(create_database_error.message);
-        //         }
-        //     }
-
-        //     line_break();
-        // }
-
-        if (pxl_config['install-script']) {
-            if (existsSync(pxl_config['install-script'])) {
-                highlight_line(`Running install script ${pxl_config['install-script']}...`);
-
-                const install_script_class = require(pxl_config['install-script']);
-                const install_script = new install_script_class(pxl_config);
-
-                install_script.install();
-            } else {
-                error_line(`Could not find install script at ${pxl_config['install-script']}.`);
-            }
+            return null;
         }
+
+        line_break();
+
+        const install_script_class = require(pxl_config['install-script']);
+        const install_script = new install_script_class(pxl_config);
+
+        install_script.install();
     },
 
     uninstall_from_pxl_config(pxl_config) {

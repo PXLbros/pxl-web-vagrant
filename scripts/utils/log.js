@@ -1,4 +1,5 @@
 const chalk = require('chalk');
+const { exec } = require('shelljs');
 const log = console.log;
 
 function yellow_line(text) {
@@ -12,6 +13,10 @@ module.exports = {
 
     highlight_line(text) {
         yellow_line(text);
+    },
+
+    success_line(text) {
+        log(chalk.green(text));
     },
 
     error_line(text) {
@@ -30,5 +35,9 @@ module.exports = {
 
     line_break() {
         log();
+    },
+
+    figlet(text) {
+        exec(`figlet ${text}`);
     }
 };

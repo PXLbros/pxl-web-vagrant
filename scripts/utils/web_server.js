@@ -3,7 +3,7 @@ const { exec } = require('shelljs');
 const { choose } = require('./choose');
 const { getFilenameFromPath, remove_trailing_slash } = require('./str');
 const { choose_files_from_dir } = require('./choose');
-const { highlight_line } = require('./log');
+const { blue_line } = require('./log');
 
 function get_public_directories() {
     return ['public', 'public_html', 'html'];
@@ -141,9 +141,11 @@ module.exports = {
 
         // Save file
         writeFileSync(file_path, contents);
+
+        blue_line(`Created ${get_web_server_title(web_server)} site configuration ${file_path}.`);
     },
 
-    enable_web_server_site(web_server, config_filename) {
+    enable_web_server_site(web_server, config_filename, silent = false) {
         let enable_result;
 
         if (web_server === 'apache') {
@@ -160,10 +162,14 @@ module.exports = {
             throw new Error(`Could not enable ${get_web_server_title(web_server)} site ${config_filename}.`);
         }
 
+        if (!silent) {
+            blue_line(`Enabled ${get_web_server_title(web_server)} ${config_filename} site.`);
+        }
+
         return true;
     },
 
-    disable_web_server_site(web_server, config_filename) {
+    disable_web_server_site(web_server, config_filename, silent = false) {
         let disable_result;
 
         if (web_server === 'apache') {
@@ -178,6 +184,10 @@ module.exports = {
             throw new Error(`${get_web_server_title(web_server)} site ${config_filename} already disabled.`);
         } else if (disable_result.code !== 0) {
             throw new Error(`Could not enable ${get_web_server_title(web_server)} site ${config_filename}.`);
+        }
+
+        if (!silent) {
+            blue_line(`Disabled ${get_web_server_title(web_server)} ${config_filename} site.`);
         }
 
         return true;
@@ -199,7 +209,7 @@ module.exports = {
         }
 
         if (!silent) {
-            highlight_line(`${get_web_server_title(web_server)} has reloaded.`);
+            blue_line(`${get_web_server_title(web_server)} has reloaded.`);
         }
 
         return true;

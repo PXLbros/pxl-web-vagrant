@@ -1,17 +1,28 @@
 const { existsSync } = require('fs');
-const { cd, cp, exec } = require('shelljs');
+const { cd, cp, exec, mv } = require('shelljs');
+const { remove_trailing_slash } = require('../../utils/str');
+const { figlet, highlight_line, line_break } = require('../../utils/log');
 
 class InstallHelper
 {
     constructor(pxl_config) {
         this.pxl_config = pxl_config;
 
+        this.site_dir = this.pxl_config['site-dir'];
         this.php_cli = `php${this.pxl_config.code.php}`;
     }
 
-    install() {
-        // Go to site directory before installing
-        cd(this.pxl_config['site-dir']);
+    install(name) {
+        highlight_line(`Run install script ${this.pxl_config['install-script']}...`);
+        line_break();
+
+        if (name) {
+            figlet(name);
+            line_break();
+        }
+
+        // Go to site directory
+        cd(this.site_dir);
     }
 
     php(command) {
@@ -30,16 +41,29 @@ class InstallHelper
         cp(from, to);
     }
 
+    move_files(from_dir, to_dir) {
+        from_dir = remove_trailing_slash(from_dir);
+        to_dir = remove_trailing_slash(to_dir);
+
+        mv(`${from_dir}/{*,.*}`, `${to_dir}/`);
+    }
+
     edit_env_file(file, key, value) {
-        exec(`sed -i s~${key}.*$~${key}${value}~g ${file}`);
+        const exec_result = exec(`sed -i s~${key}.*$~${key}${value}~g ${file}`);
+
+        return (exec_result.code === 0);
     }
 
     yarn(command = null) {
-        exec(`yarn${command !== null ? ` ${command}` : ``}`);
+        const exec_result = exec(`yarn${command !== null ? ` ${command}` : ``}`);
+
+        return (exec_result.code === 0);
     }
 
     run(command) {
-        exec(command);
+        const exec_result = exec(command);
+
+        return (exec_result.code === 0);
     }
 }
 

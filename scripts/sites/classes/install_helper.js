@@ -26,6 +26,21 @@ class InstallHelper
         this.go_to_dir(this.site_dir);
     }
 
+    finish_install() {
+        highlight_line(`Finish installation...`);
+        line_break();
+
+        if (this.file_exists(this.pxl_config['custom-files-dir'])) {
+            this.sync_paths(this.pxl_config['custom-files-dir'], this.pxl_config['site-dir'])
+        }
+    }
+
+    sync_paths(from_dir, to_dir) {
+        const rsync_result = exec(`rsync -a ${from_dir}/ ${to_dir}`);
+
+        return (rsync_result.code === 0);
+    }
+
     php(command) {
         exec(`${this.php_cli} ${command}`);
     }

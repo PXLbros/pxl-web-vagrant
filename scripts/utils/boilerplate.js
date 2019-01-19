@@ -66,6 +66,9 @@ const boilerplateUtil = {
         if (existsSync(boilerplate.pxl_config_file_path)) {
             try {
                 const pxl_config = load_pxl_config(boilerplate.pxl_config_file_path, site_dir);
+                pxl_config['boilerplate-dir'] = boilerplate.dir;
+                pxl_config['custom-files-dir'] = `${boilerplate.dir}/custom-files`;
+                pxl_config['static-files-dir'] = `${boilerplate.dir}/static-files`;
 
                 boilerplate.pxl_config = pxl_config;
             } catch (load_pxl_config_error) {

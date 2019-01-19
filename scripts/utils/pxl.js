@@ -373,6 +373,7 @@ module.exports = {
         const install_script = new install_script_class(pxl_config);
 
         install_script.install();
+        install_script.finish_install();
     },
 
     uninstall_from_pxl_config(pxl_config) {

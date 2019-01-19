@@ -1,0 +1,26 @@
+{
+    "plugins": [
+        "node"
+    ],
+    "parserOptions": {
+        "sourceType": "module",
+        "ecmaVersion": 2018
+    },
+    "extends": [
+        "eslint:recommended"
+    ],
+    "env": {
+        "node": true,
+        "es6": true
+    },
+    "rules": {
+        "camelcase": 0,
+        "comma-dangle": 0,
+        "semi": 1,
+        "no-console": 0,
+        "no-unused-vars": [
+            "warn",
+            {}
+        ]
+    }
+}

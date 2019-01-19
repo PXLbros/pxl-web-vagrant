@@ -121,7 +121,7 @@ module.exports = {
     }`;
 
             if (php_version !== null) {
-                contents += `\n\n\tlocation ~ \.php$ {
+                contents += `\n\n\tlocation ~ .php$ {
         include snippets/fastcgi-php.conf;
 
         fastcgi_pass unix:/var/run/php/php${php_version}-fpm.sock;

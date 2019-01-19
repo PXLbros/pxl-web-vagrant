@@ -15,6 +15,8 @@ function get_pxl_config_file_path_from_dir(dir) {
 }
 
 function validate_pxl_config(pxl_config) {
+    console.log('validate_pxl_config', pxl_config);
+
     return true;
 }
 
@@ -58,12 +60,12 @@ function load_pxl_config(pxl_config_file_path) {
 
         if (pxl_config['public-dir']) {
             if (get_public_directories().includes(pxl_config['public-dir'])) {
-                public_site_dir = `${site_dir}/${pxl_config['public-dir']}`;
+                public_site_dir = `${pxl_config['site-dir']}/${pxl_config['public-dir']}`;
             } else {
                 public_site_dir = pxl_config['public-dir'];
             }
         } else {
-            public_site_dir = site_dir;
+            public_site_dir = pxl_config['site-dir'];
         }
 
         pxl_config['public-site-dir'] = public_site_dir;
@@ -100,7 +102,7 @@ function find_pxl_configs(dir, filter_type = null) {
         writeFileSync(cache_file_path, search_result);
     }
 
-    const pxl_dirs = search_result.split('\n').filter(pxl_dir => { return pxl_dir !== '' });
+    const pxl_dirs = search_result.split('\n').filter(pxl_dir => (pxl_dir !== ''));
 
     let pxl_configs = [];
 
@@ -213,9 +215,7 @@ function create_pxl_config_in_dir(dir, public_dir, php_version = null, database_
     return config_dir;
 }
 
-function create_pxl_config(name, dir, options = {
-    default: 1
-}) {
+function create_pxl_config(name, dir) {
     dir = remove_trailing_slash(dir);
 
     const config_dir = `${dir}/.pxl`;
@@ -250,12 +250,13 @@ windows:
   - Home:`;
 
     const create_project_tmuxinator_result = exec(`echo "${tmuxinator_str}" > ${path}`);
+
+    console.log(tmuxinator_str);
+    console.log(create_project_tmuxinator_result);
 }
 
 module.exports = {
-    async create_pxl_project_config(name, dir, options = {
-        default: 1
-    }) {
+    async create_pxl_project_config(name, dir) {
         dir = remove_trailing_slash(dir);
 
         const config_dir = `${dir}/.pxl`;

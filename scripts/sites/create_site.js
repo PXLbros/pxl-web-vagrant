@@ -7,6 +7,7 @@ const { create_pxl_config_in_dir, install_from_pxl_config, load_pxl_config_from_
 const { ask_confirm, ask_input, ask_php_version, ask_create_database } = require('../utils/ask');
 const { is_public_directory } = require('../utils/web_server');
 const { remove_trailing_slash } = require('../utils/str');
+const boilerplateUtil = require('../utils/boilerplate');
 const { ask_create_database_driver, create: create_database, exists: database_exists, get_driver_title: get_database_driver_title } = require('../utils/database');
 const { ask_web_server, enable_web_server_site, get_config_filename, get_config_file_path, get_installed_web_servers, get_web_server_title, reload_web_server, save_virtual_host_config } = require('../utils/web_server.js');
 const { cyan_line, error_line, highlight_line, line_break } = require('../utils/log');
@@ -25,7 +26,8 @@ const options_values = [
     { name: 'overwrite', type: Boolean },
     { name: 'no-backup', type: Boolean },
     { name: 'force', type: Boolean },
-    { name: 'show-command', type: Boolean }
+    { name: 'show-command', type: Boolean },
+    { name: 'boilerplate', type: String }
 ];
 
 const options = commandLineArgs(options_values.map(option => {
@@ -38,6 +40,16 @@ const options = commandLineArgs(options_values.map(option => {
 async function main() {
     exec('figlet create site');
     line_break();
+
+    let boilerplate_input = (options['boilerplate'] || null);
+
+    // if (boilerplate) {
+    //     let boilerplate_splitted = boilerplate.split('/');
+
+    //     if (boilerplate_splitted.length === 2) {
+
+    //     }
+    // }
 
     const no_backup = (options['no-backup'] || false);
     const force = (options['force'] || false);
@@ -57,14 +69,35 @@ async function main() {
     const web_server_title = get_web_server_title(web_server);
 
     const hostname = (options['hostname'] || await ask_input('Enter hostname (e.g. domain.loc):'));
+    
     let site_dir = (options['site-dir'] || await ask_input('Enter site directory:', `/vagrant/projects/${hostname}`));
-
+    
     // Make sure site_dir doesn't have a trailing slash
     site_dir = remove_trailing_slash(site_dir);
 
-    let public_dir;
+    let boilerplate;
+    let boilerplate_pxl_config;
+    let pxl_config;
 
-    if (options['public-dir']) {
+    let public_dir;
+    let php_version = (options['php'] || null);
+    let database_driver;
+    let database_name;
+
+    if (boilerplate_input) {
+        let boilerplate_type_input = 'default';
+        let boilerplate_name_input = boilerplate_input;
+
+        boilerplate = await boilerplateUtil.loadBoilerplate(boilerplateUtil.getBoilerplateFromName(boilerplate_name_input, boilerplate_type_input));
+        boilerplate_pxl_config = boilerplate.pxl_config;
+    } else {
+        boilerplate = await boilerplateUtil.askBoilerplate('Do you want to load from boilerplate?');
+        boilerplate_pxl_config = boilerplate.pxl_config;
+    }
+
+    if (boilerplate_pxl_config && boilerplate_pxl_config['public-dir']) {
+        public_dir = boilerplate_pxl_config['public-dir'];
+    } else if (options['public-dir']) {
         public_dir = `${site_dir}/${options['public-dir']}`;
     } else if (is_public_directory(site_dir)) {
         public_dir = site_dir;
@@ -85,7 +118,7 @@ async function main() {
     let git_repo = options['git-repo'];
     let git_branch = (options['git-branch'] || null);
     
-    if (!git_repo) {
+    if (!git_repo && !boilerplate) {
         if (await ask_confirm('Create from existing Git repository?')) {
             git_repo = (await ask_input('Enter Git SSH repository (e.g. git@github.com:Organization/project-name.git):'));
         }
@@ -97,13 +130,6 @@ async function main() {
     let configuration_file_path;
 
     let git_clone_error;
-
-    let pxl_config;
-    
-    let php_version = (options['php'] || null);
-
-    let database_driver;
-    let database_name;
 
     // If site directory already exist, take backup/delete existing
     if (existsSync(site_dir)) {            
@@ -195,33 +221,51 @@ async function main() {
         }
     }
 
-    if (!php_version) {
+    if (boilerplate_pxl_config && boilerplate_pxl_config.code.php) {
+        php_version = boilerplate_pxl_config.code.php;
+    } else if (!php_version) {
         php_version = (options['php'] || await ask_php_version());
     }
 
-    if (!database_driver) {
+    if (boilerplate_pxl_config && boilerplate_pxl_config.database.driver) {
+        database_driver = boilerplate_pxl_config.database.driver;
+    } else if (!database_driver) {
         database_driver = (options['db-driver'] || null);
     }
 
-    if (!database_name) {
+    if (boilerplate_pxl_config && boilerplate_pxl_config.database.name) {
+        database_name = boilerplate_pxl_config.database.name;
+    } else if (!database_name) {
         database_name = (options['db-name'] || null);
     }
 
     if (!pxl_config && (options['db-driver'] !== '' && options['db-name'] !== '') && (!database_driver || !database_name)) {
-        const database = await ask_create_database(await ask_create_database_driver());
+        let ask_to_create_database;
 
-        database_driver = database.driver;
-        database_name = database.name;
+        if (!database_driver) {
+            ask_to_create_database = await ask_create_database_driver();
+        } else {
+            ask_to_create_database = true;
+        }
+
+        if (ask_to_create_database) {
+            const database = await ask_create_database(database_driver);
+
+            database_driver = database.driver;
+            database_name = database.name;
+        }
     }
 
-    if (!pxl_config && database_driver && database_name) {
-        if (database_exists(database_driver, database_name)) {
-            error_line(`${get_database_driver_title(database_driver)} Database "${database_name}" already exist.`);
-        } else {
-            try {
-                create_database(database_driver, database_name);
-            } catch (create_database_error) {
-                // create_database_error = create_database_error;
+    if (!pxl_config) {
+        if (database_driver && database_name) {
+            if (database_exists(database_driver, database_name)) {
+                error_line(`${get_database_driver_title(database_driver)} Database "${database_name}" already exist.`);
+            } else {
+                try {
+                    create_database(database_driver, database_name);
+                } catch (create_database_error) {
+                    // create_database_error = create_database_error;
+                }
             }
         }
     }   
@@ -230,7 +274,11 @@ async function main() {
     save_virtual_host_config(configuration_file_path, web_server, hostname, public_dir, php_version, overwrite);
 
     // Enable web server site
-    enable_web_server_site(web_server, configuration_file_name);
+    try {
+        enable_web_server_site(web_server, configuration_file_name);
+    } catch (enable_web_server_site_error) {
+        error_line(enable_web_server_site_error.message);
+    }
 
     // Reload web server service
     reload_web_server(web_server);

@@ -82,7 +82,7 @@ module.exports = {
             value: null
         });
 
-        choices = choices.reverse()
+        choices = choices.reverse();
 
         const prompt_result = await prompt([
             {

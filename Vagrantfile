@@ -44,6 +44,8 @@ GLOBAL_VARIABLES = {
     'IP_ADDRESS': vagrant_config['vm']['ip'],
     'TIMEZONE': vagrant_config['vm']['locale']['timezone'],
 
+    'HOME_DIR': vagrant_config['vm']['home-dir'],
+
     'PROVISION_SHOW_COMMAND': vagrant_config['vm']['provision']['show-command'],
     'PROVISION_SHOW_COMMAND_OUTPUT': vagrant_config['vm']['provision']['show-command-output'],
     'PROVISION_SHOW_COMMAND_EXECUTION_TIME': vagrant_config['vm']['provision']['show-command-execution-time'],

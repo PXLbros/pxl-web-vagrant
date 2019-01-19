@@ -295,13 +295,19 @@ async function main() {
         error_line(enable_web_server_site_error.message);
     }
 
-    line_break();
-
     // Reload web server service
     reload_web_server(web_server);
 
     // Add /etc/hosts entry
-    exec(`sudo hostile set 127.0.0.1 ${hostname}`, { silent: true });
+    const add_etc_hosts_entry_result = exec(`sudo hostile set 127.0.0.1 ${hostname}`, { silent: true });
+
+    if (add_etc_hosts_entry_result.code === 0) {
+        blue_line(`Added ${hostname} /etc/hosts entry.`);
+    } else {
+        console.log(add_etc_hosts_entry_result);
+
+        error_line(`Could not add ${hostname} /etc/hosts entry. (${add_etc_hosts_entry_result.stderr})`);
+    }
 
     if (force || (!force && await ask_confirm(`Do you want to install?`))) {
         if (boilerplate_pxl_config) {

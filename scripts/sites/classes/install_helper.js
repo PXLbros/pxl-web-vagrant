@@ -9,6 +9,7 @@ class InstallHelper
         this.pxl_config = pxl_config;
 
         this.site_dir = this.pxl_config['site-dir'];
+        this.site_url = `${this.pxl_config.hostname}:${process.env.APACHE_PORT}`;
         this.php_cli = `php${this.pxl_config.code.php}`;
     }
 
@@ -49,9 +50,15 @@ class InstallHelper
     }
 
     edit_env_file(file, key, value) {
-        const exec_result = exec(`sed -i s~${key}.*$~${key}${value}~g ${file}`);
+        const sed_result = exec(`sed -i s~${key}=.*$~${key}=${value}~g ${file}`);
 
-        return (exec_result.code === 0);
+        return (sed_result.code === 0);
+    }
+
+    replace_env_file(file, from, to) {
+        const sed_result = exec(`sed -i s~${to}~${from}~ ${file}`);
+
+        return (sed_result.code === 0);
     }
 
     yarn(command = null) {

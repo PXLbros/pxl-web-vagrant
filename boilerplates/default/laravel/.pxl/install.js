@@ -1,5 +1,5 @@
 const InstallHelper = require('/vagrant/scripts/sites/classes/install_helper');
-const { highlight_line, line_break } = require('/vagrant/scripts/utils/log');
+const { blue_line, highlight_line, line_break, success_line } = require('/vagrant/scripts/utils/log');
 
 class InstallScript extends InstallHelper {
     install() {
@@ -11,7 +11,7 @@ class InstallScript extends InstallHelper {
 
         // Install Laravel library
         line_break();
-        highlight_line('Install Laravel library...');
+        highlight_line('Install Laravel...');
 
         const tmp_lib_dir = '_laravel-lib';
 
@@ -25,23 +25,18 @@ class InstallScript extends InstallHelper {
         this.move_files(`${this.site_dir}/${tmp_lib_dir}/`, `${this.site_dir}/`);
         this.run(`rm -rf ${this.site_dir}/${tmp_lib_dir}/`);
 
-        // Run composer
-        // line_break();
-        // highlight_line('Install Composer...');
-        // this.composer('install');
-
-        // if (!this.file_exists('.env')) {
-        //     this.copy_file('.env.example', '.env');
-        // }
-
-        // Update .env file
         line_break();
         highlight_line('Update .env file...');
+
+        this.run(`cat .env`)
+
+        this.edit_env_file('.env', 'DB_USERNAME', process.env.MYSQL_USER_NAME);
+        this.edit_env_file('.env', 'DB_PASSWORD', process.env.MYSQL_USER_PASSWORD);
 
         // Database
         if (this.pxl_config.database && this.pxl_config.database.name) {
             // Update .env file with database name
-            this.edit_env_file('.env', 'DB_NAME=', this.pxl_config.database.name);
+            this.edit_env_file('.env', 'DB_DATABASE', this.pxl_config.database.name);
 
             // Run database migration
             line_break();
@@ -59,6 +54,12 @@ class InstallScript extends InstallHelper {
         line_break();
         highlight_line('Run Yarn...');
         this.yarn('dev');
+
+        // Done
+        success_line('Laravel has been successfully installed!');
+        line_break();
+        highlight_line(`Access at ${this.site_url}.`);
+        blue_line(this.site_dir);
     }
 };
 

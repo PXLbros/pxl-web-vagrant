@@ -78,6 +78,8 @@ module.exports = {
     save_virtual_host_config(file_path, web_server, hostname, public_dir, php_version = null, overwrite = false) {
         const config_filename = getFilenameFromPath(file_path);
 
+        // blue_line(`Create ${get_web_server_title(web_server)} site configuration file ${config_filename}.`);
+
         let contents;
 
         let config_to_delete_path;
@@ -142,7 +144,7 @@ module.exports = {
         // Save file
         writeFileSync(file_path, contents);
 
-        blue_line(`Created ${get_web_server_title(web_server)} site configuration ${file_path}.`);
+        blue_line(`Created ${get_web_server_title(web_server)} site configuration file ${config_filename}.`);
     },
 
     enable_web_server_site(web_server, config_filename, silent = false) {
@@ -209,7 +211,7 @@ module.exports = {
         }
 
         if (!silent) {
-            blue_line(`${get_web_server_title(web_server)} has reloaded.`);
+            blue_line(`Reloaded ${get_web_server_title(web_server)}.`);
         }
 
         return true;

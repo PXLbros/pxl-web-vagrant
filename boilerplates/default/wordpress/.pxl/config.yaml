@@ -1,4 +1,5 @@
 name: WordPress
+public-dir: public
 code:
     php: 7.3
 database:

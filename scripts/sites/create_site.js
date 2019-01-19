@@ -233,7 +233,7 @@ async function main() {
         }
     }
 
-    if (boilerplate_pxl_config && boilerplate_pxl_config.database.driver) {
+    if (boilerplate_pxl_config && boilerplate_pxl_config.database && boilerplate_pxl_config.database.driver) {
         database_driver = boilerplate_pxl_config.database.driver;
     } else if (!database_driver) {
         database_driver = (options['db-driver'] || null);
@@ -247,7 +247,7 @@ async function main() {
         }
     }
 
-    if (boilerplate_pxl_config && boilerplate_pxl_config.database.name) {
+    if (boilerplate_pxl_config && boilerplate_pxl_config.database && boilerplate_pxl_config.database.name) {
         database_name = boilerplate_pxl_config.database.name;
     } else if (!database_name) {
         database_name = (options['db-name'] || null);

@@ -1,7 +1,7 @@
 const { existsSync } = require('fs');
 const { cd, cp, exec, mv } = require('shelljs');
 const { remove_trailing_slash } = require('../../utils/str');
-const { figlet, highlight_line, line_break } = require('../../utils/log');
+const { blue_line, error_line, figlet, highlight_line, line_break, success_line } = require('../../utils/log');
 
 class InstallHelper
 {
@@ -33,6 +33,14 @@ class InstallHelper
         if (this.file_exists(this.pxl_config['custom-files-dir'])) {
             this.sync_paths(this.pxl_config['custom-files-dir'], this.pxl_config['site-dir'])
         }
+
+        // Summary
+        success_line(`${this.pxl_config.name} has been successfully installed!`);
+        line_break();
+
+        blue_line(`Site Directory: ${this.site_dir}`);
+        blue_line(`Site Public Directory: ${this.pxl_config['public-site-dir']}`);
+        blue_line(`URL: ${this.site_url}.`);
     }
 
     sync_paths(from_dir, to_dir) {

@@ -1,5 +1,5 @@
 const InstallHelper = require('/vagrant/scripts/sites/classes/install_helper');
-const { blue_line, highlight_line, line_break, success_line } = require('/vagrant/scripts/utils/log');
+const { highlight_line, line_break } = require('/vagrant/scripts/utils/log');
 
 class InstallScript extends InstallHelper {
     install() {
@@ -24,7 +24,7 @@ class InstallScript extends InstallHelper {
 
         this.run(`rm -rf public/`);
         this.move_files(`${this.site_dir}/${tmp_lib_dir}/`, `${this.site_dir}/`);
-        // this.run(`rm -rf ${this.site_dir}/${tmp_lib_dir}/`);
+        this.run(`rm -rf ${this.site_dir}/${tmp_lib_dir}/`);
 
         line_break();
         highlight_line('Update .env file...');
@@ -45,20 +45,14 @@ class InstallScript extends InstallHelper {
         }
 
         // Install Yarn dependencies
-        line_break();
-        highlight_line('Install Yarn dependencies...');
-        this.yarn();
+        // line_break();
+        // highlight_line('Install Yarn dependencies...');
+        // this.yarn();
 
-        // Run Yarn dev
-        line_break();
-        highlight_line('Run Yarn...');
-        this.yarn('dev');
-
-        // Done
-        success_line('Laravel has been successfully installed!');
-        line_break();
-        highlight_line(`Access at ${this.site_url}.`);
-        blue_line(this.site_dir);
+        // // Run Yarn dev
+        // line_break();
+        // highlight_line('Run Yarn...');
+        // this.yarn('dev');
     }
 };
 

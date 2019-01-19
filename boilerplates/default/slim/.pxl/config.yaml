@@ -1,4 +1,4 @@
-name: Laravel
+name: 'Slim Framework'
 public-dir: public
 code:
     php: 7.3

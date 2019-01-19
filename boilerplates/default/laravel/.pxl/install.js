@@ -5,7 +5,15 @@ class InstallScript extends InstallHelper {
         super.install();
 
         this.composer('global require laravel/installer');
-        this.run('laravel new');
+        
+        this.composer('create-project laravel/laravel .laravel');
+
+        if (!this.file_exists('.laravel')) {
+            console.log('Could not create Laravel project.');
+            return;
+        }
+
+        this.run('mv ./laravel/* ./*');
 
         this.composer('install');
 

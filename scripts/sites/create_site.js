@@ -219,9 +219,9 @@ async function main() {
         }
     }
 
-    if (boilerplate_pxl_config && boilerplate_pxl_config.code.php) {
+    if (boilerplate_pxl_config && boilerplate_pxl_config.code && boilerplate_pxl_config.code.php) {
         php_version = boilerplate_pxl_config.code.php;
-    } else if (!php_version) {
+    } else if (!php_version && !boilerplate_pxl_config) {
         php_version = (options['php'] || await ask_php_version());
 
         if (boilerplate_pxl_config && boilerplate_pxl_config.code) {

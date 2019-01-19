@@ -1,7 +1,7 @@
 const { existsSync } = require('fs');
 const { cd, cp, exec, mv } = require('shelljs');
-const { remove_trailing_slash } = require('../../utils/str');
-const { blue_line, error_line, figlet, highlight_line, line_break, success_line } = require('../../utils/log');
+const { getLastDirectory, remove_trailing_slash } = require('../../utils/str');
+const { blue_line, figlet, highlight_line, line_break, success_line } = require('../../utils/log');
 
 class InstallHelper
 {
@@ -9,8 +9,12 @@ class InstallHelper
         this.pxl_config = pxl_config;
 
         this.site_dir = this.pxl_config['site-dir'];
+        this.site_dir_name = getLastDirectory(this.site_dir);
         this.site_url = `http://${this.pxl_config.hostname}:${process.env.APACHE_PORT_OUT}`;
-        this.php_cli = `php${this.pxl_config.code.php}`;
+
+        if (this.pxl_config.code && this.pxl_config.code.php) {
+            this.php_cli = `php${this.pxl_config.code.php}`;
+        }
     }
 
     install() {
@@ -23,7 +27,9 @@ class InstallHelper
         }
 
         // Go to site directory
-        this.go_to_dir(this.site_dir);
+        if (this.file_exists(this.site_dir)) {
+            this.go_to_dir(this.site_dir);
+        }
     }
 
     finish_install() {

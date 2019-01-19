@@ -9,7 +9,7 @@ class InstallHelper
         this.pxl_config = pxl_config;
 
         this.site_dir = this.pxl_config['site-dir'];
-        this.site_url = `${this.pxl_config.hostname}:${process.env.APACHE_PORT}`;
+        this.site_url = `http://${this.pxl_config.hostname}:${process.env.APACHE_PORT_OUT}`;
         this.php_cli = `php${this.pxl_config.code.php}`;
     }
 
@@ -23,7 +23,7 @@ class InstallHelper
         }
 
         // Go to site directory
-        cd(this.site_dir);
+        this.go_to_dir(this.site_dir);
     }
 
     php(command) {
@@ -36,6 +36,10 @@ class InstallHelper
 
     file_exists(path) {
         return existsSync(path);
+    }
+
+    go_to_dir(dir) {
+        cd(dir);
     }
 
     copy_file(from, to) {
@@ -56,7 +60,7 @@ class InstallHelper
     }
 
     replace_env_file(file, from, to) {
-        const sed_result = exec(`sed -i s~${to}~${from}~ ${file}`);
+        const sed_result = exec(`sed -i s~${from}~${to}~g ${file}`);
 
         return (sed_result.code === 0);
     }

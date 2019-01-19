@@ -10,7 +10,7 @@ const { remove_trailing_slash } = require('../utils/str');
 const boilerplateUtil = require('../utils/boilerplate');
 const { ask_create_database_driver, create: create_database, exists: database_exists, get_driver_title: get_database_driver_title } = require('../utils/database');
 const { ask_web_server, enable_web_server_site, get_config_filename, get_config_file_path, get_installed_web_servers, get_web_server_title, reload_web_server, save_virtual_host_config } = require('../utils/web_server.js');
-const { cyan_line, error_line, highlight_line, line_break, success_line } = require('../utils/log');
+const { blue_line, cyan_line, error_line, highlight_line, line_break, success_line } = require('../utils/log');
 const log = console.log;
 
 const options_values = [
@@ -89,6 +89,7 @@ async function main() {
         boilerplate.pxl_config['site-dir'] = site_dir;
 
         boilerplate_pxl_config = boilerplate.pxl_config;
+        boilerplate_pxl_config.hostname = hostname;
     }
 
     if (boilerplate_pxl_config && boilerplate_pxl_config['public-dir']) {
@@ -176,6 +177,10 @@ async function main() {
             pxl_config = load_pxl_config_from_dir(`${site_dir}/.pxl`);
 
             if (pxl_config) {
+                if (hostname && !pxl_config.hostname) {
+                    pxl_config.hostname = hostname;
+                }
+
                 if (pxl_config.code && pxl_config.code.php) {
                     php_version = pxl_config.code.php;
                 }

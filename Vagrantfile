@@ -150,10 +150,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
                 port_out = (web_server_vagrant_config['port'] || 7001)
 
                 GLOBAL_VARIABLES['APACHE_PORT'] = web_server_port_in
+                GLOBAL_VARIABLES['APACHE_PORT_OUT'] = port_out
             elsif web_server_name === 'nginx'
                 port_out = (web_server_vagrant_config['port'] || 7002)
 
                 GLOBAL_VARIABLES['NGINX_PORT'] = web_server_port_in
+                GLOBAL_VARIABLES['NGINX_PORT_OUT'] = port_out
             end
 
             # Install web server

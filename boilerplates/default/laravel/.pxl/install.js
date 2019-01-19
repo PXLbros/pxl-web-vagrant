@@ -22,13 +22,12 @@ class InstallScript extends InstallHelper {
             return;
         }
 
+        this.run(`rm -rf public/`);
         this.move_files(`${this.site_dir}/${tmp_lib_dir}/`, `${this.site_dir}/`);
-        this.run(`rm -rf ${this.site_dir}/${tmp_lib_dir}/`);
+        // this.run(`rm -rf ${this.site_dir}/${tmp_lib_dir}/`);
 
         line_break();
         highlight_line('Update .env file...');
-
-        this.run(`cat .env`)
 
         this.edit_env_file('.env', 'DB_USERNAME', process.env.MYSQL_USER_NAME);
         this.edit_env_file('.env', 'DB_PASSWORD', process.env.MYSQL_USER_PASSWORD);

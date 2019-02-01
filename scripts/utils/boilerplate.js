@@ -53,8 +53,10 @@ const boilerplateUtil = {
         }
 
         const selected_boilerplate = await choose('Choose:', boilerplates.map(boilerplate => {
+            const boilerplate_name = (boilerplate.pxl_config && boilerplate.pxl_config.name ? boilerplate.pxl_config.name : boilerplate.name);
+
             return {
-                name: `${boilerplate.name} (${boilerplate.type})`,
+                name: `${boilerplate_name}${boilerplate.type === 'user' ? ` (User)` : ''}`,
                 value: boilerplate
             };
         }));

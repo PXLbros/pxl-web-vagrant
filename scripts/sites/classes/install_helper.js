@@ -33,10 +33,12 @@ class InstallHelper
     }
 
     finish_install() {
-        highlight_line(`Finish installation...`);
+        highlight_line(`Finish ${this.pxl_config.name} installation...`);
         line_break();
 
         if (this.file_exists(this.pxl_config['custom-files-dir'])) {
+            blueline(`Found custom-files-dir directory, sync...`);
+
             this.sync_paths(this.pxl_config['custom-files-dir'], this.pxl_config['site-dir'])
         }
 

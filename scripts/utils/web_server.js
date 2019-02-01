@@ -6,7 +6,7 @@ const { choose_files_from_dir } = require('./choose');
 const { blue_line } = require('./log');
 
 function get_public_directories() {
-    return ['public', 'public_html', 'html'];
+    return ['public', 'public_html', 'html', 'dist'];
 }
 
 function get_sites_config_dir(web_server) {

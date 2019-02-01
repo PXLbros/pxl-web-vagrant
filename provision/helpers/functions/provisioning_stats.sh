@@ -37,9 +37,18 @@ print_provisioning_stats() {
     local file_contents=`cat $PROVISIONING_STATS_FILE_PATH`
     local results=(${file_contents//;/ })
 
+    echo "file_contents:"
+    echo $file_contents
+    echo "results:"
+    echo $results
+
     local num_successful=${results[0]}
     local num_errors=${results[1]}
     local num_total=$((num_successful + num_errors))
+
+    echo "num_successful: $num_successful"
+    echo "num_errors: $num_errors"
+    echo "num_total: $num_total"
 
     if [ "$num_errors" == "1" ]; then
         local was_word="was"

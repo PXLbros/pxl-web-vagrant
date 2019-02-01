@@ -7,7 +7,7 @@ export LOG_FILE_PATH=tmux/tmux-resurrect.log
 title "tmux-resurrect"
 
 TMUX_RESURRECT_DIR=/home/vagrant/tmux-resurrect
-TMUX_CONF=$HOME/.tmux.conf
+TMUX_CONF=$HOME/.tmux.conf.local
 
 # Clone tmux-resurrect GitHub repository
 if [[ ! -d $TMUX_RESURRECT_DIR ]]; then
@@ -16,7 +16,11 @@ if [[ ! -d $TMUX_RESURRECT_DIR ]]; then
 fi
 
 # Append to .tmux.conf
-if ! grep -qF "export NVM_DIR" $TMUX_CONF; then
-    highlight_text "Append run-shell to .tmux.conf file..."
-    exec_command "echo \"run-shell $TMUX_RESURRECT_DIR/resurrect.tmux\" >> $TMUX_CONF"
+if [ -f $TMUX_CONF ]; then
+    if ! grep -qF "export NVM_DIR" $TMUX_CONF; then
+        highlight_text "Append run-shell to .tmux.conf file..."
+        exec_command "echo \"run-shell $TMUX_RESURRECT_DIR/resurrect.tmux\" >> $TMUX_CONF"
+    fi
+else
+    error_text "Append run-shell to .tmux.conf file because can't find file $TMUX_CONF."
 fi

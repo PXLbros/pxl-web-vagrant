@@ -31,13 +31,13 @@ for PHP_VERSION in "${PHP_VERSIONS[@]}"; do
     highlight_text "Install PHP $PHP_VERSION..."
     exec_command "apt-get -y install php$PHP_VERSION"
 
-    # Install common modules
-    highlight_text "Install PHP $PHP_VERSION modules..."
-    for PHP_COMMON_MODULE in "${PHP_COMMON_MODULES[@]}"; do
-        exec_command "apt-get -y install php$PHP_VERSION-$PHP_COMMON_MODULE"
-    done
-
     if [ -x "$(command -v php$PHP_VERSION)" ]; then
+         # Install common modules
+        highlight_text "Install PHP $PHP_VERSION modules..."
+        for PHP_COMMON_MODULE in "${PHP_COMMON_MODULES[@]}"; do
+            exec_command "apt-get -y install php$PHP_VERSION-$PHP_COMMON_MODULE"
+        done
+
         # Install PHP mcrypt extension
         if [ "$PHP_VERSION" == "7.3" ] || [ "$PHP_VERSION" == "7.2" ]; then
             exec_command "apt-get install php-dev libmcrypt-dev php-pear -y"

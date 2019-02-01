@@ -6,7 +6,6 @@ node_modules/
 /provision/shell/scripts/yarn.lock
 /scripts/yarn.lock
 /config.yaml
-/.provisioning
 /.command
 .vagrant
 yarn-error.log

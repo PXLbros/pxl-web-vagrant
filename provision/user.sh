@@ -45,5 +45,5 @@ if [ -f "$USER_TMUX_CONF_PATH" ]; then
 
     exec_command "echo -e \"\n# User\n$USER_TMUX_CONF_PATH\" >> $HOME/.tmux.conf.local"
     exec_command "source $HOME/.bash_profile"
-    exec_command "tmux source-file $HOME/.tmux.conf.local"
+    # exec_command "tmux source-file $HOME/.tmux.conf.local"
 fi

@@ -96,25 +96,30 @@ module.exports = {
         return prompt_result.value;
     },
 
-    async ask_dir() {
+    async ask_path(root_dir, type = 'any', message = 'Select path:') {
+        const excluded_dirs = [
+            'node_modules',
+            'vendor'
+        ];
+
         return prompt([
             {
                 type: 'fuzzypath',
                 name: 'path',
+                itemType: type,
                 
                 excludePath: nodePath => {
-                    return nodePath.startsWith('node_modules');
-                },
-
-                pathFilter: (isDirectory, nodePath) => {
-                    if (nodePath.indexOf('node_modules') !== -1 || nodePath.indexOf('vendor') !== -1 || nodePath.indexOf('.git') !== -1) {
-                        return false;
+                    for (let excluded_dir of excluded_dirs) {
+                        if (nodePath.startsWith(excluded_dir)) {
+                            return true;
+                        }
                     }
 
-                    return isDirectory;
+                    return false;
                 },
-                rootPath: '/vagrant/projects/pxl/universal/website',
-                message: 'Select a target directory for your component:',
+
+                rootPath: root_dir,
+                message: message,
                 suggestOnly: false
             }
         ]);

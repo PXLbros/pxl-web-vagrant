@@ -4,7 +4,7 @@ const { exec } = require('shelljs');
 const { bold, blue, cyan, red, yellow } = require('chalk');
 const { format } = require('date-fns');
 const { create_pxl_config_in_dir, run_install_script_from_pxl_config, load_pxl_config_from_dir, print_pxl_config } = require('../utils/pxl');
-const { ask_confirm, ask_input, ask_php_version, ask_create_database } = require('../utils/ask');
+const { ask_confirm, ask_input, ask_path, ask_php_version, ask_create_database } = require('../utils/ask');
 const { is_public_directory } = require('../utils/web_server');
 const { remove_trailing_slash } = require('../utils/str');
 const boilerplateUtil = require('../utils/boilerplate');
@@ -40,6 +40,9 @@ const options = commandLineArgs(options_values.map(option => {
 async function main() {
     exec('figlet create site');
     line_break();
+
+    // const my_dir = (await ask_path('/vagrant', 'dir', 'Select a root directory:'));
+    // const my_file = (await ask_path(my_dir.path, 'file', 'Select a file:'));
 
     let boilerplate_input = (options['boilerplate'] || null);
 

@@ -53,4 +53,6 @@ exec_command "apt-get -y install build-essential libevent-dev libncurses-dev zip
 
 # Set home directory
 highlight_text "Set home directory..."
+exec_command "mkdir -p $HOME_DIR"
+exec_command "chown vagrant:vagrant $HOME_DIR"
 exec_command "usermod -d $HOME_DIR vagrant"

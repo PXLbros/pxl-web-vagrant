@@ -64,7 +64,7 @@ module.exports = {
         return prompt_result.value;
     },
 
-    async ask_php_version() {
+    async ask_php_version(question, no_text = 'No') {
         const is_directory = source => lstatSync(source).isDirectory();
         const get_directories = source => readdirSync(source).map(name => join(source, name)).filter(is_directory);
 
@@ -78,17 +78,17 @@ module.exports = {
         });
 
         choices.push({
-            name: 'None',
+            name: no_text,
             value: null
         });
 
-        choices = choices.reverse()
+        choices = choices.reverse();
 
         const prompt_result = await prompt([
             {
                 type: 'list',
                 name: 'value',
-                message: 'Which PHP version to use?',
+                message: question || 'Use PHP?',
                 choices: choices
             }
         ]);
@@ -108,7 +108,7 @@ module.exports = {
 
                     return isDirectory;
                 },
-                rootPath: '/vagrant/projects/pxl/universal/website',
+                // rootPath: '/vagrant/projects/pxl/universal/website',
                 message: 'Select a target directory for your component:',
                 suggestOnly: false
             }

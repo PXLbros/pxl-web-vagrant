@@ -1,0 +1,4 @@
+name: Laravel
+public-dir: public
+code:
+    php: 7.3

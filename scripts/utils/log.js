@@ -1,5 +1,10 @@
 const chalk = require('chalk');
+const { exec } = require('shelljs');
 const log = console.log;
+
+function yellow_line(text) {
+    log(chalk.yellow(text));
+}
 
 module.exports = {
     title_line(title, value, color = 'cyan') {
@@ -7,22 +12,32 @@ module.exports = {
     },
 
     highlight_line(text) {
-        log(chalk.yellow(text));
+        yellow_line(text);
     },
 
-    error_line(message) {
-        log(chalk.red(message));
+    success_line(text) {
+        log(chalk.green(text));
     },
 
-    blue_line(message) {
-        log(chalk.blue(message));
+    error_line(text) {
+        log(chalk.red(text));
     },
 
-    cyan_line(message) {
-        log(chalk.cyan(message));
+    blue_line(text) {
+        log(chalk.blue(text));
     },
+
+    cyan_line(text) {
+        log(chalk.cyan(text));
+    },
+
+    yellow_line,
 
     line_break() {
         log();
+    },
+
+    figlet(text) {
+        exec(`figlet ${text}`);
     }
 };

@@ -48,7 +48,7 @@ async function main() {
     exec(`sudo rm ${selected_apache_site_configuration_file_path}`);
 
     // Reload Apache
-    exec('sudo service apache2 reload', { silent: true });
+    reload_web_server('apache', true);
 
     log(yellow(`Apache site "${hostname}" deleted!`));
 }

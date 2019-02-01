@@ -28,6 +28,9 @@ package_json = JSON.parse(File.read("#{VAGRANT_DIR}/package.json"))
 VERSION = package_json['version']
 BUILD_DATE = `git log -1 --format=%cd | tr -d '\n'`
 
+# Read user .gitconfig
+user_gitconfig = Pathname.new("#{Dir.home}/.gitconfig")
+
 # Set global variables
 GLOBAL_VARIABLES = {
     'VERSION': VERSION,
@@ -40,6 +43,8 @@ GLOBAL_VARIABLES = {
     'VAGRANT_NAME': vagrant_config['vm']['name'],
     'IP_ADDRESS': vagrant_config['vm']['ip'],
     'TIMEZONE': vagrant_config['vm']['locale']['timezone'],
+
+    'HOME_DIR': vagrant_config['vm']['home-dir'],
 
     'PROVISION_SHOW_COMMAND': vagrant_config['vm']['provision']['show-command'],
     'PROVISION_SHOW_COMMAND_OUTPUT': vagrant_config['vm']['provision']['show-command-output'],
@@ -60,7 +65,9 @@ GLOBAL_VARIABLES = {
     'PHP_USER_MODULES': (vagrant_config['code']['php']['modules'] ? vagrant_config['code']['php']['modules'].join(' ') : ''),
 
     'MEMCACHED': (vagrant_config['code']['php']['cache']['memcached']['enabled'] ? true : false),
-    'APC': (vagrant_config['code']['php']['cache']['apc']['enabled'] ? true : false)
+    'APC': (vagrant_config['code']['php']['cache']['apc']['enabled'] ? true : false),
+
+    'USER_GIT_CONFIG': user_gitconfig
 }
 
 Vagrant.require_version '>= 2.1.0'
@@ -107,6 +114,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Git
     gitconfig = Pathname.new("#{Dir.home}/.gitconfig")
     config.vm.provision 'shell', name: 'Git', :inline => "echo -e '#{gitconfig.read()}' > '/home/vagrant/.gitconfig'", privileged: false, env: GLOBAL_VARIABLES if gitconfig.exist?
+    config.vm.provision 'shell', name: 'Node', path: "#{VAGRANT_DIR}/provision/code/git.sh", run: 'once', privileged: false, env: GLOBAL_VARIABLES
 
     # Node
     config.vm.provision 'shell', name: 'Node', path: "#{VAGRANT_DIR}/provision/code/node.sh", run: 'once', privileged: false, env: GLOBAL_VARIABLES
@@ -142,10 +150,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
                 port_out = (web_server_vagrant_config['port'] || 7001)
 
                 GLOBAL_VARIABLES['APACHE_PORT'] = web_server_port_in
+                GLOBAL_VARIABLES['APACHE_PORT_OUT'] = port_out
             elsif web_server_name === 'nginx'
                 port_out = (web_server_vagrant_config['port'] || 7002)
 
                 GLOBAL_VARIABLES['NGINX_PORT'] = web_server_port_in
+                GLOBAL_VARIABLES['NGINX_PORT_OUT'] = port_out
             end
 
             # Install web server

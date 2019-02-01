@@ -1,8 +1,13 @@
 const { existsSync, writeFileSync } = require('fs');
 const { exec } = require('shelljs');
 const { choose } = require('./choose');
-const { getFilenameFromPath } = require('./str');
+const { getFilenameFromPath, remove_trailing_slash } = require('./str');
 const { choose_files_from_dir } = require('./choose');
+const { blue_line } = require('./log');
+
+function get_public_directories() {
+    return ['public', 'public_html', 'html'];
+}
 
 function get_sites_config_dir(web_server) {
     if (web_server === 'apache') {
@@ -73,6 +78,8 @@ module.exports = {
     save_virtual_host_config(file_path, web_server, hostname, public_dir, php_version = null, overwrite = false) {
         const config_filename = getFilenameFromPath(file_path);
 
+        // blue_line(`Create ${get_web_server_title(web_server)} site configuration file ${config_filename}.`);
+
         let contents;
 
         let config_to_delete_path;
@@ -116,7 +123,7 @@ module.exports = {
     }`;
 
             if (php_version !== null) {
-                contents += `\n\n\tlocation ~ \.php$ {
+                contents += `\n\n\tlocation ~ .php$ {
         include snippets/fastcgi-php.conf;
 
         fastcgi_pass unix:/var/run/php/php${php_version}-fpm.sock;
@@ -136,32 +143,98 @@ module.exports = {
 
         // Save file
         writeFileSync(file_path, contents);
+
+        blue_line(`Created ${get_web_server_title(web_server)} site configuration file ${config_filename}.`);
     },
 
-    enable_web_server_site(web_server, config_filename) {
+    enable_web_server_site(web_server, config_filename, silent = false) {
+        let enable_result;
+
         if (web_server === 'apache') {
-            exec(`sudo a2ensite ${config_filename}`, { silent: true });
+            enable_result = exec(`sudo a2ensite ${config_filename}`, { silent: true });
         } else if (web_server === 'nginx') {
-            exec(`sudo ln -s ${get_config_file_path('nginx', config_filename)} /etc/nginx/sites-enabled/`, { silent: true });
+            enable_result = exec(`sudo ln -s ${get_config_file_path('nginx', config_filename)} /etc/nginx/sites-enabled/`, { silent: true });
         } else {
             throw new Error(`Invalid web server "${web_server}".`);
         }
+
+        if (enable_result.stdout === `Site ${config_filename.substr(0, config_filename.length - 5)} already enabled\n`) {
+            throw new Error(`${get_web_server_title(web_server)} site ${config_filename} already enabled.`);
+        } else if (enable_result.code !== 0) {
+            throw new Error(`Could not enable ${get_web_server_title(web_server)} site ${config_filename}.`);
+        }
+
+        if (!silent) {
+            blue_line(`Enabled ${get_web_server_title(web_server)} ${config_filename} site.`);
+        }
+
+        return true;
     },
 
-    reload_web_server(web_server) {
+    disable_web_server_site(web_server, config_filename, silent = false) {
+        let disable_result;
+
         if (web_server === 'apache') {
-            exec(`sudo service apache2 reload`, { silent: true });
+            disable_result = exec(`sudo a2dissite ${config_filename}`, { silent: true });
         } else if (web_server === 'nginx') {
-            exec(`sudo service nginx reload`, { silent: true });
+            // TODO: ...
         } else {
             throw new Error(`Invalid web server "${web_server}".`);
         }
+
+        if (disable_result.stdout === `Site ${config_filename.substr(0, config_filename.length - 5)} already disabled\n`) {
+            throw new Error(`${get_web_server_title(web_server)} site ${config_filename} already disabled.`);
+        } else if (disable_result.code !== 0) {
+            throw new Error(`Could not enable ${get_web_server_title(web_server)} site ${config_filename}.`);
+        }
+
+        if (!silent) {
+            blue_line(`Disabled ${get_web_server_title(web_server)} ${config_filename} site.`);
+        }
+
+        return true;
     },
+
+    reload_web_server(web_server, silent = false) {
+        let reload_result;
+
+        if (web_server === 'apache') {
+            reload_result = exec(`sudo service apache2 reload`, { silent: true });
+        } else if (web_server === 'nginx') {
+            reload_result = exec(`sudo service nginx reload`, { silent: true });
+        } else {
+            throw new Error(`Invalid web server "${web_server}".`);
+        }
+
+        if (reload_result.code !== 0) {
+            throw new Error(reload_result.stderr);
+        }
+
+        if (!silent) {
+            blue_line(`Reloaded ${get_web_server_title(web_server)}.`);
+        }
+
+        return true;
+    },
+
+    get_public_directories,
 
     is_public_directory(path) {
         let last_directory = path.split('/').reverse()[0];
 
-        return ['public', 'public_html', 'html'].includes(last_directory);
+        return get_public_directories().includes(last_directory);
+    },
+
+    remove_public_from_dir(path) {
+        path = remove_trailing_slash(path);
+
+        for (let public_dir_str of get_public_directories()) {
+            const public_dir_str_length = public_dir_str.length;
+
+            if (path.substr(path.length - public_dir_str_length) === public_dir_str) {
+                return remove_trailing_slash(path.substr(0, path.length - public_dir_str_length));
+            }
+        }
     },
 
     async ask_site_configuration_file(web_server) {

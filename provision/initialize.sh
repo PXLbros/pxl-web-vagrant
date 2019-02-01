@@ -52,5 +52,5 @@ highlight_text "Install required APT packages..."
 exec_command "apt-get -y install build-essential libevent-dev libncurses-dev zip unzip"
 
 # Set home directory
-# highlight_text "Set home directory..."
-# exec_command "usermod -d /vagrant/projects/ vagrant"
+highlight_text "Set home directory..."
+exec_command "usermod -d $HOME_DIR vagrant"

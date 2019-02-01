@@ -12,6 +12,7 @@ vm:
         show-command-execution-time: true
         show-command-exit-code: false
         abort-on-error: false
+    home-dir: /home/vagrant
 web-servers:
     apache:
         enabled: true

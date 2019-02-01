@@ -2,7 +2,7 @@ const commandLineArgs = require('command-line-args');
 const { get_current_dir } = require('../utils/file');
 const { ask_input, ask_confirm } = require('../utils/ask');
 const { yellow } = require('chalk');
-const { install_from_pxl_config, load_pxl_config_from_dir, print_pxl_config } = require('../utils/pxl');
+const { run_install_script_from_pxl_config, load_pxl_config_from_dir, print_pxl_config } = require('../utils/pxl');
 const { error_line, line_break, title_line } = require('../utils/log');
 const log = console.log;
 
@@ -81,7 +81,7 @@ async function main() {
         }
 
         if (do_install) {
-            install_from_pxl_config(pxl_config);
+            run_install_script_from_pxl_config(pxl_config);
         }
 
         line_break();

@@ -17,9 +17,9 @@ PHP_COMMON_MODULES=(
 )
 PHP_USER_MODULES=($PHP_USER_MODULES)
 
-# Install PHP dependencies
 title "PHP"
 
+# Install PHP dependencies
 highlight_text "Install PHP dependencies..."
 exec_command "apt-get -y install software-properties-common"
 

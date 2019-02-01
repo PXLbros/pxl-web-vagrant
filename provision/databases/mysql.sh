@@ -61,6 +61,7 @@ fi
 if [ -x "$(command -v mysql)" ]; then
     PHP_VERSIONS=($PHP_VERSIONS)
 
+    line_break
     highlight_text "Install PHP MySQL module..."
 
     for PHP_VERSION in "${PHP_VERSIONS[@]}"; do

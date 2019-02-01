@@ -31,7 +31,7 @@ class InstallHelper
     }
 
     edit_env_file(file, key, value) {
-        exec(`sed -i s~${key}.*$~${pre}${value}~g ${file}`);
+        exec(`sed -i s~${key}.*$~${key}${value}~g ${file}`);
     }
 
     yarn(command = null) {

@@ -226,7 +226,7 @@ async function main() {
     // Show summary
     log(yellow(`\n${web_server_title} site added!\n`));
     log(`${cyan(bold('Hostname:'))} ${hostname}`);
-    log(`${cyan(bold('Public Directory:'))} ${public_dir}`);
+    log(`${cyan(bold('Site Directory:'))} ${site_dir}`);
 
     if (php_version) {
         log(`${cyan(bold('PHP:'))} ${php_version}`);
@@ -245,8 +245,8 @@ async function main() {
         --web-server=${web_server} \\
         --hostname=${hostname} \\
         --site-dir=${site_dir} \\
-        --public-dir=${public_dir} \\
-        --git-repo=${git_repo} \\
+        --public-dir=${public_dir || ''} \\
+        --git-repo=${git_repo || ''} \\
         --php=${php_version} \\
         --database-driver=${database_driver} \\
         --database-name=${database_name} \\

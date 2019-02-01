@@ -19,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/PXLbros/pxl-web-vagrant/issues"
   },
-  "homepage": "https://pxlbros.github.io/pxl-web-vagrant"
+  "homepage": "https://pxlbros.github.io/pxl-web-vagrant",
+  "dependencies": {
+    "vue2-dropzone": "^3.5.2"
+  }
 }

@@ -6,14 +6,44 @@ export LOG_FILE_PATH=user.log
 
 title "User Provision"
 
-USER_BASH_PROFILE_PATH=/vagrant/provision/user/.bash_profile
+PROVISION_USER_DIR="/vagrant/provision/user"
+USER_BASH_PROFILE_PATH="$PROVISION_USER_DIR/.bash_profile"
+USER_TMUX_CONF_PATH="$PROVISION_USER_DIR/.tmux.conf"
 
-if [ -e $USER_BASH_PROFILE_PATH ]; then
+# Run user bash scripts
+for file in "$PROVISION_USER_DIR/*.sh"; do
+    [ ! -f "$file" ] || break
+
+    USER_SCRIPT_FILENAME="$(basename -- $file)"
+
+    chmod +x $file
+
+    highlight_text "Run user script ($USER_SCRIPT_FILENAME)..."
+
+    # Execute
+    $file
+
+    line_break
+done
+
+# .bash_profile
+if [ -f "$USER_BASH_PROFILE_PATH" ]; then
     USER_BASH_PROFILE_CONTENTS=$(cat $USER_BASH_PROFILE_PATH)
 
-    highlight_text 'Copy user .bash_profile...'
+    highlight_text "Copy user .bash_profile..."
 
     exec_command "echo -e \"\n# User\n$USER_BASH_PROFILE_CONTENTS\" >> $HOME/.bash_profile"
 
     exec_command "source $HOME/.bash_profile"
+fi
+
+# .tmux.conf
+if [ -f "$USER_TMUX_CONF_PATH" ]; then
+    USER_BASH_PROFILE_CONTENTS=$(cat $USER_TMUX_CONF_PATH)
+
+    highlight_text "Copy user tmux configuration..."
+
+    exec_command "echo -e \"\n# User\n$USER_TMUX_CONF_PATH\" >> $HOME/.tmux.conf.local"
+    exec_command "source $HOME/.bash_profile"
+    exec_command "tmux source-file $HOME/.tmux.conf.local"
 fi

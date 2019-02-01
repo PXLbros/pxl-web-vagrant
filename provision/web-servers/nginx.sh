@@ -4,7 +4,7 @@ export LOG_FILE_PATH=web-servers/nginx.log
 
 . /vagrant/provision/helpers/include.sh
 
-if [ "$NGINX" == "true" ]; then
+if [ "$NGINX_ENABLED" == "true" ]; then
     title "NGINX"
 
     if ! grep -qF "export NGINX_PORT" /home/vagrant/.bashrc; then

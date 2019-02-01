@@ -10,10 +10,13 @@ VAGRANT_DIR = File.dirname(File.expand_path(__FILE__))
 #require "#{VAGRANT_DIR}/libs/deep_merge/deep_merge_hash.rb"
 
 # Get default config
-default_config = YAML.load_file("#{VAGRANT_DIR}/config.default.yaml")
+default_config_path = "#{VAGRANT_DIR}/config.default.yaml"
+user_config_path = "#{VAGRANT_DIR}/config.yaml"
+
+default_config = YAML.load_file(default_config_path)
 
 # Get user config and merge with default config
-if File.file?("#{VAGRANT_DIR}/config.yaml")
+if File.exist? "#{VAGRANT_DIR}/config.yaml" then
     user_config = YAML.load_file("#{VAGRANT_DIR}/config.yaml")
 
     vagrant_config = default_config.merge(user_config)
@@ -52,9 +55,12 @@ GLOBAL_VARIABLES = {
     'PROVISION_SHOW_COMMAND_EXIT_CODE': vagrant_config['vm']['provision']['show-command-exit-code'],
     'PROVISION_ABORT_ON_ERROR': vagrant_config['vm']['provision']['abort-on-error'],
 
-    'APACHE': vagrant_config['web-servers']['apache']['enabled'],
-    'NGINX': vagrant_config['web-servers']['nginx']['enabled'],
-    'MYSQL': vagrant_config['databases']['mysql']['enabled'],
+    'APACHE_ENABLED': vagrant_config['web-servers']['apache']['enabled'],
+    'NGINX_ENABLED': vagrant_config['web-servers']['nginx']['enabled'],
+    
+    'MYSQL_ENABLED': vagrant_config['databases']['mysql']['enabled'],
+    'MYSQL_VERSION': vagrant_config['databases']['mysql']['version'],
+
     'MONGODB': vagrant_config['databases']['mongodb']['enabled'],
 
     'TMUX_VERSION': (vagrant_config['shell']['tmux']['version'] || '2.8'),
@@ -108,7 +114,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Welcome message
     config.vm.provision 'shell', name: 'Welcome Message', path: "#{VAGRANT_DIR}/provision/shell/welcome-message.sh", privileged: true, run: 'once', env: GLOBAL_VARIABLES
 
-    # Generate .bash_profile
+    # .bash_profile
     config.vm.provision 'shell', name: '.bash_profile', path: "#{VAGRANT_DIR}/provision/shell/bash_profile.sh", privileged: false, run: 'once', env: GLOBAL_VARIABLES
 
     # Git

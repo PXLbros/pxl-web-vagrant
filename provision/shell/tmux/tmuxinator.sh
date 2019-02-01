@@ -27,7 +27,7 @@ root: ~/
 
 windows:"
 
-if [ "$APACHE" = "true" ];
+if [ "$APACHE_ENABLED" = "true" ];
 then
     HOME_TMUXINATOR_CONTENTS="${HOME_TMUXINATOR_CONTENTS}
   - Apache Sites:
@@ -44,7 +44,7 @@ then
           - tail -f error.log 2> /dev/null"
 fi
 
-if [ "$NGINX" = "true" ];
+if [ "$NGINX_ENABLED" = "true" ];
 then
     HOME_TMUXINATOR_CONTENTS="${HOME_TMUXINATOR_CONTENTS}
 - nginx Sites:

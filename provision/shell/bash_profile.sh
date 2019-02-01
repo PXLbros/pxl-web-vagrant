@@ -40,7 +40,7 @@ alias disable_site_conf='node $SCRIPTS_SITES_DIR/disable_site_conf.js'
 alias delete_site='node $SCRIPTS_SITES_DIR/delete_site.js'
 alias install_site='node $SCRIPTS_SITES_DIR/install_site.js'"
 
-if [ "$APACHE" == "true" ]
+if [ "$APACHE_ENABLED" == "true" ]
 then
     BASH_PROFILE_CONTENTS="${BASH_PROFILE_CONTENTS}
 
@@ -56,7 +56,7 @@ alias edit_apache_site_conf='edit_site_conf --web-server=apache'
 alias delete_apache_site='delete_site --web-server=apache'"
 fi
 
-if [ "$NGINX" == "true" ]
+if [ "$NGINX_ENABLED" == "true" ]
 then
     BASH_PROFILE_CONTENTS="${BASH_PROFILE_CONTENTS}
 
@@ -78,7 +78,7 @@ BASH_PROFILE_CONTENTS="${BASH_PROFILE_CONTENTS}
 alias create_database='node $SCRIPTS_DIR/databases/create.js'
 alias delete_database='node $SCRIPTS_DIR/databases/delete.js'"
 
-if [ "$MYSQL" == "true" ]
+if [ "$MYSQL_ENABLED" == "true" ]
 then
     BASH_PROFILE_CONTENTS="${BASH_PROFILE_CONTENTS}
 

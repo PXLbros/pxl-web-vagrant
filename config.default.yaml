@@ -37,6 +37,7 @@ code:
 databases:
     mysql:
         enabled: true
+        version: 8
     mongodb:
         enabled: true
 cache:

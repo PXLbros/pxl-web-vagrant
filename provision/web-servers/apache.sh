@@ -4,7 +4,7 @@ export LOG_FILE_PATH=web-servers/apache.log
 
 . /vagrant/provision/helpers/include.sh
 
-if [ "$APACHE" == "true" ]; then
+if [ "$APACHE_ENABLED" == "true" ]; then
     title "Apache"
 
     DEFAULT_APACHE_SITE_CONF=/etc/apache2/sites-available/000-default.conf

@@ -31,13 +31,13 @@ if [ "$PHP" == "true" ]; then
     exec_command "sudo apt-get install php-redis"
 
     # Restart Apache
-    if [ "$APACHE" == "true" ]; then
+    if [ "$APACHE_ENABLED" == "true" ]; then
         highlight_text "Restart Apache"
         exec_command "sudo service apache2 restart"
     fi
 
     # Restart NGINX
-    if [ "$NGINX" == "true" ]; then
+    if [ "$NGINX_ENABLED" == "true" ]; then
         highlight_text "Restart NGINX"
         exec_command "sudo service nginx restart"
     fi

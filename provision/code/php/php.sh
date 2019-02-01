@@ -100,7 +100,7 @@ done
 
 if [ -x "$(command -v php)" ]; then
     # Restart Apache
-    if [ "$APACHE" == "true" ]; then
+    if [ "$APACHE_ENABLED" == "true" ]; then
         highlight_text "Restart Apache..."
         exec_command service apache2 restart
     fi

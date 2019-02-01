@@ -101,6 +101,11 @@ module.exports = {
             {
                 type: 'fuzzypath',
                 name: 'path',
+                
+                excludePath: nodePath => {
+                    return nodePath.startsWith('node_modules');
+                },
+
                 pathFilter: (isDirectory, nodePath) => {
                     if (nodePath.indexOf('node_modules') !== -1 || nodePath.indexOf('vendor') !== -1 || nodePath.indexOf('.git') !== -1) {
                         return false;
@@ -108,7 +113,7 @@ module.exports = {
 
                     return isDirectory;
                 },
-                // rootPath: '/vagrant/projects/pxl/universal/website',
+                rootPath: '/vagrant/projects/pxl/universal/website',
                 message: 'Select a target directory for your component:',
                 suggestOnly: false
             }

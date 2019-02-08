@@ -97,9 +97,13 @@ exec_command() {
 }
 
 add_ppa() {
-    grep -h "^deb.*$1" /etc/apt/sources.list.d/* > /dev/null 2>&1
+    for i in "$@"; do
+        grep -h "^deb.*$i" /etc/apt/sources.list.d/* > /dev/null 2>&1
 
-    if [ $? -ne 0 ]; then
-        exec_command "sudo add-apt-repository -y ppa:$1"
-    fi
+        if [ $? -ne 0 ]; then
+            highlight_text "Adding ppa:$i"
+
+            exec_command "sudo add-apt-repository -y ppa:$i"
+        fi
+    done
 }

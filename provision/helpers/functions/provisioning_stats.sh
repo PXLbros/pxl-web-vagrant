@@ -3,16 +3,19 @@
 update_provisioning_stats() {
     local result=$1
 
-    if [ -f $PROVISIONING_STATS_FILE_PATH ]; then
+    if [ -f "$PROVISIONING_STATS_FILE_PATH" ]; then
+        # Stats file already exist
         local file_contents=`cat $PROVISIONING_STATS_FILE_PATH`
     else
+        # Initialize empty content
         local file_contents="0;0"
     fi
 
-    local results=(${file_contents//;/ })
+    local file_contents_splitted=(${file_contents//;/ })
 
-    local num_successful=${results[0]}
-    local num_errors=${results[1]}
+    local start_time=${file_contents_splitted[0]}
+    local num_successful=${file_contents_splitted[1]}
+    local num_errors=${file_contents_splitted[2]}
 
     if [ "$result" == "success" ]; then
         num_successful=$((num_successful + 1))
@@ -20,35 +23,26 @@ update_provisioning_stats() {
         num_errors=$((num_errors + 1))
     fi
 
-    echo "$num_successful;$num_errors" > $PROVISIONING_STATS_FILE_PATH
+    echo "$start_time;$num_successful;$num_errors" > $PROVISIONING_STATS_FILE_PATH
 }
 
 init_provisioning_stats() {
     local start_time=$(date +%s.%N)
 
-    echo "0;0;$start_time" > $PROVISIONING_STATS_FILE_PATH
+    echo "$start_time;0;0" > $PROVISIONING_STATS_FILE_PATH
 }
 
 print_provisioning_stats() {
-    if [ ! -f $PROVISIONING_STATS_FILE_PATH ]; then
+    if [ ! -f "$PROVISIONING_STATS_FILE_PATH" ]; then
         exit 0
     fi
 
     local file_contents=`cat $PROVISIONING_STATS_FILE_PATH`
-    local results=(${file_contents//;/ })
+    local file_contents_splitted=(${file_contents//;/ })
 
-    echo "file_contents:"
-    echo $file_contents
-    echo "results:"
-    echo $results
-
-    local num_successful=${results[0]}
-    local num_errors=${results[1]}
+    local num_successful=${file_contents_splitted[1]}
+    local num_errors=${file_contents_splitted[2]}
     local num_total=$((num_successful + num_errors))
-
-    echo "num_successful: $num_successful"
-    echo "num_errors: $num_errors"
-    echo "num_total: $num_total"
 
     if [ "$num_errors" == "1" ]; then
         local was_word="was"
@@ -59,7 +53,7 @@ print_provisioning_stats() {
     fi
 
     # Calculate total execution time
-    local start_time=${results[2]}
+    local start_time=${file_contents_splitted[0]}
     local end_time=$(date +%s.%N)
     local time_total=$(echo "$end_time - $start_time" | bc)
 

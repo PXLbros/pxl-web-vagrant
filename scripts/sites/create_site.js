@@ -79,48 +79,46 @@ async function main() {
     let database_driver;
     let database_name;
 
-    if (boilerplate_input) {
-        let boilerplate_type_input = 'default';
-        let boilerplate_name_input = boilerplate_input;
-
-        boilerplate = await boilerplateUtil.loadBoilerplate(boilerplateUtil.getBoilerplateFromName(boilerplate_name_input, boilerplate_type_input), site_dir);
-    } else {
-        boilerplate = await boilerplateUtil.askBoilerplate('Do you want to load from boilerplate?');
-    }
-
-    if (boilerplate && boilerplate.pxl_config) {
-        boilerplate.pxl_config['site-dir'] = site_dir;
-
-        boilerplate_pxl_config = boilerplate.pxl_config;
-        boilerplate_pxl_config.hostname = hostname;
-    }
-
-    if (boilerplate_pxl_config && boilerplate_pxl_config['public-dir']) {
-        public_dir = boilerplate_pxl_config['public-site-dir'];
-    } else if (options['public-dir']) {
-        public_dir = `${site_dir}/${options['public-dir']}`;
-    } else if (is_public_directory(site_dir)) {
-        public_dir = site_dir;
-    } else {
-        let public_dir_input = await ask_input('What is the public site directory? (leave empty for same as site directory)'); // TODO: Can we wait with this question till after cloning git? Because it'll say in .pxl config file from clone if
-
-        if (public_dir_input) {
-            public_dir_input = remove_trailing_slash(public_dir_input);
-
-            public_dir = `${site_dir}/${public_dir_input}`;
-
-            // log(yellow(public_dir));
-        }
-    }
-
-    // const default_site_dir = (is_public_directory(public_dir) ? remove_last_directory(public_dir) : public_dir);
-
     let git_repo = options['git-repo'];
     let git_branch = (options['git-branch'] || null);
     
     if (!git_repo && !boilerplate) {
         if (await ask_confirm('Create from existing Git repository?')) {
             git_repo = (await ask_input('Enter Git SSH repository (e.g. git@github.com:Organization/project-name.git):'));
+        }
+    }
+
+    if (!git_repo) {
+        if (boilerplate_input) {
+            let boilerplate_type_input = 'default';
+            let boilerplate_name_input = boilerplate_input;
+
+            boilerplate = await boilerplateUtil.loadBoilerplate(boilerplateUtil.getBoilerplateFromName(boilerplate_name_input, boilerplate_type_input), site_dir);
+        } else {
+            boilerplate = await boilerplateUtil.askBoilerplate('Do you want to load from boilerplate?');
+        }
+
+        if (boilerplate && boilerplate.pxl_config) {
+            boilerplate.pxl_config['site-dir'] = site_dir;
+
+            boilerplate_pxl_config = boilerplate.pxl_config;
+            boilerplate_pxl_config.hostname = hostname;
+        }
+
+        if (boilerplate_pxl_config && boilerplate_pxl_config['public-dir']) {
+            public_dir = boilerplate_pxl_config['public-site-dir'];
+        } else if (options['public-dir']) {
+            public_dir = `${site_dir}/${options['public-dir']}`;
+        } else if (is_public_directory(site_dir)) {
+            public_dir = site_dir;
+        } else {
+            let public_dir_input = await ask_input('What is the public site directory? (leave empty for same as site directory)'); // TODO: Can we wait with this question till after cloning git? Because it'll say in .pxl config file from clone if
+    
+            if (public_dir_input) {
+                public_dir_input = remove_trailing_slash(public_dir_input);
+    
+                public_dir = `${site_dir}/${public_dir_input}`;
+            }
         }
     }
 

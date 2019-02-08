@@ -9,9 +9,6 @@ export LOG_FILE_PATH=initialize.log
 
 . /vagrant/provision/helpers/include.sh
 
-# Initialize provisioning stats file
-init_provisioning_stats
-
 # Install figlet
 apt-get -y install figlet &>/dev/null
 
@@ -24,13 +21,16 @@ echo -e "${BLUE}https://github.com/PXLbros/pxl-web-vagrant${NC}"
 line_break
 
 # Initialize logs
-if [ -d /vagrant/logs ]; then
+# if [ -d /vagrant/logs ]; then
     # Delete log files in log folder
-    rm -rf /vagrant/logs/*
-else
-    # Logs directory doesn't exist, create
-    mkdir /vagrant/logs
-fi
+#     rm -rf /vagrant/logs/*
+# fi
+
+rm -rf /vagrant/logs
+mkdir -p /vagrant/logs/provision
+
+# Initialize provisioning stats file
+init_provisioning_stats
 
 # Configure date/time
 highlight_text "Configure date/time..."
@@ -50,9 +50,3 @@ exec_command "apt-get -y upgrade -o Dpkg::Options::=\"--force-confdef\" -o Dpkg:
 # Install required APT packages
 highlight_text "Install required APT packages..."
 exec_command "apt-get -y install build-essential libevent-dev libncurses-dev zip unzip"
-
-# Set home directory
-highlight_text "Set home directory..."
-exec_command "mkdir -p $HOME_DIR"
-exec_command "chown vagrant:vagrant $HOME_DIR"
-exec_command "usermod -d $HOME_DIR vagrant"

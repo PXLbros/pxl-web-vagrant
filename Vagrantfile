@@ -110,7 +110,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     # Install Vagrant core
     config.vm.provision 'shell', name: 'Initialize', path: "#{VAGRANT_DIR}/provision/initialize.sh", privileged: true, run: 'once', env: GLOBAL_VARIABLES
-
+    
     # Welcome message
     config.vm.provision 'shell', name: 'Welcome Message', path: "#{VAGRANT_DIR}/provision/shell/welcome-message.sh", privileged: true, run: 'once', env: GLOBAL_VARIABLES
 
@@ -134,12 +134,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # tmux
     if vagrant_config['shell']['tmux']['enabled']
         config.vm.provision 'shell', name: 'tmux', path: "#{VAGRANT_DIR}/provision/shell/tmux/tmux.sh", run: 'once', privileged: false, env: GLOBAL_VARIABLES
-        config.vm.provision 'shell', name: 'tmux-resurrect', path: "#{VAGRANT_DIR}/provision/shell/tmux/tmux-resurrect.sh", run: 'once', privileged: false, env: GLOBAL_VARIABLES
+        # config.vm.provision 'shell', name: 'tmux-resurrect', path: "#{VAGRANT_DIR}/provision/shell/tmux/tmux-resurrect.sh", run: 'once', privileged: false, env: GLOBAL_VARIABLES
 
         # tmuxinator
-        # if vagrant_config['shell']['tmux']['tmuxinator']['enabled']
-        #     config.vm.provision 'shell', name: 'tmuxinator', path: "#{VAGRANT_DIR}/provision/shell/tmux/tmuxinator.sh", run: 'once', privileged: false, env: GLOBAL_VARIABLES
-        # end
+        if vagrant_config['shell']['tmux']['tmuxinator']['enabled']
+            config.vm.provision 'shell', name: 'tmuxinator', path: "#{VAGRANT_DIR}/provision/shell/tmux/tmuxinator.sh", run: 'once', privileged: false, env: GLOBAL_VARIABLES
+        end
     end
 
     # Liquid Prompt

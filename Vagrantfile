@@ -67,7 +67,7 @@ GLOBAL_VARIABLES = {
     'TMUXINATOR': (vagrant_config['shell']['tmux']['tmuxinator']['enabled'] || false),
     'GPAKOSZ': (vagrant_config['shell']['tmux']['gpakosz']['enabled'] || false),
 
-    'PHP_VERSIONS': vagrant_config['code']['php']['versions'].join(' '),
+    'PHP_VERSIONS': (vagrant_config['code']['php']['versions'] ? vagrant_config['code']['php']['versions'].join(' ') : nil),
     'PHP_USER_MODULES': (vagrant_config['code']['php']['modules'] ? vagrant_config['code']['php']['modules'].join(' ') : ''),
 
     'MEMCACHED': (vagrant_config['code']['php']['cache']['memcached']['enabled'] ? true : false),
@@ -176,20 +176,22 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
 
     # PHP
-    if vagrant_config['code']['php']['versions'].any?
-        # Install PHP
-        config.vm.provision 'shell', name: 'PHP', path: "#{VAGRANT_DIR}/provision/code/php/php.sh", privileged: true, run: 'once', env: GLOBAL_VARIABLES
+    if vagrant_config['code']['php']['versions']
+        if vagrant_config['code']['php']['versions'].any?
+            # Install PHP
+            config.vm.provision 'shell', name: 'PHP', path: "#{VAGRANT_DIR}/provision/code/php/php.sh", privileged: true, run: 'once', env: GLOBAL_VARIABLES
 
-        # Memcached
-        if vagrant_config['code']['php']['cache']['memcached']['enabled']
-            # Install Memcached
-            config.vm.provision 'shell', name: "Memcached", path: "#{VAGRANT_DIR}/provision/code/php/cache/memcached.sh", privileged: true, env: GLOBAL_VARIABLES, run: 'once'
-        end
+            # Memcached
+            if vagrant_config['code']['php']['cache']['memcached']['enabled']
+                # Install Memcached
+                config.vm.provision 'shell', name: "Memcached", path: "#{VAGRANT_DIR}/provision/code/php/cache/memcached.sh", privileged: true, env: GLOBAL_VARIABLES, run: 'once'
+            end
 
-        # APC
-        if vagrant_config['code']['php']['cache']['apc']['enabled']
-            # Install APC
-            config.vm.provision 'shell', name: "APC", path: "#{VAGRANT_DIR}/provision/code/php/cache/apc.sh", privileged: true, env: GLOBAL_VARIABLES, run: 'once'
+            # APC
+            if vagrant_config['code']['php']['cache']['apc']['enabled']
+                # Install APC
+                config.vm.provision 'shell', name: "APC", path: "#{VAGRANT_DIR}/provision/code/php/cache/apc.sh", privileged: true, env: GLOBAL_VARIABLES, run: 'once'
+            end
         end
     end
 

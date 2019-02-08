@@ -10,7 +10,7 @@
     "docs:deploy": "./docs/deploy.sh"
   },
   "devDependencies": {
-    "electron": "^4.0.3"
+    "electron": "^4.0.4"
   },
   "repository": {
     "type": "git",

@@ -32,9 +32,8 @@ if [ -f "$USER_BASH_PROFILE_PATH" ]; then
 
     highlight_text "Copy user .bash_profile..."
 
-    exec_command "echo -e \"\n# User\n$USER_BASH_PROFILE_CONTENTS\" >> $HOME/.bash_profile"
-
-    exec_command "source $HOME/.bash_profile"
+    exec_command "echo -e \"\n# User\n\$USER_BASH_PROFILE_CONTENTS\" >> \$HOME/.bash_profile"
+    exec_command "source \$HOME/.bash_profile"
 fi
 
 # .tmux.conf

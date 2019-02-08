@@ -317,11 +317,13 @@ async function main() {
         error_line(`Could not add ${hostname} /etc/hosts entry. (${add_etc_hosts_entry_result.stderr})`);
     }
 
-    if (force || (!force && await ask_confirm(`Do you want to install?`))) {
-        if (boilerplate_pxl_config) {
-            run_install_script_from_pxl_config(boilerplate_pxl_config);
-        } else if (pxl_config) {
-            run_install_script_from_pxl_config(pxl_config);
+    if (boilerplate_pxl_config || pxl_config) {
+        if (force || (!force && await ask_confirm(`Do you want to install?`))) {
+            if (boilerplate_pxl_config) {
+                run_install_script_from_pxl_config(boilerplate_pxl_config);
+            } else if (pxl_config) {
+                run_install_script_from_pxl_config(pxl_config);
+            }
         }
     }
 

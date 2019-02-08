@@ -7,14 +7,20 @@ const { load_pxl_config } = require('./pxl');
 const boilerplateUtil = {
     getBoilerplates() {
         const default_boilerplates = this.getBoilerplatesDirs('default');
-        const user_boilerplates = this.getBoilerplatesDirs('user');
+        const user_boilerplates = this.getBoilerplatesDirs('user') || [];
 
         return default_boilerplates.concat(user_boilerplates).map(boilerplate => boilerplateUtil.loadBoilerplate(boilerplate));
     },
 
     getBoilerplatesDirs(type) {
-        return readdirSync(`/vagrant/boilerplates/${type}`).map(boilerplate_dir => {
-            const dir = `/vagrant/boilerplates/${type}/${boilerplate_dir}`;
+        const boilerplates_dir = `/vagrant/boilerplates/${type}`;
+
+        if (!existsSync(boilerplates_dir)) {
+            return;
+        }
+
+        return readdirSync(boilerplates_dir).map(boilerplate_dir => {
+            const dir = `${boilerplate_dir}/${type}/${boilerplate_dir}`;
 
             return {
                 dir: dir,
@@ -65,6 +71,10 @@ const boilerplateUtil = {
     },
 
     loadBoilerplate(boilerplate, site_dir) {
+        if (!boilerplate) {
+            return;
+        }
+
         if (existsSync(boilerplate.pxl_config_file_path)) {
             try {
                 const pxl_config = load_pxl_config(boilerplate.pxl_config_file_path, site_dir);

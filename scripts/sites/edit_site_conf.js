@@ -1,7 +1,5 @@
 const commandLineArgs = require('command-line-args');
-const { exec } = require('shelljs');
 const { spawn } = require('child_process');
-const { line_break } = require('../utils/log');
 const { ask_site_configuration_file, ask_web_server, get_installed_web_servers, get_sites_config_dir } = require('../utils/web_server');
 
 const options = commandLineArgs([

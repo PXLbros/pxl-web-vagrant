@@ -20,7 +20,7 @@ const boilerplateUtil = {
         }
 
         return readdirSync(boilerplates_dir).map(boilerplate_dir => {
-            const dir = `${boilerplate_dir}/${type}/${boilerplate_dir}`;
+            const dir = `${boilerplates_dir}/${boilerplate_dir}`;
 
             return {
                 dir: dir,

@@ -4,7 +4,7 @@ const { exec } = require('shelljs');
 const { bold, blue, cyan, red, yellow } = require('chalk');
 const { format } = require('date-fns');
 const { create_pxl_config_in_dir, run_install_script_from_pxl_config, load_pxl_config_from_dir, print_pxl_config } = require('../utils/pxl');
-const { ask_confirm, ask_input, ask_path, ask_php_version, ask_create_database } = require('../utils/ask');
+const { ask_confirm, ask_input, ask_php_version, ask_create_database } = require('../utils/ask');
 const { is_public_directory } = require('../utils/web_server');
 const { remove_trailing_slash } = require('../utils/str');
 const boilerplateUtil = require('../utils/boilerplate');
@@ -79,15 +79,16 @@ async function main() {
     let database_driver;
     let database_name;
 
-    let git_repo = options['git-repo'];
+    let git_repo = (options['git-repo'] || null);
     let git_branch = (options['git-branch'] || null);
     
-    if (!git_repo && !boilerplate) {
+    if (options['git-repo'] === undefined && !boilerplate) {
         if (await ask_confirm('Create from existing Git repository?')) {
             git_repo = (await ask_input('Enter Git SSH repository (e.g. git@github.com:Organization/project-name.git):'));
         }
     }
 
+    // If not Git repository, check for boilerplate
     if (!git_repo) {
         if (boilerplate_input) {
             let boilerplate_type_input = 'default';
@@ -155,6 +156,7 @@ async function main() {
         }
     }
 
+    // Create from Git repository
     if (git_repo) {    
         line_break();
 
@@ -263,15 +265,11 @@ async function main() {
     }
 
     if (!pxl_config && (options['db-driver'] !== '' && options['db-name'] !== '') && (!database_driver || !database_name)) {
-        let ask_to_create_database;
-
         if (!database_driver) {
-            ask_to_create_database = await ask_create_database_driver();
-        } else {
-            ask_to_create_database = true;
+            database_driver = await ask_create_database_driver();
         }
 
-        if (ask_to_create_database) {
+        if (database_driver) {
             const database = await ask_create_database(database_driver);
 
             database_driver = database.driver;
@@ -287,6 +285,7 @@ async function main() {
             try {
                 create_database(database_driver, database_name);
             } catch (create_database_error) {
+                error_line(create_database_error.message);
             }
         }
     }   
@@ -367,7 +366,7 @@ async function main() {
         log(`${cyan(bold('Database Name:'))} ${database_name}`);
     }
 
-    if (true || options['show-command']) {
+    if (options['show-command']) {
         let command_str = `create_site`;
 
         if (web_server) {

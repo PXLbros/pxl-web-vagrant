@@ -5,8 +5,8 @@
   "author": "Dennis Nygren",
   "license": "ISC",
   "scripts": {
-    "lint": "eslint utils/**/*.js",
-    "watch": "esw -w --clear utils/**/*.js"
+    "lint": "eslint **/*.js",
+    "watch": "esw -w --clear **/*.js"
   },
   "devDependencies": {
     "chalk": "^2.4.2",

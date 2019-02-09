@@ -6,7 +6,7 @@ const { ask_confirm, ask_input } = require('../utils/ask');
 const { choose_files_from_dir } = require('../utils/choose');
 const { error_line, line_break } = require('../utils/log');
 const { load_pxl_config_from_dir, print_pxl_config, uninstall_from_pxl_config } = require('../utils/pxl');
-const { get_web_server_title, get_installed_web_servers, get_sites_config_dir, remove_public_from_dir, reload_web_server } = require('../utils/web_server');
+const { ask_web_server, get_web_server_title, get_installed_web_servers, get_sites_config_dir, remove_public_from_dir, reload_web_server } = require('../utils/web_server');
 const log = console.log;
 
 const options = commandLineArgs([
@@ -66,17 +66,17 @@ async function main() {
         // Disable Apache site
         exec(`sudo a2dissite ${selected_site_configuration_file}`, { silent: true });
 
-        const document_root_result = exec(`awk '/DocumentRoot/ {print $2}' ${selected_site_configuration_file_path}`, { silent: true })
+        const document_root_result = exec(`awk '/DocumentRoot/ {print $2}' ${selected_site_configuration_file_path}`, { silent: true });
         document_root = (document_root_result.code === 0 && document_root_result.stdout ? document_root_result.stdout.trim() : null);
         document_root_without_public = remove_public_from_dir(document_root);
 
-        const get_server_name_result = exec(`awk '/ServerName/ {print $2}' ${selected_site_configuration_file_path}`, { silent: true })
+        const get_server_name_result = exec(`awk '/ServerName/ {print $2}' ${selected_site_configuration_file_path}`, { silent: true });
         hostname = (get_server_name_result.code === 0 && get_server_name_result.stdout ? get_server_name_result.stdout.trim() : null);
     } else if (web_server === 'nginx') {
         // const document_root_result = exec(`awk '/DocumentRoot/ {print $2}' ${selected_site_configuration_file_path}`, { silent: true })
         // document_root = (document_root_result.code === 0 && document_root_result.stdout ? document_root_result.stdout.trim() : null);
         
-        const get_server_name_result = exec(`awk '/server_name/ {print $2}' ${selected_nginx_site_configuration_file_path}`, { silent: true })
+        const get_server_name_result = exec(`awk '/server_name/ {print $2}' ${selected_site_configuration_file_path}`, { silent: true });
         hostname = (get_server_name_result.code === 0 && get_server_name_result.stdout ? get_server_name_result.stdout.trim().slice(0, -1) : null);
 
         // exec(`sudo rm ${selected_nginx_site_configuration_enabled_file_path}`);
@@ -86,20 +86,24 @@ async function main() {
 
     // Check if PXL Web Vagrant configuration in site dir
     try {
-        pxl_config = load_pxl_config_from_dir(`${site_dir}/.pxl`);
+        let pxl_config = load_pxl_config_from_dir(`${site_dir}/.pxl`);
+        
+        // let public_dir;
+        // let php_version;
+        // let database_driver;
+        // let database_name;
 
         if (pxl_config) {
-            if (pxl_config.code && pxl_config.code.php) {
-                php_version = pxl_config.code.php;
-            }
+            // if (pxl_config.code && pxl_config.code.php) {
+            //     php_version = pxl_config.code.php;
+            // }
 
-            if (pxl_config.database) {
-                database_driver = pxl_config.database.driver;
-                database_name = pxl_config.database.name;
-            }
+            // if (pxl_config.database) {
+            //     database_driver = pxl_config.database.driver;
+            //     database_name = pxl_config.database.name;
+            // }
 
-            public_dir = pxl_config['public-site-dir'];
-            console.log('GOT PUBLIC DIR FROM: ' + pxl_config['public-site-dir']);
+            // public_dir = pxl_config['public-site-dir'];
 
             line_break();
 

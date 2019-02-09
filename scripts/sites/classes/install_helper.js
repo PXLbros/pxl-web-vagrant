@@ -37,7 +37,7 @@ class InstallHelper
         line_break();
 
         if (this.file_exists(this.pxl_config['custom-files-dir'])) {
-            blueline(`Found custom-files-dir directory, sync...`);
+            blue_line(`Found custom-files-dir directory, sync...`);
 
             this.sync_paths(this.pxl_config['custom-files-dir'], this.pxl_config['site-dir'])
         }

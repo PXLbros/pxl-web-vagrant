@@ -71,7 +71,7 @@ print_provisioning_stats() {
     else
         highlight_text "\nPXL Web Vagrant has been provisioned.\n"
         
-        cyan_text "Name: ${VAGRANT_NAME}"
+        cyan_text "Vagrant Name: ${VAGRANT_NAME}"
         cyan_text "IP: ${IP_ADDRESS}"
 
         line_break

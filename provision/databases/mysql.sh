@@ -51,6 +51,12 @@ if [ ! -x "$(command -v mysql)" ]; then
 
         exec_command "echo \"CREATE USER IF NOT EXISTS '$MYSQL_USER_NAME'@'localhost' IDENTIFIED BY '$MYSQL_USER_PASSWORD';\" | mysql -u $MYSQL_ROOT_USER --password=\"$MYSQL_ROOT_PASSWORD\""
         exec_command "echo \"CREATE USER IF NOT EXISTS '$MYSQL_USER_NAME'@'%' IDENTIFIED BY '$MYSQL_USER_PASSWORD';\" | mysql -u $MYSQL_ROOT_USER --password=\"$MYSQL_ROOT_PASSWORD\""
+        
+        if [ "$MYSQL_VERSION" == "8" ]; then
+            exec_command "ALTER USER '$MYSQL_USER_NAME'@'localhost' IDENTIFIED WITH mysql_native_password BY '$MYSQL_USER_PASSWORD';"
+            exec_command "ALTER USER '$MYSQL_USER_NAME'@'%' IDENTIFIED WITH mysql_native_password BY '$MYSQL_USER_PASSWORD';"
+        fi
+        
         exec_command "echo \"GRANT ALL PRIVILEGES ON *.* TO '$MYSQL_USER_NAME'@'localhost';\" | mysql -u $MYSQL_ROOT_USER --password=\"$MYSQL_ROOT_PASSWORD\""
         exec_command "echo \"GRANT ALL PRIVILEGES ON *.* TO '$MYSQL_USER_NAME'@'%';\" | mysql -u $MYSQL_ROOT_USER --password=\"$MYSQL_ROOT_PASSWORD\""
         exec_command "echo \"FLUSH PRIVILEGES;\" | mysql -u $MYSQL_ROOT_USER --password=\"$MYSQL_ROOT_PASSWORD\""

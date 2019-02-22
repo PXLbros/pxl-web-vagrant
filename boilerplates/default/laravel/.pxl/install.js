@@ -23,8 +23,8 @@ class InstallScript extends InstallHelper {
         }
 
         this.run(`rm -rf public/`);
-        this.move_files(`${this.site_dir}/${tmp_lib_dir}/`, `${this.site_dir}/`);
-        this.run(`rm -rf ${this.site_dir}/${tmp_lib_dir}/`);
+        this.move_files(`${tmp_lib_dir}/`, `${this.site_dir}/`);
+        this.run(`rm -rf ${tmp_lib_dir}/`);
 
         line_break();
         highlight_line('Update .env file...');

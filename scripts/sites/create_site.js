@@ -157,7 +157,7 @@ async function main() {
     }
 
     // Create from Git repository
-    if (git_repo) {    
+    if (git_repo) {
         line_break();
 
         log(blue(`Cloning Git repository ${git_repo} into ${site_dir}...`));
@@ -229,9 +229,11 @@ async function main() {
     configuration_file_name = get_config_filename(web_server, hostname);
     configuration_file_path = get_config_file_path(web_server, configuration_file_name);
 
+    let overwrite_web_server_conf_file = false;
+
     if (existsSync(configuration_file_path) && !overwrite) {
-        if (!await ask_confirm(`${web_server_title} virtual host configuration file "${configuration_file_name}" already exist, do you want to overwrite it?`, false)) {
-            return;
+        if (await ask_confirm(`${web_server_title} virtual host configuration file "${configuration_file_name}" already exist, do you want to overwrite it?`, false)) {
+            overwrite_web_server_conf_file = true;
         }
     }
 
@@ -304,7 +306,9 @@ async function main() {
     }   
 
     // Save virtual host configuration file
-    save_virtual_host_config(configuration_file_path, web_server, hostname, public_dir, php_version, overwrite);
+    if (overwrite_web_server_conf_file) {
+        save_virtual_host_config(configuration_file_path, web_server, hostname, public_dir, php_version, overwrite);
+    }
 
     // Enable web server site
     try {
@@ -342,7 +346,7 @@ async function main() {
 
         if (force || await ask_confirm(`Do you want to save PXL Web Vagrant configuration?`)) {
             try {
-                const pxl_config_dir = create_pxl_config_in_dir(site_dir, public_dir, php_version, database_driver, database_name, boilerplate);
+                const pxl_config_dir = create_pxl_config_in_dir(site_dir, public_dir, php_version, database_driver, database_name, boilerplate.pxl_config.name);
 
                 cyan_line(`PXL Web Vagrant configuration ${pxl_config_dir} created.`);
             } catch (create_pxl_config_error) {

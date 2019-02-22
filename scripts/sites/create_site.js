@@ -202,6 +202,19 @@ async function main() {
                 print_pxl_config(pxl_config);
 
                 line_break();
+            } else {
+                // Check or ask public dir
+                if (is_public_directory(site_dir)) {
+                    public_dir = site_dir;
+                } else {
+                    let public_dir_input = await ask_input('What is the public site directory? (leave empty for same as site directory)'); // TODO: Can we wait with this question till after cloning git? Because it'll say in .pxl config file from clone if
+            
+                    if (public_dir_input) {
+                        public_dir_input = remove_trailing_slash(public_dir_input);
+            
+                        public_dir = `${site_dir}/${public_dir_input}`;
+                    }
+                }
             }
         } catch (load_pxl_config_error) {
             error_line(load_pxl_config_error);

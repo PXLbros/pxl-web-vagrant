@@ -1,4 +1,5 @@
 const commandLineArgs = require('command-line-args');
+const commandLineUsage = require('command-line-usage');
 const { existsSync } = require('fs');
 const { exec } = require('shelljs');
 const { bold, blue, cyan, red, yellow } = require('chalk');
@@ -14,20 +15,21 @@ const { blue_line, cyan_line, error_line, highlight_line, line_break, success_li
 const log = console.log;
 
 const options_values = [
-    { name: 'web-server', type: String },
-    { name: 'hostname', type: String },
-    { name: 'site-dir', type: String },
-    { name: 'public-dir', type: String },
-    { name: 'git-repo', type: String },
-    { name: 'git-branch', type: String },
-    { name: 'php', type: String },
-    { name: 'db-driver', type: String },
-    { name: 'db-name', type: String },
-    { name: 'overwrite', type: Boolean },
-    { name: 'no-backup', type: Boolean },
-    { name: 'force', type: Boolean },
-    { name: 'show-command', type: Boolean },
-    { name: 'boilerplate', type: String }
+    { name: 'web-server', type: String, description: 'Web server.' },
+    { name: 'hostname', type: String, description: 'Site hostname.' },
+    { name: 'site-dir', type: String, description: 'Site root directory.' },
+    { name: 'public-dir', type: String, description: 'Site public directory.' },
+    { name: 'git-repo', type: String, description: 'Git repository.' },
+    { name: 'git-branch', type: String, description: 'Initial Git branch.' },
+    { name: 'boilerplate', type: String, description: 'Boilerplate.' },
+    { name: 'php', type: String, description: 'PHP version.' },
+    { name: 'db-driver', type: String, description: 'Database driver.' },
+    { name: 'db-name', type: String, description: 'Database name.' },
+    { name: 'overwrite', type: Boolean, description: 'Overwrite existing site.' },
+    { name: 'no-backup', type: Boolean, description: `Don't take backup of existing site upon overwrite.` },
+    { name: 'force', type: Boolean, description: `Don't prompt for questions.` },
+    { name: 'show-command', type: Boolean, description: 'Show executed command after run.' },
+    { name: 'help', type: Boolean, description: 'Print this help guide.' }
 ];
 
 const options = commandLineArgs(options_values.map(option => {
@@ -40,6 +42,25 @@ const options = commandLineArgs(options_values.map(option => {
 async function main() {
     exec('figlet create site');
     line_break();
+
+    if (options.help) {
+        const usage = commandLineUsage([
+            {
+                header: 'Options',
+                content: 'Create new site from existing Git repository, boilerplate or new.',
+                optionList: options_values.map(option => {
+                    return  {
+                        name: option.name,
+                        description: (option.description || null)
+                    };
+                })
+            }
+        ]);
+
+        log(usage);
+        return;
+    }
+
 
     // const my_dir = (await ask_path('/vagrant', 'dir', 'Select a root directory:'));
     // const my_file = (await ask_path(my_dir.path, 'file', 'Select a file:'));

@@ -38,11 +38,13 @@ fi
 
 # .tmux.conf
 if [ -f "$USER_TMUX_CONF_PATH" ]; then
-    USER_BASH_PROFILE_CONTENTS=$(cat $USER_TMUX_CONF_PATH)
+    USER_TMUX_CONF_CONTENTS=$(cat $USER_TMUX_CONF_PATH)
 
     highlight_text "Copy user tmux configuration..."
 
-    exec_command "echo -e \"\n# User\n$USER_TMUX_CONF_PATH\" >> $HOME/.tmux.conf.local"
-    exec_command "source $HOME/.bash_profile"
+    if ! grep -qF "# User" $HOME/.tmux.conf.local; then
+        exec_command "echo -e \"\n# User\n$USER_TMUX_CONF_CONTENTS\" >> \$HOME/.tmux.conf.local"
+    fi
+
     # exec_command "tmux source-file $HOME/.tmux.conf.local"
 fi

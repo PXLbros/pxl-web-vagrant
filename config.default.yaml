@@ -40,8 +40,6 @@ databases:
         version: 8
     postgresql:
         enabled: true
-    mongodb:
-        enabled: true
 cache:
     redis:
         enabled: true

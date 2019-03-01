@@ -91,18 +91,5 @@ alias create_mysql_database='create_database --driver=mysql'
 alias delete_mysql_database='delete_database --driver=mysql'"
 fi
 
-if [ "$MONGODB" == "true" ]
-then
-    BASH_PROFILE_CONTENTS="${BASH_PROFILE_CONTENTS}
-
-# MongoDB
-alias start_mongodb='sudo service mongodb start'
-alias stop_mongodb='sudo service mongodb stop'
-alias restart_mongodb='sudo service mongodb restart'
-alias mongodb_status='sudo service mysql status'
-alias create_mongodb_database='create_database --driver=mongodb'
-alias delete_mongodb_database='delete_database --driver=mongodb'"
-fi
-
 # Save .bash_profile
 exec_command "echo -e \"$BASH_PROFILE_CONTENTS\" > $HOME/.bash_profile"

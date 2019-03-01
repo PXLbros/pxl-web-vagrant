@@ -25,8 +25,8 @@ const options_values = [
     { name: 'php', type: String, description: 'PHP version.' },
     { name: 'db-driver', type: String, description: 'Database driver.' },
     { name: 'db-name', type: String, description: 'Database name.' },
-    { name: 'overwrite', type: Boolean, description: 'Overwrite existing site.' },
-    { name: 'no-backup', type: Boolean, description: `Don't take backup of existing site upon overwrite.` },
+    { name: 'overwrite', type: Boolean, description: 'Overwrite existing site if any.' },
+    { name: 'no-backup', type: Boolean, description: `Omit backup of existing site upon overwrite.` },
     { name: 'force', type: Boolean, description: `Don't prompt for questions.` },
     { name: 'show-command', type: Boolean, description: 'Show executed command after run.' },
     { name: 'help', type: Boolean, description: 'Print this help guide.' }
@@ -41,7 +41,6 @@ const options = commandLineArgs(options_values.map(option => {
 
 async function main() {
     exec('figlet create site');
-    line_break();
 
     if (options.help) {
         const usage = commandLineUsage([
@@ -59,8 +58,9 @@ async function main() {
 
         log(usage);
         return;
+    } else {
+        line_break();
     }
-
 
     // const my_dir = (await ask_path('/vagrant', 'dir', 'Select a root directory:'));
     // const my_file = (await ask_path(my_dir.path, 'file', 'Select a file:'));

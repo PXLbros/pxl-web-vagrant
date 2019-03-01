@@ -63,8 +63,6 @@ GLOBAL_VARIABLES = {
 
     'POSTGREQSQL_ENABLED': vagrant_config['databases']['postgresql']['enabled'],
 
-    'MONGODB': vagrant_config['databases']['mongodb']['enabled'],
-
     'TMUX_VERSION': (vagrant_config['shell']['tmux']['version'] || '2.8'),
     'TMUXINATOR': (vagrant_config['shell']['tmux']['tmuxinator']['enabled'] || false),
     'GPAKOSZ': (vagrant_config['shell']['tmux']['gpakosz']['enabled'] || false),

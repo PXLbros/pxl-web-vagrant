@@ -37,7 +37,7 @@ code:
 databases:
     mysql:
         enabled: true
-        version: 8
+        version: 5.7
     postgresql:
         enabled: true
 cache:

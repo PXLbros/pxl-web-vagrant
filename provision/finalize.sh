@@ -16,11 +16,11 @@ clear_provisioning_stats
 rm $PROVISIONING_COMMAND_FILE_PATH
 
 # Set home directory
-if ! -z "$HOME_DIR"; then
+if [ ! -z "$HOME_DIR" ]; then
     highlight_text "Set home directory..."
 
     # Create directory if not already exists
-    if ! -d "$HOME_DIR"; then
+    if [ ! -d "$HOME_DIR" ]; then
         exec_command "mkdir -p $HOME_DIR"
     fi
 

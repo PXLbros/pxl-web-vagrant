@@ -161,6 +161,8 @@ module.exports = {
         if (enable_result.stdout === `Site ${config_filename.substr(0, config_filename.length - 5)} already enabled\n`) {
             throw new Error(`${get_web_server_title(web_server)} site ${config_filename} already enabled.`);
         } else if (enable_result.code !== 0) {
+            console.log(enable_result.stderr);
+
             throw new Error(`Could not enable ${get_web_server_title(web_server)} site ${config_filename}.`);
         }
 

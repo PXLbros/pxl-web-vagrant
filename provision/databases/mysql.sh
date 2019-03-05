@@ -14,7 +14,7 @@ MYSQL_ROOT_PASSWORD=root
 MYSQL_USER_NAME=vagrant
 MYSQL_USER_PASSWORD=vagrant
 
-MYSQL_VERSION="8"
+# MYSQL_VERSION="8"
 
 if ! grep -qF "MYSQL_USER_NAME" /home/vagrant/.bashrc; then
     exec_command "echo -e \"\nexport MYSQL_USER_NAME=$MYSQL_USER_NAME\nexport MYSQL_USER_PASSWORD=$MYSQL_USER_PASSWORD\" >> /home/vagrant/.bashrc"
@@ -33,7 +33,7 @@ if [ ! -x "$(command -v mysql)" ]; then
         exec_command "apt-get update"
         exec_command "apt-get install -y mysql-server"
 
-        exec_command "ebconf-set-selections <<< \"mysql-server mysql-server/data-dir select ''\""
+        exec_command "debconf-set-selections <<< \"mysql-server mysql-server/data-dir select ''\""
     fi
 
     exec_command "debconf-set-selections <<< \"mysql-server mysql-server/root_password password $MYSQL_ROOT_PASSWORD\""

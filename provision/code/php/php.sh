@@ -23,6 +23,7 @@ title "PHP"
 highlight_text "Install PHP dependencies..."
 exec_command "apt-get -y install software-properties-common"
 
+# Add PHP 7 PPA
 add_ppa ondrej/apache2 ondrej/php
 
 exec_command "apt-get update -y"
@@ -39,7 +40,8 @@ for PHP_VERSION in "${PHP_VERSIONS[@]}"; do
         done
 
         # Install PHP mcrypt extension
-        if [ "$PHP_VERSION" == "7.3" ] || [ "$PHP_VERSION" == "7.2" ]; then
+        # if [ "$PHP_VERSION" == "7.3" ] || [ "$PHP_VERSION" == "7.2" ]; then
+        if [ "$PHP_VERSION" == "7.2" ]; then
             exec_command "apt-get install php-dev libmcrypt-dev php-pear -y"
             exec_command "pecl channel-update pecl.php.net"
 

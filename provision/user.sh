@@ -37,14 +37,14 @@ if [ -f "$USER_BASH_PROFILE_PATH" ]; then
 fi
 
 # .tmux.conf
-if [ -f "$USER_TMUX_CONF_PATH" ]; then
-    USER_TMUX_CONF_CONTENTS=$(cat $USER_TMUX_CONF_PATH)
+# if [ -f "$USER_TMUX_CONF_PATH" ]; then
+#     USER_TMUX_CONF_CONTENTS=$(cat $USER_TMUX_CONF_PATH)
 
-    highlight_text "Copy user tmux configuration..."
+#     highlight_text "Copy user tmux configuration..."
 
-    if ! grep -qF "# User" $HOME/.tmux.conf.local; then
-        exec_command "echo -e \"\n# User\n$USER_TMUX_CONF_CONTENTS\" >> \$HOME/.tmux.conf.local"
-    fi
+#     if ! grep -qF "# User" $HOME/.tmux.conf.local; then
+#         exec_command "echo -e \"\n# User\n$USER_TMUX_CONF_CONTENTS\" >> \$HOME/.tmux.conf.local"
+#     fi
 
     # exec_command "tmux source-file $HOME/.tmux.conf.local"
-fi
+# fi

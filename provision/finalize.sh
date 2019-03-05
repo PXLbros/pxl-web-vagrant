@@ -4,7 +4,12 @@
 
 # Clean up APT
 highlight_text "Clean up APT..."
-exec_command "sudo apt-get autoremove -yf"
+exec_command "sudo apt-get clean"
+
+# Clean up OS
+highlight_text "Clean up OS..."
+exec_command "rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*"
+exec_command "rm /var/log/lastlog /var/log/faillog"
 
 # Print provisioning stats
 print_provisioning_stats

@@ -199,7 +199,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     vagrant_config['databases'].each do |database_name, database_vagrant_config|
         if database_vagrant_config['enabled'] == true
             # Install database
-            config.vm.provision 'shell', name: "Web Server: #{database_name}", path: "#{VAGRANT_DIR}/provision/databases/#{database_name}.sh", privileged: true, env: GLOBAL_VARIABLES, run: 'once'
+            config.vm.provision 'shell', name: "Database: #{database_name}", path: "#{VAGRANT_DIR}/provision/databases/#{database_name}.sh", privileged: true, env: GLOBAL_VARIABLES, run: 'once'
         end
     end
 

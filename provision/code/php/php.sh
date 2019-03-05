@@ -23,6 +23,7 @@ title "PHP"
 highlight_text "Install PHP dependencies..."
 exec_command "apt-get -y install software-properties-common"
 
+# Add PHP 7 PPA
 add_ppa ondrej/apache2 ondrej/php
 
 exec_command "apt-get update -y"
@@ -40,19 +41,22 @@ for PHP_VERSION in "${PHP_VERSIONS[@]}"; do
 
         # Install PHP mcrypt extension
         if [ "$PHP_VERSION" == "7.3" ] || [ "$PHP_VERSION" == "7.2" ]; then
-            exec_command "apt-get install php-dev libmcrypt-dev php-pear -y"
-            exec_command "pecl channel-update pecl.php.net"
+            # exec_command "apt-get install php-dev libmcrypt-dev php-pear -y"
+            # exec_command "pecl channel-update pecl.php.net"
 
-            if ! pecl list | grep mcrypt; then
-                exec_command "pecl install mcrypt-1.0.1"
-            fi
+            # if [ "$PHP_VERSION" == "7.2" ]; then
+            #     if ! pecl list | grep mcrypt; then
+            #         exec_command "pecl install mcrypt-1.0.1"
+            #     fi
+            # fi
 
-            # Add line to php.ini configuration file
-            PHP_INI_FILE_PATH=/etc/php/$PHP_VERSION/fpm/php.ini
+            # # Add line to php.ini configuration file
+            # PHP_INI_FILE_PATH=/etc/php/$PHP_VERSION/fpm/php.ini
 
-            if ! grep -q "extension=mcrypt.so" $PHP_INI_FILE_PATH; then
-                exec_command "echo -e \"\nextension=mcrypt.so\" >> $PHP_INI_FILE_PATH"
-            fi
+            # if ! grep -q "extension=mcrypt.so" $PHP_INI_FILE_PATH; then
+            #     exec_command "echo -e \"\nextension=mcrypt.so\" >> $PHP_INI_FILE_PATH"
+            # fi
+            echo "Skip"
         else
             exec_command "apt-get -y install php${PHP_VERSION}-mcrypt"
         fi

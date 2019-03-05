@@ -7,12 +7,14 @@ line_break();
 
 exec('figlet PXL Web Vagrant');
 
-blue_line(`v${package_json.version} (Built on [${process.env.BUILD_DATE}])`);
+line_break();
+
+blue_line(`v${package_json.version} (Built on ${process.env.VAGRANT_BUILD_DATE})`);
 blue_line('https://github.com/PXLbros/pxl-web-vagrant');
 
 line_break();
 
 cyan_line(`Vagrant Name: ${process.env.VAGRANT_NAME}`);
-cyan_line(`IP: ${process.env.IP_ADDRESS}`);
+cyan_line(`IP: ${process.env.VAGRANT_IP_ADDRESS}`);
 
 exec('echo " "');

@@ -33,7 +33,7 @@ if [ ! -x "$(command -v mysql)" ]; then
         exec_command "apt-get update"
         exec_command "apt-get install -y mysql-server"
 
-        dexec_command "ebconf-set-selections <<< \"mysql-server mysql-server/data-dir select ''\""
+        exec_command "ebconf-set-selections <<< \"mysql-server mysql-server/data-dir select ''\""
     fi
 
     exec_command "debconf-set-selections <<< \"mysql-server mysql-server/root_password password $MYSQL_ROOT_PASSWORD\""

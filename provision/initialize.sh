@@ -16,16 +16,12 @@ apt-get -y install figlet &>/dev/null
 title "PXL Web Vagrant"
 
 echo -e "${BLUE}v${VERSION} (Built on $BUILD_DATE)${NC}"
-echo -e "${BLUE}https://github.com/PXLbros/pxl-web-vagrant${NC}"
+echo -e "${BLUE}GitHub: https://github.com/PXLbros/pxl-web-vagrant${NC}"
+echo -e "${BLUE}Documentation: https://pxlbros.github.io/pxl-web-vagrant${NC}"
 
 line_break
 
-# Initialize logs
-# if [ -d /vagrant/logs ]; then
-    # Delete log files in log folder
-#     rm -rf /vagrant/logs/*
-# fi
-
+# Initialize empty log directory
 rm -rf /vagrant/logs
 mkdir -p /vagrant/logs/provision
 

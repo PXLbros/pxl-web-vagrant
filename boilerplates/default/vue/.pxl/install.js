@@ -8,7 +8,7 @@ class InstallScript extends InstallHelper {
 
         // Download Vue CLI
         highlight_line('Install Vue CLI...');
-        this.run(`yarn global add @vue/cli`);
+        this.run(`npm install -g @vue/cli`);
 
         // Create Vue project
         highlight_line('Create Vue project...');

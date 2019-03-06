@@ -13,12 +13,12 @@
     "command-line-args": "^5.0.2",
     "command-line-usage": "^5.0.5",
     "date-fns": "^1.30.1",
-    "eslint": "^5.13.0",
+    "eslint": "^5.15.1",
     "eslint-plugin-node": "^8.0.1",
-    "eslint-watch": "^4.0.2",
+    "eslint-watch": "^5.0.1",
     "inquirer": "^6.2.2",
-    "inquirer-fuzzy-path": "^2.0.1",
-    "js-yaml": "^3.12.1",
+    "inquirer-fuzzy-path": "^2.0.2",
+    "js-yaml": "^3.12.2",
     "shelljs": "^0.8.3",
     "slugify": "^1.3.4"
   }

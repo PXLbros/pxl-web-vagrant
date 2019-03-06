@@ -359,13 +359,13 @@ async function main() {
     }
 
     if (boilerplate_pxl_config || pxl_config) {
-        if (force || (!force && await ask_confirm(`Do you want to install?`))) {
+        // if (force || (!force && await ask_confirm(`Do you want to install?`))) {
             if (boilerplate_pxl_config) {
                 run_install_script_from_pxl_config(boilerplate_pxl_config);
             } else if (pxl_config) {
                 run_install_script_from_pxl_config(pxl_config);
             }
-        }
+        // }
     }
 
     if (!pxl_config) {

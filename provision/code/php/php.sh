@@ -95,6 +95,11 @@ for PHP_VERSION in "${PHP_VERSIONS[@]}"; do
         exec_command "sed -i -r -e 's/error_reporting=.*/error_reporting = E_ALL | E_STRICT/g' $PHP_INI_FILE"
         exec_command "sed -i -r -e 's/display_errors = Off/display_errors = On/g' $PHP_INI_FILE"
 
+        # Enable Apache PHP configuration
+        if [ "$APACHE_ENABLED" == "true" ]; then
+            exec_command "sudo a2enconf php${PHP_VERSION}-fpm"
+        fi
+
         # Restart PHP version
         highlight_text "Restart PHP $PHP_VERSION..."
 
@@ -106,7 +111,7 @@ if [ -x "$(command -v php)" ]; then
     # Restart Apache
     if [ "$APACHE_ENABLED" == "true" ]; then
         highlight_text "Restart Apache..."
-        exec_command service apache2 restart
+        exec_command "service apache2 restart"
     fi
 
     # Download Composer

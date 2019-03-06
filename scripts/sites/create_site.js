@@ -5,7 +5,7 @@ const { exec } = require('shelljs');
 const { bold, blue, cyan, red, yellow } = require('chalk');
 const { format } = require('date-fns');
 const { create_pxl_config_in_dir, run_install_script_from_pxl_config, load_pxl_config_from_dir, print_pxl_config } = require('../utils/pxl');
-const { ask_confirm, ask_input, ask_php_version, ask_create_database } = require('../utils/ask');
+const { ask_create_database, ask_confirm, ask_input, ask_path, ask_php_version } = require('../utils/ask');
 const { is_public_directory } = require('../utils/web_server');
 const { remove_trailing_slash } = require('../utils/str');
 const boilerplateUtil = require('../utils/boilerplate');
@@ -65,6 +65,10 @@ async function main() {
     // const my_dir = (await ask_path('/vagrant', 'dir', 'Select a root directory:'));
     // const my_file = (await ask_path(my_dir.path, 'file', 'Select a file:'));
 
+    // console.log(my_dir);
+    // console.log(my_file);
+    // return;
+
     let boilerplate_input = (options['boilerplate'] || null);
 
     const no_backup = (options['no-backup'] || false);
@@ -95,7 +99,7 @@ async function main() {
     let boilerplate_pxl_config;
     let pxl_config;
 
-    let public_dir;
+    let public_dir = (options['public-dir'] || null);
     let php_version = (options['php'] || null);
     let database_driver;
     let database_name;
@@ -157,7 +161,7 @@ async function main() {
         if (!no_backup || no_backup !== true) {
             const backup_dir = `${site_dir}_${format(new Date(), 'YYYY-MM-DD_H-mm-ss')}`;
 
-            if (await ask_confirm(`Site directory ${site_dir} already exists, do you want to take a backup of it?`)) {
+            if (await ask_confirm(`Site directory ${site_dir} already exists, do you want to take a backup?`)) {
                 exec(`sudo mv ${site_dir} ${backup_dir}`, { silent: true });
 
                 log(yellow(`Backed up existing directory ${site_dir} to ${backup_dir}.`));
@@ -224,16 +228,18 @@ async function main() {
 
                 line_break();
             } else {
-                // Check or ask public dir
-                if (is_public_directory(site_dir)) {
-                    public_dir = site_dir;
-                } else {
-                    let public_dir_input = await ask_input('What is the public site directory? (leave empty for same as site directory)'); // TODO: Can we wait with this question till after cloning git? Because it'll say in .pxl config file from clone if
-            
-                    if (public_dir_input) {
-                        public_dir_input = remove_trailing_slash(public_dir_input);
-            
-                        public_dir = `${site_dir}/${public_dir_input}`;
+                if (!public_dir) {
+                    // Check or ask public dir
+                    if (is_public_directory(site_dir)) {
+                        public_dir = site_dir;
+                    } else {
+                        let public_dir_input = await ask_input('What is the public site directory? (leave empty for same as site directory)'); // TODO: Can we wait with this question till after cloning git? Because it'll say in .pxl config file from clone if
+                
+                        if (public_dir_input) {
+                            public_dir_input = remove_trailing_slash(public_dir_input);
+                
+                            public_dir = `${site_dir}/${public_dir_input}`;
+                        }
                     }
                 }
             }
@@ -246,6 +252,8 @@ async function main() {
             exec(`mkdir -p ${public_dir}`);
         }
     }
+
+    let public_dir_full = (public_dir ? `${site_dir}/${public_dir}` : site_dir);
 
     configuration_file_name = get_config_filename(web_server, hostname);
     configuration_file_path = get_config_file_path(web_server, configuration_file_name);
@@ -327,9 +335,7 @@ async function main() {
     }   
 
     // Save virtual host configuration file
-    if (overwrite_web_server_conf_file) {
-        save_virtual_host_config(configuration_file_path, web_server, hostname, public_dir, php_version, overwrite);
-    }
+    save_virtual_host_config(configuration_file_path, web_server, hostname, public_dir_full, php_version, overwrite_web_server_conf_file);
 
     // Enable web server site
     try {
@@ -367,7 +373,7 @@ async function main() {
 
         if (force || await ask_confirm(`Do you want to save PXL Web Vagrant configuration?`)) {
             try {
-                const pxl_config_dir = create_pxl_config_in_dir(site_dir, public_dir, php_version, database_driver, database_name, boilerplate.pxl_config.name);
+                const pxl_config_dir = create_pxl_config_in_dir(site_dir, public_dir, php_version, database_driver, database_name, boilerplate ? boilerplate.pxl_config.name : null);
 
                 cyan_line(`PXL Web Vagrant configuration ${pxl_config_dir} created.`);
             } catch (create_pxl_config_error) {
@@ -419,8 +425,8 @@ async function main() {
             command_str += ` \\\n\t--site-dir=${site_dir}`;
         }
 
-        if (public_dir) {
-            command_str += ` \\\n\t--public-dir=${public_dir}`;
+        if (public_dir_full) {
+            command_str += ` \\\n\t--public-dir=${public_dir_full}`;
         }
 
         if (git_repo) {

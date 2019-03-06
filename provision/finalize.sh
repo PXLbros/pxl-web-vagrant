@@ -8,8 +8,7 @@ exec_command "sudo apt-get clean"
 
 # Clean up OS
 highlight_text "Clean up OS..."
-exec_command "rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*"
-exec_command "rm /var/log/lastlog /var/log/faillog"
+exec_command "sudo rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*"
 
 # Print provisioning stats
 print_provisioning_stats
@@ -33,9 +32,7 @@ if [ ! -z "$HOME_DIR" ]; then
 
     # Add change directory directive to .bashrc
     if ! grep -qF "$SET_HOME_DIR_COMMAND" $HOME/.bashrc
-    then
+    then        
         exec_command "echo -e \"\n$SET_HOME_DIR_COMMAND\" >> $HOME/.bashrc"
-    else
-        echo "~~~~~~~~~~~~~~~~~~ HOME DIR ALREADY IN BASHRC ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
     fi
 fi

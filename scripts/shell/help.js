@@ -10,7 +10,8 @@ exec('figlet PXL Web Vagrant');
 line_break();
 
 blue_line(`v${package_json.version} (Built on ${process.env.VAGRANT_BUILD_DATE})`);
-blue_line('https://github.com/PXLbros/pxl-web-vagrant');
+blue_line(`GitHub: https://github.com/PXLbros/pxl-web-vagrant`);
+blue_line(`Documentation: https://pxlbros.github.io/pxl-web-vagrant`);
 
 line_break();
 

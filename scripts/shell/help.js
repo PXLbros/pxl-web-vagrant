@@ -1,5 +1,6 @@
 const { exec } = require('shelljs');
-const { blue_line, cyan_line, line_break } = require('../utils/log');
+const { blue_line, cyan_line, line_break, yellow_line, white_line } = require('../utils/log');
+const log = console.log;
 
 const package_json = require('../../package.json');
 
@@ -18,4 +19,4 @@ line_break();
 cyan_line(`Vagrant Name: ${process.env.VAGRANT_NAME}`);
 cyan_line(`IP: ${process.env.VAGRANT_IP_ADDRESS}`);
 
-exec('echo " "');
+line_break();

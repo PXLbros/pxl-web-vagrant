@@ -32,8 +32,6 @@ module.exports = {
         switch (driver) {
             case 'mysql':
                 return 'MySQL';
-            case 'mongodb':
-                return 'MongoDB';
         }
     },
 
@@ -48,11 +46,6 @@ module.exports = {
         choices.push({
             name: 'MySQL',
             value: 'mysql'
-        });
-
-        choices.push({
-            name: 'MongoDB (not installed)',
-            value: 'mongodb'
         });
 
         const prompt_result = await prompt([

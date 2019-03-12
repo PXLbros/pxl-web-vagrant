@@ -107,6 +107,12 @@ class InstallHelper
 
         return (exec_result.code === 0);
     }
+
+    delete(path, recursive = false) {
+        const exec_result = exec(`rm ${recursive ? '-rf' : ''} ${path}`);
+        
+        return (exec_result.code === 0);
+    }
 }
 
 module.exports = InstallHelper;

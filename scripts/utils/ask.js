@@ -120,7 +120,7 @@ module.exports = {
 
                 rootPath: root_dir,
                 message: message,
-                suggestOnly: false
+                suggestOnly: true
             }
         ]);
     },

@@ -16,7 +16,6 @@ Welcome to **PXL Web Vagrant** - a Ubuntu Vagrant environment for web developmen
     * Built-in helper commands for managing virtual host configurations, e.g. [`create_apache_site`](/web-servers/apache.html#create-apache-site) and [`edit_nginx_site`](/web-servers/nginx.html#edit-nginx-site)
 * Databases
     * MySQL
-    * MongoDB
     * Built-in helper commands for creating and deleting databases, .e.g [`create_database`](/databases/commands.html#create-database) and [`delete_database`](/databases/commands.html#delete-database)
 * Shell
     * LiquidPrompt

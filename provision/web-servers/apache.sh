@@ -13,6 +13,10 @@ if [ "$APACHE_ENABLED" == "true" ]; then
         exec_command "echo -e \"\nexport APACHE_PORT=$APACHE_PORT\" >> $HOME/.bashrc"
     fi
 
+    if ! grep -qF "export APACHE_PORT_OUT" $HOME/.bashrc; then
+        exec_command "echo -e \"export APACHE_PORT_OUT=$APACHE_PORT_OUT\" >> $HOME/.bashrc"
+    fi
+
     # Install Apache
     highlight_text "Install Apache..."
     exec_command "sudo apt-get -y install apache2"

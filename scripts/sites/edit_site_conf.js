@@ -1,14 +1,30 @@
 const commandLineArgs = require('command-line-args');
+const commandLineUsage = require('command-line-usage');
 const { spawn } = require('child_process');
 const { ask_site_configuration_file, ask_web_server, get_installed_web_servers, get_sites_config_dir } = require('../utils/web_server');
 
 const options = commandLineArgs([
-    { name: 'web-server', type: String }
+    { name: 'web-server', type: String, description: 'Web server.' }
 ]);
 
 async function main() {
-    // exec('figlet edit site conf');
-    // line_break();
+    if (options.help) {
+        const usage = commandLineUsage([
+            {
+                header: 'Options',
+                content: 'Edit site configuration.',
+                optionList: options_values.map(option => {
+                    return  {
+                        name: option.name,
+                        description: (option.description || null)
+                    };
+                })
+            }
+        ]);
+
+        log(usage);
+        return;
+    }
 
     const installed_web_servers = get_installed_web_servers();
     

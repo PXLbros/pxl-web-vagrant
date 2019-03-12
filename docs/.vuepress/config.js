@@ -57,8 +57,7 @@ module.exports = {
                 collapsable: false,
                 children: [
                     ['/databases/commands', 'Commands'],
-                    ['/databases/mysql', 'MySQL'],
-                    ['/databases/mongodb', 'MongoDB']
+                    ['/databases/mysql', 'MySQL']
                 ]
             },
             {

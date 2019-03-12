@@ -1,24 +1,44 @@
 const commandLineArgs = require('command-line-args');
+const commandLineUsage = require('command-line-usage');
 const { existsSync } = require('fs');
-const { exec } = require('shelljs');
+const { exec, rm } = require('shelljs');
 const { yellow } = require('chalk');
-const { ask_confirm, ask_input } = require('../utils/ask');
+const { ask_confirm } = require('../utils/ask');
 const { choose_files_from_dir } = require('../utils/choose');
 const { error_line, line_break } = require('../utils/log');
-const { load_pxl_config_from_dir, print_pxl_config, uninstall_from_pxl_config } = require('../utils/pxl');
 const { ask_web_server, get_web_server_title, get_installed_web_servers, get_sites_config_dir, remove_public_from_dir, reload_web_server } = require('../utils/web_server');
 const log = console.log;
 
 const options = commandLineArgs([
-    { name: 'web-server', type: String },
-    { name: 'hostname', type: String },
-    { name: 'site-dir', type: String },
-    { name: 'force', type: Boolean }
+    { name: 'web-server', type: String, description: 'Web server.' },
+    { name: 'hostname', type: String, description: 'Site hostname.' },
+    { name: 'site-dir', type: String, description: 'Site root directory.' },
+    { name: 'force', type: Boolean, description: `Don't prompt for questions.` },
+    { name: 'help', type: Boolean, description: 'Show this help.' }
 ]);
 
 async function main() {
     exec('figlet delete site');
-    line_break();
+    
+    if (options.help) {
+        const usage = commandLineUsage([
+            {
+                header: 'Options',
+                content: 'Create new site from existing Git repository, boilerplate or new.',
+                optionList: options_values.map(option => {
+                    return  {
+                        name: option.name,
+                        description: (option.description || null)
+                    };
+                })
+            }
+        ]);
+
+        log(usage);
+        return;
+    } else {
+        line_break();
+    }
 
     const force = (options['force'] || false);
 
@@ -68,6 +88,7 @@ async function main() {
 
         const document_root_result = exec(`awk '/DocumentRoot/ {print $2}' ${selected_site_configuration_file_path}`, { silent: true });
         document_root = (document_root_result.code === 0 && document_root_result.stdout ? document_root_result.stdout.trim() : null);
+        console.log('document_root', document_root);
         document_root_without_public = remove_public_from_dir(document_root);
 
         const get_server_name_result = exec(`awk '/ServerName/ {print $2}' ${selected_site_configuration_file_path}`, { silent: true });
@@ -82,44 +103,28 @@ async function main() {
         // exec(`sudo rm ${selected_nginx_site_configuration_enabled_file_path}`);
     }
 
-    const site_dir = (options['site-dir'] || await ask_input('Enter site directory:', document_root_without_public));
+    // const site_dir = (options['site-dir'] || await ask_input('Enter site directory:', document_root_without_public));
 
     // Check if PXL Web Vagrant configuration in site dir
-    try {
-        let pxl_config = load_pxl_config_from_dir(`${site_dir}/.pxl`);
-        
-        // let public_dir;
-        // let php_version;
-        // let database_driver;
-        // let database_name;
+    // try {
+    //     let pxl_config = load_pxl_config_from_dir(`${site_dir}/.pxl`);
 
-        if (pxl_config) {
-            // if (pxl_config.code && pxl_config.code.php) {
-            //     php_version = pxl_config.code.php;
-            // }
+    //     if (pxl_config) {
+    //         line_break();
 
-            // if (pxl_config.database) {
-            //     database_driver = pxl_config.database.driver;
-            //     database_name = pxl_config.database.name;
-            // }
+    //         log(yellow('Found PXL Web Vagrant configuration:'));
 
-            // public_dir = pxl_config['public-site-dir'];
+    //         print_pxl_config(pxl_config);
 
-            line_break();
+    //         line_break();
 
-            log(yellow('Found PXL Web Vagrant configuration:'));
-
-            print_pxl_config(pxl_config);
-
-            line_break();
-
-            if (force || (!force && await ask_confirm(`Do you want to uninstall?`))) {
-                uninstall_from_pxl_config(pxl_config); // TODO: Instead of doing this, just get variables instead and run commands below?
-            }
-        }
-    } catch (load_pxl_config_error) {
-        error_line(load_pxl_config_error);
-    }
+    //         if (force || (!force && await ask_confirm(`Do you want to uninstall?`))) {
+    //             uninstall_from_pxl_config(pxl_config); // TODO: Instead of doing this, just get variables instead and run commands below?
+    //         }
+    //     }
+    // } catch (load_pxl_config_error) {
+    //     error_line(load_pxl_config_error);
+    // }
 
     // Delete sites available configuration file
     exec(`sudo rm ${selected_site_configuration_file_path}`);
@@ -127,6 +132,11 @@ async function main() {
     // Delete /etc/hosts entry
     if (hostname !== null) {
         exec(`sudo hostile remove ${hostname}`, { silent: true });
+    }
+
+    // Delete site directory
+    if (options['delete-site-dir'] || (await ask_confirm(`Do you want to delete site directory? (${document_root_without_public})`))) {
+        rm(document_root_without_public);
     }
 
     // Restart

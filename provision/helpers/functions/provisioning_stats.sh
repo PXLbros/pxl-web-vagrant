@@ -65,21 +65,21 @@ print_provisioning_stats() {
     local execution_time_in_minutes=$(echo "$dt3 / 60" | bc)
     local execution_time_in_seconds=$(echo "$dt3 - 60 * $execution_time_in_minutes" | bc)
 
+    printf "Execution Time: \e[3m%0.2fs\e[0m\n" $execution_time_in_seconds
+    
     if (( num_errors > 0 )); then
         error_text "There $was_word $num_errors $error_word of $num_total total commands."
         error_text "See logs/ folder for more details."
     else
-        highlight_text "\nPXL Web Vagrant has been provisioned.\n"
+        highlight_text "\nPXL Web Vagrant has been provisioned!\n"
         
         cyan_text "Vagrant Name: ${VAGRANT_NAME}"
         cyan_text "IP: ${IP_ADDRESS}"
 
         line_break
         
-        echo "Start by running command \"vagrant ssh\"."
+        blue_text "Start by running command \"vagrant ssh\"."
     fi
-
-    printf "Execution Time: \e[3m%0.2fs\e[0m\n" $execution_time_in_seconds
 }
 
 clear_provisioning_stats() {

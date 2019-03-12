@@ -161,14 +161,6 @@ Enable MySQL.
 
 **Default:** `true`
 
-#### mongodb
-
-##### enabled
-
-Enable MongoDB.
-
-**Default:** `true`
-
 ### cache
 
 #### redis

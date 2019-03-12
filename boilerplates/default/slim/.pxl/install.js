@@ -9,8 +9,9 @@ class InstallScript extends InstallHelper {
         highlight_line('Download Slim Framework dependencies...');
         this.composer('global require slim/slim-skeleton');
 
-        // Install Slim Framework library
         line_break();
+
+        // Install Slim Framework library
         highlight_line('Install Slim Framework...');
 
         const tmp_lib_dir = '_slim-framework-lib';
@@ -22,9 +23,9 @@ class InstallScript extends InstallHelper {
             return;
         }
 
-        this.run(`rm -rf public/`);
+        this.delete('public/', true);
         this.move_files(`${this.site_dir}/${tmp_lib_dir}/`, `${this.site_dir}/`);
-        this.run(`rm -rf ${this.site_dir}/${tmp_lib_dir}/`);
+        this.delete(`${this.site_dir}/${tmp_lib_dir}/`, true);
 
         line_break();
     }

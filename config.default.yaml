@@ -12,13 +12,14 @@ vm:
         show-command-execution-time: true
         show-command-exit-code: false
         abort-on-error: false
-    home-dir: /home/vagrant
+    home-dir: /vagrant/projects
+    projects-dir: /vagrant/projects
 web-servers:
     apache:
         enabled: true
         port: 7001
     nginx:
-        enabled: true
+        enabled: false
         port: 7002
 code:
     php:
@@ -39,10 +40,10 @@ databases:
         enabled: true
         version: 5.7
     postgresql:
-        enabled: true
+        enabled: false
 cache:
     redis:
-        enabled: true
+        enabled: false
 shell:
     tmux:
         enabled: true

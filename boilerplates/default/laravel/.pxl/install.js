@@ -22,9 +22,9 @@ class InstallScript extends InstallHelper {
             return;
         }
 
-        this.run(`rm -rf public/`);
+        this.delete('public/', true);
         this.move_files(`${tmp_lib_dir}/`, `${this.site_dir}/`);
-        this.run(`rm -rf ${tmp_lib_dir}/`);
+        this.delete(`${tmp_lib_dir}/`, true);
 
         line_break();
         highlight_line('Update .env file...');
@@ -43,16 +43,6 @@ class InstallScript extends InstallHelper {
 
             this.php('artisan migrate:fresh --seed');
         }
-
-        // Install Yarn dependencies
-        // line_break();
-        // highlight_line('Install Yarn dependencies...');
-        // this.yarn();
-
-        // // Run Yarn dev
-        // line_break();
-        // highlight_line('Run Yarn...');
-        // this.yarn('dev');
     }
 };
 

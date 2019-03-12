@@ -151,6 +151,7 @@ module.exports = {
         let enable_result;
 
         if (web_server === 'apache') {
+            enable_result = exec(`sudo a2dissite ${config_filename}`, { silent: true });
             enable_result = exec(`sudo a2ensite ${config_filename}`, { silent: true });
         } else if (web_server === 'nginx') {
             enable_result = exec(`sudo ln -s ${get_config_file_path('nginx', config_filename)} /etc/nginx/sites-enabled/`, { silent: true });

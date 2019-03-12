@@ -48,8 +48,30 @@ highlight_text "Install required APT packages..."
 exec_command "apt-get -y install build-essential libevent-dev libncurses-dev zip unzip"
 
 # Add Vagrant info to .bashrc
-exec_command "echo \"export VAGRANT_NAME=${VAGRANT_NAME}\" >> /home/vagrant/.bashrc"
-exec_command "echo \"export VAGRANT_VERSION=${VERSION}\" >> /home/vagrant/.bashrc"
-exec_command "echo \"export VAGRANT_BUILD_DATE=\"${BUILD_DATE}\" >> /home/vagrant/.bashrc"
-exec_command "echo \"export VAGRANT_IP_ADDRESS=${IP_ADDRESS}\" >> /home/vagrant/.bashrc"
-exec_command "echo \"export VAGRANT_TIMEZONE=${TIMEZONE}\" >> /home/vagrant/.bashrc"
+BASHRC_PATH=/home/vagrant/.bashrc
+
+if ! grep -qF "PROJECTS_DIR" $BASHRCPATH; then
+    exec_command "echo \"
+export PROJECTS_DIR=${PROJECTS_DIR}\" >> $BASHRC_PATH"
+fi
+
+if ! grep -qF "VAGRANT_NAME" $BASHRCPATH; then
+    exec_command "echo \"
+export VAGRANT_NAME=${VAGRANT_NAME}\" >> $BASHRC_PATH"
+fi
+
+if ! grep -qF "VAGRANT_VERSION" $BASHRCPATH; then
+    exec_command "echo \"export VAGRANT_VERSION=${VERSION}\" >> /home/vagrant/.bashrc"
+fi
+
+if ! grep -qF "VAGRANT_BUILD_DATE" $BASHRCPATH; then
+    exec_command "echo -e \"export VAGRANT_BUILD_DATE=TODO_FIX_QUOTES_IN_INITIALIZE_SH\" >> /home/vagrant/.bashrc"
+fi
+
+if ! grep -qF "VAGRANT_IP_ADDRESS" $BASHRCPATH; then
+    exec_command "echo \"export VAGRANT_IP_ADDRESS=${IP_ADDRESS}\" >> /home/vagrant/.bashrc"
+fi
+
+if ! grep -qF "VAGRANT_TIMEZONE" $BASHRCPATH; then
+    exec_command "echo \"export VAGRANT_TIMEZONE=${TIMEZONE}\" >> /home/vagrant/.bashrc"
+fi

@@ -33,7 +33,7 @@ class InstallHelper
     }
 
     finish_install() {
-        highlight_line(`Finish ${this.pxl_config.name} installation...`);
+        highlight_line(`Finish installation...`);
         line_break();
 
         if (this.file_exists(this.pxl_config['custom-files-dir'])) {
@@ -43,7 +43,7 @@ class InstallHelper
         }
 
         // Summary
-        success_line(`${this.pxl_config.name} has been successfully installed!`);
+        success_line(`Installed!`);
         line_break();
 
         blue_line(`Site Directory: ${this.site_dir}`);

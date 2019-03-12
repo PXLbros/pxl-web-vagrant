@@ -34,7 +34,11 @@ module.exports = {
                 title: 'Sites',
                 collapsable: false,
                 children: [
-                    ['/sites/commands', 'Commands']
+                    ['/sites/commands', 'Commands'],
+                    ['/sites/create', 'Create'],
+                    ['/sites/edit_site_conf', 'Edit Site Configuration'],
+                    ['/sites/delete', 'Delete'],
+                    ['/sites/config', '.pxl']
                 ]
             },
             {

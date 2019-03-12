@@ -90,18 +90,18 @@ async function main() {
     const web_server_title = get_web_server_title(web_server);
 
     let hostname;
-    
+
     if (options['hostname']) {
         hostname = options['hostname']; 
     } else {
         if (options['hostname'] === '') {
             hostname = null;
         } else {
-            hostname = await ask_input('Enter hostname (e.g. domain.loc):');
+            hostname = await ask_input('Enter hostname (e.g. domain.loc or leave empty for none):');
         }
     }
     
-    let site_dir = (options['site-dir'] || await ask_input('Enter site directory:', `${hostname}`));
+    let site_dir = (options['site-dir'] || await ask_input('Enter site directory:', null, '', ` ${process.env.PROJECTS_DIR}/`));
     
     // Make sure site_dir doesn't have a trailing slash
     site_dir = remove_trailing_slash(site_dir);
@@ -113,6 +113,7 @@ async function main() {
 
     // let public_dir_input = (options['public-dir'] || null);
     let public_dir;
+    let public_dir_full;
     let php_version = (options['php'] || null);
     let database_driver;
     let database_name;
@@ -144,19 +145,21 @@ async function main() {
             boilerplate_pxl_config.hostname = hostname;
         }
 
-        if (boilerplate_pxl_config && boilerplate_pxl_config['public-dir']) {
-            public_dir = boilerplate_pxl_config['public-site-dir'];
-        } else if (options['public-dir']) {
-            public_dir = `${site_dir}/${options['public-dir']}`;
-        } else if (is_public_directory(site_dir) || options['public-dir'] === '') {
-            public_dir = site_dir;
-        } else {
-            let public_dir_input = await ask_input('What is the public site directory? (leave empty for same as site directory)'); // TODO: Can we wait with this question till after cloning git? Because it'll say in .pxl config file from clone if
-    
-            if (public_dir_input) {
-                public_dir_input = remove_trailing_slash(public_dir_input);
-    
-                public_dir = `${site_dir}/${public_dir_input}`;
+        if (boilerplate_pxl_config['hostname']) {
+            if (boilerplate_pxl_config && boilerplate_pxl_config['public-dir']) {
+                public_dir_full = boilerplate_pxl_config['public-site-dir'];
+            } else if (options['public-dir']) {
+                public_dir_full = `${site_dir}/${options['public-dir']}`;
+            } else if (is_public_directory(site_dir) || options['public-dir'] === '') {
+                public_dir_full = site_dir;
+            } else {
+                let public_dir_input = await ask_input('What is the public site directory? (leave empty for same as site directory)'); // TODO: Can we wait with this question till after cloning git? Because it'll say in .pxl config file from clone if
+        
+                if (public_dir_input) {
+                    public_dir_input = remove_trailing_slash(public_dir_input);
+        
+                    public_dir_full = `${site_dir}/${public_dir_input}`;
+                }
             }
         }
     }
@@ -235,6 +238,7 @@ async function main() {
                 }
 
                 public_dir = pxl_config['public-site-dir'];
+                public_dir_full = `${site_dir}/${public_dir}`;
 
                 line_break();
 
@@ -244,20 +248,20 @@ async function main() {
 
                 line_break();
             } else {
-                if (!public_dir) {
+                if (!public_dir_full) {
                     // Check or ask public dir
                     if (is_public_directory(site_dir)) {
-                        public_dir = site_dir;
+                        public_dir_full = site_dir;
                     } else {
                         if (options['public-dir'] === '') {
-                            public_dir = site_dir;
+                            public_dir_full = site_dir;
                         } else {
                             let public_dir_input = await ask_input('What is the public site directory? (leave empty for same as site directory)'); // TODO: Can we wait with this question till after cloning git? Because it'll say in .pxl config file from clone if
                     
                             if (public_dir_input) {
                                 public_dir_input = remove_trailing_slash(public_dir_input);
                     
-                                public_dir = `${site_dir}/${public_dir_input}`;
+                                public_dir_full = `${site_dir}/${public_dir_input}`;
                             }
                         }
                     }
@@ -268,16 +272,16 @@ async function main() {
         }
     } else {
         // If not from Git repo, create site & public directory
-        if (!existsSync(public_dir)) {
-            exec(`mkdir -p ${public_dir}`);
+        if (!existsSync(public_dir_full)) {
+            exec(`mkdir -p ${public_dir_full}`);
         }
     }
+    
+    let overwrite_web_server_conf_file = (options['overwrite'] || false);
 
     if (hostname) {
         configuration_file_name = get_config_filename(web_server, hostname);
         configuration_file_path = get_config_file_path(web_server, configuration_file_name);
-
-        let overwrite_web_server_conf_file = false;
 
         if (existsSync(configuration_file_path) && !overwrite) {
             if (await ask_confirm(`${web_server_title} virtual host configuration file "${configuration_file_name}" already exist, do you want to overwrite it?`, false)) {
@@ -287,6 +291,10 @@ async function main() {
 
         if (boilerplate_pxl_config && boilerplate_pxl_config.code && boilerplate_pxl_config.code.php) {
             php_version = boilerplate_pxl_config.code.php;
+        } else if (pxl_config) {
+            if (pxl_config['code'] && pxl_config['code']['php']) {
+                php_version = pxl_config['code']['php'];
+            }
         } else if (!php_version && !boilerplate_pxl_config) {
             php_version = (options['php'] || await ask_php_version());
 
@@ -393,7 +401,7 @@ async function main() {
 
     // Add default index file
     if (!boilerplate_pxl_config && !pxl_config && !git_repo) {
-        cp(`/vagrant/scripts/sites/default_site_index.${php_version ? 'php' : 'html'}`, `${public_dir}/index.php`);
+        cp(`/vagrant/scripts/sites/default_site_index.${php_version ? 'php' : 'html'}`, `${public_dir_full}/index.php`);
     }
 
     if (!pxl_config) {
@@ -424,7 +432,7 @@ async function main() {
     }
 
     log(`${cyan(bold('Site Directory:'))} ${site_dir}`);
-    log(`${cyan(bold('Public Directory:'))} ${public_dir}`);
+    log(`${cyan(bold('Public Directory:'))} ${public_dir_full}`);
 
     if (php_version) {
         log(`${cyan(bold('PHP:'))} ${php_version}`);
@@ -464,8 +472,8 @@ async function main() {
             command_str += ` \\\n\t--site-dir=${site_dir}`;
         }
 
-        if (public_dir) {
-            command_str += ` \\\n\t--public-dir=${public_dir}`;
+        if (public_dir_full) {
+            command_str += ` \\\n\t--public-dir=${public_dir_full}`;
         }
 
         if (git_repo) {

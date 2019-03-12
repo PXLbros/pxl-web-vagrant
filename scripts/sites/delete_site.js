@@ -136,7 +136,7 @@ async function main() {
 
     // Delete site directory
     if (options['delete-site-dir'] || (await ask_confirm(`Do you want to delete site directory? (${document_root_without_public})`))) {
-        rm(document_root_without_public);
+        rm('-rf', document_root_without_public);
     }
 
     // Restart

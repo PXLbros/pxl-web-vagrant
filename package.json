@@ -9,9 +9,6 @@
     "docs:build": "vuepress build docs",
     "docs:deploy": "./docs/deploy.sh"
   },
-  "devDependencies": {
-    "electron": "^4.0.4"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/PXLbros/pxl-web-vagrant.git"
@@ -19,5 +16,11 @@
   "bugs": {
     "url": "https://github.com/PXLbros/pxl-web-vagrant/issues"
   },
-  "homepage": "https://pxlbros.github.io/pxl-web-vagrant"
+  "homepage": "https://pxlbros.github.io/pxl-web-vagrant",
+  "devDependencies": {
+    "vuepress": "^0.14.10"
+  },
+  "resolutions": {
+    "webpack-dev-middleware": "3.6.0"
+  }
 }

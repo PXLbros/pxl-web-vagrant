@@ -1,9 +1,11 @@
 const commandLineArgs = require('command-line-args');
+const { exec } = require('shelljs');
 const { get_current_dir } = require('../utils/file');
 const { ask_input, ask_confirm } = require('../utils/ask');
 const { yellow } = require('chalk');
 const { run_install_script_from_pxl_config, load_pxl_config_from_dir, print_pxl_config } = require('../utils/pxl');
-const { error_line, line_break, title_line } = require('../utils/log');
+const { get_config_filename, enable_web_server_site, get_config_file_path, reload_web_server, save_virtual_host_config } = require('../utils/web_server');
+const { blue_line, error_line, line_break, title_line } = require('../utils/log');
 const log = console.log;
 
 const options = commandLineArgs([
@@ -47,20 +49,7 @@ async function main() {
             throw new Error('Could not find PXL Web Vagrant configuration file.');
         }
 
-        let hostname;
-
-        if (options['hostname']) {
-            hostname = options['hostname'];
-        } else if (pxl_config.hostname) {
-            hostname = pxl_config.hostname;
-        } else {
-            hostname = await ask_input('What is the hostname? (e.g. domain.loc)');
-        }
-
-        pxl_config.hostname = hostname;
-
-        const web_server = 'apache';
-        pxl_config['web-server'] = (web_server || 'nginx');
+        pxl_config['hostname'] = pxl_config.hostname;
 
         line_break();
 
@@ -86,10 +75,45 @@ async function main() {
             run_install_script_from_pxl_config(pxl_config);
         }
 
+        // Install apache if hostname is specified in pxl config
+        if (pxl_config['hostname']) {
+            const configuration_file_name = get_config_filename('apache', pxl_config['hostname']);
+            const configuration_file_path = get_config_file_path('apache', configuration_file_name);
+
+            save_virtual_host_config(configuration_file_path, 'apache', pxl_config['hostname'], pxl_config['public-dir'], pxl_config['php'] || null, true);
+
+            try {
+                // Enable web server site
+                enable_web_server_site('apache', configuration_file_name);
+
+                // Reload web server service
+                reload_web_server('apache');
+            } catch (web_server_site_error) {
+                error_line(web_server_site_error.message);
+            }
+
+            // Add /etc/hosts entry
+            const add_etc_hosts_entry_result = exec(`sudo hostile set 127.0.0.1 ${pxl_config['hostname']}`, {
+                silent: true
+            });
+
+            if (add_etc_hosts_entry_result.code === 0) {
+                blue_line(`Added ${pxl_config['hostname']} /etc/hosts entry.`);
+            } else {
+                console.log(add_etc_hosts_entry_result);
+
+                error_line(`Could not add ${pxl_config['hostname']} /etc/hosts entry. (${add_etc_hosts_entry_result.stderr})`);
+            }
+        }
+
         line_break();
 
         log(yellow('Site installed!'));
-        title_line('Hostname', hostname);
+
+        if (pxl_config['hostname']) {
+            title_line('Hostname', pxl_config['hostname']);
+        }
+
         line_break();
     } catch (load_pxl_config_error) {
         error_line(load_pxl_config_error.message);

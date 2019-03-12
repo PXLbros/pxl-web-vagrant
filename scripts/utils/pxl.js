@@ -137,11 +137,11 @@ function print_pxl_config(pxl_config) {
             throw new Error();
         }
 
-         if (typeof pxl_config.hostname === 'string') {
+        if (typeof pxl_config.hostname === 'string' && pxl_config.hostname) {
             title_line('Hostname', pxl_config.hostname);
         }
 
-        if (typeof pxl_config['web-server'] === 'string') {
+        if (typeof pxl_config['web-server'] === 'string' && pxl_config['web-server']) {
             title_line('Web Server', pxl_config['web-server']);
         }
 
@@ -154,7 +154,7 @@ function print_pxl_config(pxl_config) {
             title_line('Database Name', pxl_config['database'].name);
         }
 
-        if (pxl_config['install-script'] === true) {
+        if (pxl_config['install-script']) {
             title_line('Install Script', pxl_config['install-script']);
         }
     } catch (e) {
@@ -192,13 +192,15 @@ function create_pxl_config_in_dir(dir, public_dir, php_version = null, database_
         throw new Error(`PXL Web Vagrant configuration file ${config_file_path} already exist.`);
     }
 
-    let config_contents = `site-dir: ${dir}`;
+    // let config_contents = `site-dir: ${dir}`;
 
-    if (boilerplate) {
-        config_contents += `\nboilerplate: ${boilerplate}`;
-    }
+    // if (boilerplate) {
+    //     config_contents += `\nboilerplate: ${boilerplate}`;
+    // }
+    
+    config_contents = '';
 
-    config_contents += `\npublic-dir: ${public_dir}`;
+    config_contents += `public-dir: ${public_dir}`;
 
     if (php_version) {
         config_contents += `\ncode:\n    php: ${php_version}`;

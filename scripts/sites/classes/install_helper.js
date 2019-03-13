@@ -70,9 +70,11 @@ class InstallHelper
     }
 
     sync_paths(from_dir, to_dir) {
-        const rsync_result = exec(`rsync -a ${from_dir}/ ${to_dir}`);
+        console.log('sync_paths disabled');
+        return true;
+        // const rsync_result = exec(`rsync -a ${from_dir}/ ${to_dir}`);
 
-        return (rsync_result.code === 0);
+        // return (rsync_result.code === 0);
     }
 
     php(command) {

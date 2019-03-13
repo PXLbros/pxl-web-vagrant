@@ -36,6 +36,6 @@ exec_command "nvm use --lts"
 exec_command "nvm alias default lts/*"
 
 # Change NVM home directory ownership
-highlight_text "Give Vagrant user NVM home directory permission..."
+highlight_text "Give Vagrant user NVM home directory permissions..."
 
 exec_command "sudo chown -R vagrant:vagrant $HOME/.nvm"

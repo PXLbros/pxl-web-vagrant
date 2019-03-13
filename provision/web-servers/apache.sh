@@ -43,7 +43,7 @@ if [ "$APACHE_ENABLED" == "true" ]; then
 
     # Install FastCGI module
     highlight_text "Install FastCGI module..."
-    exec_command sudo apt-get -y install libapache2-mod-fastcgi
+    exec_command "sudo apt-get -y install libapache2-mod-fastcgi libapache2-mod-fcgid" # TODO: libapache2-mod-fastcgi might not be needed in Ubuntu 18.04
 
     # Enable FastCGI module
     highlight_text "Enable FastCGI module..."

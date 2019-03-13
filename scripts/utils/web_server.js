@@ -99,7 +99,14 @@ module.exports = {
     ErrorLog /var/log/apache2/${hostname}-error.log
     CustomLog /var/log/apache2/${hostname}-access.log combined`;
 
-            contents += (php_version !== null ? `\n\n    Include /etc/apache2/conf-available/php${php_version}-fpm.conf\n` : `\n`);
+            // contents += (php_version !== null ? `\n\n    Include /etc/apache2/conf-available/php${php_version}-fpm.conf\n` : `\n`);
+
+            if (php_version !== null) {
+                contents += `\n\n    <FilesMatch \.php$>
+        SetHandler "proxy:unix:/var/run/php/php${php_version}-fpm.sock|fcgi://localhost/"
+    </FilesMatch>`;
+            }
+
             contents += `</VirtualHost>`;
 
             contents += '\n\n# vim: syntax=apache';

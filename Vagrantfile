@@ -62,6 +62,8 @@ GLOBAL_VARIABLES = {
     'MYSQL_ENABLED': vagrant_config['databases']['mysql']['enabled'],
     'MYSQL_VERSION': vagrant_config['databases']['mysql']['version'],
 
+    'PHPMYADMIN': vagrant_config['databases']['mysql']['phpmyadmin'],
+
     'POSTGREQSQL_ENABLED': vagrant_config['databases']['postgresql']['enabled'],
 
     'TMUX_VERSION': (vagrant_config['shell']['tmux']['version'] || '2.8'),

@@ -15,6 +15,7 @@ blue_line(`Documentation: https://pxlbros.github.io/pxl-web-vagrant`);
 
 line_break();
 
+cyan_line(`Configuration:`);
 cyan_line(`Vagrant Name: ${process.env.VAGRANT_NAME}`);
 cyan_line(`IP: ${process.env.VAGRANT_IP_ADDRESS}`);
 

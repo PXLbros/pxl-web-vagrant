@@ -21,13 +21,13 @@ if [ -x "$(command -v tmux)" ]; then
         exit
     fi
 
-    highlight_text "tmux v$CURRENT_TMUX_VERSION is outdated, uninstall..."
+    highlight_text "tmux v$CURRENT_TMUX_VERSION is outdated, install v$TMUX_VERSION..."
     exec_command "sudo apt-get -y remove tmux"
+else
+    highlight_text "Download and install tmux v$TMUX_VERSION..."
 fi
 
 # Download/install tmux
-highlight_text "Download and install tmux v$TMUX_VERSION..."
-
 exec_command "mkdir $HOME/tmux-src"
 exec_command "wget -qO- https://github.com/tmux/tmux/releases/download/${TMUX_VERSION}/tmux-${TMUX_VERSION}.tar.gz | tar xvz -C $HOME/tmux-src && cd $HOME/tmux-src/tmux*"
 exec_command "./configure"

@@ -93,3 +93,12 @@ if [ -x "$(command -v mysql)" ]; then
         exec_command "apt-get install -y php$PHP_VERSION-mysql"
     done
 fi
+
+# phpMyAdmin
+if [ ! -z "$PHPMYADMIN" ]; then
+    echo "PHP MY ADMIN YES!"
+    ./mysql/phpmyadmin.sh
+else
+    echo "PHP MY ADMIN NO!"
+    ./mysql/phpmyadmin.sh
+fi

@@ -22,6 +22,7 @@ title "PHP"
 # Install PHP dependencies
 highlight_text "Install PHP dependencies..."
 exec_command "apt-get -y install software-properties-common"
+exec_command "apt-get -y install python-software-properties"
 
 # Add PHP 7 PPA
 add_ppa ondrej/apache2 ondrej/php
@@ -59,7 +60,7 @@ for PHP_VERSION in "${PHP_VERSIONS[@]}"; do
                 # if ! grep -q "extension=mcrypt.so" $PHP_INI_FILE_PATH; then
                 #     exec_command "echo -e \"\nextension=mcrypt.so\" >> $PHP_INI_FILE_PATH"
                 # fi
-                echo "Skip"
+                echo "TODO: PHP ${PHP_VERSION} mcrypt"
             else
                 exec_command "apt-get -y install php${PHP_VERSION}-mcrypt"
             fi

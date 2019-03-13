@@ -45,11 +45,11 @@ then
     BASH_PROFILE_CONTENTS="${BASH_PROFILE_CONTENTS}
 
 # Apache
-alias start_apache='sudo service apache2 start'
-alias restart_apache='sudo service apache2 restart'
-alias stop_apache='sudo service apache2 stop'
-alias reload_apache='sudo service apache2 reload'
-alias apache_status='sudo service apache2 status'
+alias start_apache='sudo systemctl start apache2'
+alias restart_apache='sudo systemctl restart apache2'
+alias stop_apache='sudo systemctl stop apache2'
+alias reload_apache='sudo systemctl reload apache2'
+alias apache_status='sudo systemctl status apache2'
 alias edit_apache_conf='sudo vim /etc/apache2/apache2.conf'
 alias create_apache_site='create_site --web-server=apache'
 alias edit_apache_site_conf='edit_site_conf --web-server=apache'

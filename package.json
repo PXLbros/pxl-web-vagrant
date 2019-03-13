@@ -1,6 +1,6 @@
 {
   "name": "pxl-web-vagrant",
-  "description": "A Ubuntu Vagrant environment for web development.",
+  "description": "A Vagrant environment for Web development.",
   "version": "1.0.0",
   "license": "ISC",
   "author": "Dennis Nygren",

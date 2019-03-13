@@ -1,10 +1,11 @@
 # PXL Web Vagrant
 
-Welcome to **PXL Web Vagrant** - a Ubuntu Vagrant environment for web development.
+Welcome to **PXL Web Vagrant** - a Vagrant environment for Web development.
 
 * Open source :100:
     * Help make **PXL Web Vagrant** better. ([GitHub](https://github.com/PXLbros/pxl-web-vagrant/CONTRIBUTE.md))
 * Easy powerful configuration through [`config.yaml`](/configuration.html#config-yaml)
+* Ubuntu 18.04
 * PHP
     * Version 5.6 & 7.0-7.3
     * Support for running multiple versions simultaneously

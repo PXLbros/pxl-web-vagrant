@@ -1,5 +1,5 @@
 # PXL Web Vagrant
 
-A Ubuntu Vagrant environment for web development.
+A Vagrant environment for Web development.
 
 * [Documentation](https://pxlbros.github.io/pxl-web-vagrant/)

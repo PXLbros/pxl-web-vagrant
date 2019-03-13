@@ -15,13 +15,27 @@ module.exports = {
     create(driver, name) {
         if (driver === 'mysql') {
             if (database_exists(driver, name)) {
-                throw new Error(`Database "${name}" already exist.`);
+                throw new Error(`MySQL database "${name}" already exist.`);
             }
 
             const create_database_result = exec(`mysql -u${process.env.MYSQL_USER_NAME} -p${process.env.MYSQL_USER_PASSWORD} -e "CREATE DATABASE ${name};"`, { silent: true });
             
             if (create_database_result.code !== 0) {
                 throw new Error(create_database_result.stderr);
+            }
+        }
+    },
+
+    delete(driver, name) {
+        if (driver === 'mysql') {
+            if (!database_exists(driver, name)) {
+                throw new Error(`MySQL database "${name}" doesn't exist.`);
+            }
+
+            const delete_database_result = exec(`mysql -u${process.env.MYSQL_USER_NAME} -p${process.env.MYSQL_USER_PASSWORD} -e "DROP DATABASE ${name};"`, { silent: true });
+            
+            if (delete_database_result.code !== 0) {
+                throw new Error(delete_database_result.stderr);
             }
         }
     },

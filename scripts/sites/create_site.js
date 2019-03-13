@@ -9,7 +9,7 @@ const { ask_create_database, ask_confirm, ask_input, ask_php_version } = require
 const { is_public_directory } = require('../utils/web_server');
 const { remove_trailing_slash } = require('../utils/str');
 const boilerplateUtil = require('../utils/boilerplate');
-const { ask_create_database_driver, create: create_database, exists: database_exists, get_driver_title: get_database_driver_title } = require('../utils/database');
+const { ask_create_database_driver, create: create_database, delete: delete_database, exists: database_exists, get_driver_title: get_database_driver_title } = require('../utils/database');
 const { ask_web_server, enable_web_server_site, get_config_filename, get_config_file_path, get_installed_web_servers, get_web_server_title, reload_web_server, save_virtual_host_config } = require('../utils/web_server.js');
 const { blue_line, cyan_line, error_line, line_break, success_line } = require('../utils/log');
 const log = console.log;
@@ -119,11 +119,11 @@ async function main() {
 
         if (boilerplate && boilerplate.pxl_config) {
             boilerplate.pxl_config['site-dir'] = site_dir;
-
+console.log('HELLO!');
             boilerplate_pxl_config = boilerplate.pxl_config;
             boilerplate_pxl_config.hostname = hostname;
         }
-
+console.log('boilerplate_pxl_config', boilerplate_pxl_config);
         if (boilerplate_pxl_config['hostname']) {
             if (boilerplate_pxl_config && boilerplate_pxl_config['public-dir']) {
                 public_dir_full = boilerplate_pxl_config['public-site-dir'];
@@ -351,11 +351,23 @@ async function main() {
     }
 
     if (database_driver && database_name) {
+        let do_create_database = false;
+
         if (database_exists(database_driver, database_name)) {
-            line_break();
-            error_line(`${get_database_driver_title(database_driver)} database "${database_name}" already exists.`);
-            line_break();
+            if (force) {
+                delete_database(database_driver, database_name);
+                
+                do_create_database = true;
+            } else {
+                line_break();
+                error_line(`${get_database_driver_title(database_driver)} database "${database_name}" already exists.`);
+                line_break();
+            }
         } else {
+            do_create_database = true;
+        }
+
+        if (do_create_database) {
             try {
                 create_database(database_driver, database_name);
             } catch (create_database_error) {

@@ -36,3 +36,6 @@ clear_provisioning_stats
 
 # Remove current command temporary file
 rm $PROVISIONING_COMMAND_FILE_PATH
+
+line_break
+line_break

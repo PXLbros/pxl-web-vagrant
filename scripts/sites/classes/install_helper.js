@@ -109,43 +109,40 @@ class InstallHelper
     }
 
     edit_env(file, keys, type = 'dotenv') {
-        if (type === 'dotenv') {
-            let num_total = 0;
-            let num_successful = 0;
+        let num_total = 0;
+        let num_successful = 0;
 
-            for (let key in keys) {
-                const value = keys[key];
-                
-                const sed_result = exec(`sed -i s~${key}=.*$~${key}=${value}~g ${file}`);
-                
-                if (sed_result.code === 0) {
-                    num_successful++;
-                }
+        for (let key in keys) {
+            const value = keys[key];
+            
+            let sed_command;
 
-                num_total++;
+            if (type === 'dotenv') {
+                sed_command = `sed -i s~${key}=.*$~${key}=${value}~g ${file}`;
+            } else if (type === 'wordpress') {
+                sed_command = `sed -i s~${key}~${value}~g ${file}`;
+            } else {
+                warn(`end_env type "${type}" not implemented.`);
 
-                // console.log('key', key);
-                // console.log('value', value);
-            }
-
-            const all_successful = (num_successful === num_total);
-
-            if (!all_successful) {
                 return false;
             }
+            
+            const sed_result = exec(sed_command);
+            
+            if (sed_result.code === 0) {
+                num_successful++;
+            }
 
-            return true;
-        } else {
-            warn(`end_env type "${type}" not implemented.`);
+            num_total++;
+        }
 
+        const all_successful = (num_successful === num_total);
+
+        if (!all_successful) {
             return false;
         }
-    }
 
-    replace_env_file(file, from, to) {
-        const sed_result = exec(`sed -i s~${from}~${to}~g ${file}`);
-
-        return (sed_result.code === 0);
+        return true;
     }
 
     yarn(command = null) {

@@ -17,12 +17,19 @@ const options_values = [
     { name: 'help', type: Boolean, description: 'Show this help.' }
 ];
 
-const options = commandLineArgs(options_values.map(option => {
-    return {
-        name: option.name,
-        type: option.type
-    };
-}));
+let options;
+
+try {
+    options = commandLineArgs(options_values.map(option => {
+        return {
+            name: option.name,
+            type: option.type
+        };
+    }));
+} catch (e) {
+    console.log(e.message);
+    return;
+}
 
 async function main() {
     exec('figlet delete site');

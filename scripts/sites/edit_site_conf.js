@@ -8,12 +8,19 @@ const options_values = [
     { name: 'web-server', type: String, description: 'Web server.' }
 ];
 
-const options = commandLineArgs(options_values.map(option => {
-    return {
-        name: option.name,
-        type: option.type
-    };
-}));
+let options;
+
+try {
+    options = commandLineArgs(options_values.map(option => {
+        return {
+            name: option.name,
+            type: option.type
+        };
+    }));
+} catch (e) {
+    console.log(e.message);
+    return;
+}
 
 async function main() {
     if (options.help) {

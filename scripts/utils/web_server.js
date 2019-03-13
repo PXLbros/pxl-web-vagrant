@@ -244,7 +244,16 @@ module.exports = {
         return await choose_files_from_dir(get_sites_config_dir(web_server), `Which ${get_web_server_title(web_server)} virtual host configuration file do you want to edit?`);
     },
 
-    ask_web_server(question) {
-        return choose(question, get_installed_web_servers());
+    ask_web_server(question, none_option = false, none_option_text = 'None') {
+        const web_server_options = get_installed_web_servers();
+        
+        if (none_option) {
+            web_server_options.unshift({
+                value: null,
+                name: none_option_text
+            });
+        }
+
+        return choose(question, web_server_options);
     }
 };

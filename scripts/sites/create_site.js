@@ -10,7 +10,7 @@ const { is_public_directory } = require('../utils/web_server');
 const { remove_trailing_slash } = require('../utils/str');
 const boilerplateUtil = require('../utils/boilerplate');
 const { ask_create_database_driver, create: create_database, delete: delete_database, exists: database_exists, get_driver_title: get_database_driver_title } = require('../utils/database');
-const { ask_web_server, enable_web_server_site, get_config_filename, get_config_file_path, get_installed_web_servers, get_web_server_title, reload_web_server, save_virtual_host_config } = require('../utils/web_server.js');
+const { ask_web_server, enable_web_server_site, get_config_filename, get_config_file_path, get_web_server_title, reload_web_server, save_virtual_host_config } = require('../utils/web_server.js');
 const { cyan_line, error_line, line_break, success_line } = require('../utils/log');
 const log = console.log;
 
@@ -33,12 +33,19 @@ const options_values = [
     { name: 'help', type: Boolean, description: 'Show this help.' }
 ];
 
-const options = commandLineArgs(options_values.map(option => {
-    return {
-        name: option.name,
-        type: option.type
-    };
-}));
+let options;
+
+try {
+    options = commandLineArgs(options_values.map(option => {
+        return {
+            name: option.name,
+            type: option.type
+        };
+    }));
+} catch (e) {
+    console.log(e.message);
+    return;
+}
 
 async function main() {
     exec('figlet create site');
@@ -90,24 +97,8 @@ async function main() {
     let git_repo = (options['git-repo'] || null);
     let git_branch = (options['git-branch'] || null);
     
-    if (options['git-repo'] === undefined && !boilerplate) {
-        if (await ask_confirm('Create from existing Git repository?')) {
-            git_repo = (await ask_input('Enter Git SSH repository (e.g. git@github.com:Organization/project-name.git):'));
-        }
-    }
-
     // If not Git repository, check for boilerplate
     if (!git_repo) {
-        if (options['hostname']) {
-            hostname = options['hostname']; 
-        } else {
-            if (options['hostname'] === '') {
-                hostname = null;
-            } else {
-                hostname = await ask_input('Enter hostname (e.g. domain.loc or leave empty for none):');
-            }
-        }
-
         if (boilerplate_input) {
             let boilerplate_type_input = 'default';
             let boilerplate_name_input = boilerplate_input;
@@ -140,6 +131,12 @@ async function main() {
                     public_dir_full = `${site_dir}/${public_dir_input}`;
                 }
             }
+        }
+    }
+
+    if (options['git-repo'] === undefined && !boilerplate) {
+        if (await ask_confirm('Create from existing Git repository?')) {
+            git_repo = (await ask_input('Enter Git SSH repository (e.g. git@github.com:Organization/project-name.git):'));
         }
     }
 
@@ -267,45 +264,7 @@ async function main() {
     }
 
     let web_server = options['web-server'];
-    
-    if (!web_server) {
-        const installed_web_servers = get_installed_web_servers();
-
-        web_server = (!hostname || web_server === '' ? null : (installed_web_servers.length === 1 ? installed_web_servers[0].value : await ask_web_server('What web server should be used?')));
-    }
-
-    const web_server_title = (web_server ? get_web_server_title(web_server) : null);
-    
     let overwrite_web_server_conf_file = (options['overwrite'] || false);
-
-    if (hostname) {
-        configuration_file_name = get_config_filename(web_server, hostname);
-        configuration_file_path = get_config_file_path(web_server, configuration_file_name);
-
-        if (existsSync(configuration_file_path) && !overwrite) {
-            if (await ask_confirm(`${web_server_title} virtual host configuration file "${configuration_file_name}" already exist, do you want to overwrite it?`, false)) {
-                overwrite_web_server_conf_file = true;
-            }
-        }
-
-        if (boilerplate_pxl_config && boilerplate_pxl_config.code && boilerplate_pxl_config.code.php) {
-            php_version = boilerplate_pxl_config.code.php;
-        } else if (pxl_config) {
-            if (pxl_config['code'] && pxl_config['code']['php']) {
-                php_version = pxl_config['code']['php'];
-            }
-        } else if (!php_version && !boilerplate_pxl_config) {
-            php_version = (options['php'] || await ask_php_version());
-
-            if (boilerplate_pxl_config && boilerplate_pxl_config.code) {
-                boilerplate_pxl_config.code.php = php_version;
-            }
-
-            if (pxl_config && pxl_config.code) {
-                pxl_config.code.php = php_version;
-            }
-        }
-    }
 
     if (boilerplate_pxl_config && boilerplate_pxl_config.database && boilerplate_pxl_config.database.driver) {
         database_driver = boilerplate_pxl_config.database.driver;
@@ -335,6 +294,53 @@ async function main() {
         }
     }
 
+    // Hostname
+    if (options['hostname']) {
+        hostname = options['hostname']; 
+    } else {
+        if (options['hostname'] === '') {
+            hostname = null;
+        } else {
+            if (!web_server && web_server !== '') {
+                web_server = await ask_web_server('Choose Web Server', true);
+            }
+
+            if (web_server) {
+                hostname = await ask_input('Enter hostname (e.g. domain.loc):');
+            }
+        }
+    }
+
+    if (hostname) {
+        configuration_file_name = get_config_filename(web_server, hostname);
+        configuration_file_path = get_config_file_path(web_server, configuration_file_name);
+
+        if (existsSync(configuration_file_path) && !overwrite) {
+            if (await ask_confirm(`${get_web_server_title(web_server)} virtual host configuration file "${configuration_file_name}" already exist, do you want to overwrite it?`, false)) {
+                overwrite_web_server_conf_file = true;
+            }
+        }
+
+        if (boilerplate_pxl_config && boilerplate_pxl_config.code && boilerplate_pxl_config.code.php) {
+            php_version = boilerplate_pxl_config.code.php;
+        } else if (pxl_config) {
+            if (pxl_config['code'] && pxl_config['code']['php']) {
+                php_version = pxl_config['code']['php'];
+            }
+        } else if (!php_version && !boilerplate_pxl_config) {
+            php_version = (options['php'] || await ask_php_version());
+
+            if (boilerplate_pxl_config && boilerplate_pxl_config.code) {
+                boilerplate_pxl_config.code.php = php_version;
+            }
+
+            if (pxl_config && pxl_config.code) {
+                pxl_config.code.php = php_version;
+            }
+        }
+    }
+
+    // Database
     if (!pxl_config && (options['db-driver'] !== '' && options['db-name'] !== '') && (!database_driver || !database_name)) {
         if (!database_driver) {
             database_driver = await ask_create_database_driver();
@@ -352,7 +358,9 @@ async function main() {
         let do_create_database = false;
 
         if (database_exists(database_driver, database_name)) {
+            console.log('DATABASE EXIST!');
             if (overwrite) {
+                console.log('DELETE!');
                 delete_database(database_driver, database_name);
                 
                 do_create_database = true;
@@ -378,6 +386,7 @@ async function main() {
 
     // Save virtual host configuration file
     if (hostname) {
+        console.log('configuration_file_path', configuration_file_path);
         save_virtual_host_config(configuration_file_path, web_server, hostname, public_dir, php_version, overwrite_web_server_conf_file);
 
         try {
@@ -439,7 +448,7 @@ async function main() {
     line_break();
 
     if (web_server) {
-        log(`${cyan(bold('Web Server:'))} ${web_server_title}`);
+        log(`${cyan(bold('Web Server:'))} ${get_web_server_title(web_server)}`);
     }
 
     if (hostname) {

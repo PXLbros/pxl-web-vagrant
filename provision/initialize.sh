@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# export DEBIAN_FRONTEND=noninteractive
-
 export NUM_SUCCESSFUL=0
 export NUM_ERRORS=0
 
@@ -65,7 +63,7 @@ if ! grep -qF "VAGRANT_VERSION" $BASHRCPATH; then
 fi
 
 if ! grep -qF "VAGRANT_BUILD_DATE" $BASHRCPATH; then
-    exec_command "echo -e \"export VAGRANT_BUILD_DATE=TODO_FIX_QUOTES_IN_INITIALIZE_SH\" >> /home/vagrant/.bashrc"
+    exec_command "echo \"export VAGRANT_BUILD_DATE=TODO_FIX_QUOTES_IN_INITIALIZE_SH\" >> /home/vagrant/.bashrc"
 fi
 
 if ! grep -qF "VAGRANT_IP_ADDRESS" $BASHRCPATH; then

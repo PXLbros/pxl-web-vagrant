@@ -65,6 +65,15 @@ module.exports = {
                 ]
             },
             {
+                title: 'Boilerplates',
+                collapsable: false,
+                children: [
+                    ['/boilerplates/intro', 'Introduction'],
+                    ['/boilerplates/default', 'Default Boilerplates'],
+                    ['/boilerplates/custom', 'Custom Boilerplates']
+                ]
+            },
+            {
                 title: 'Shell',
                 collapsable: false,
                 children: [

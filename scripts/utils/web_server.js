@@ -3,7 +3,7 @@ const { exec } = require('shelljs');
 const { choose } = require('./choose');
 const { getFilenameFromPath, remove_trailing_slash } = require('./str');
 const { choose_files_from_dir } = require('./choose');
-const { blue_line, success_line } = require('./log');
+const { blue_line, cyan_line, success_line } = require('./log');
 
 function get_public_directories() {
     return ['public', 'public_html', 'html', 'dist'];
@@ -214,7 +214,7 @@ module.exports = {
         }
 
         if (!silent) {
-            blue_line(`Reloaded ${get_web_server_title(web_server)}.`);
+            cyan_line(`Reloaded ${get_web_server_title(web_server)}.`);
         }
 
         return true;

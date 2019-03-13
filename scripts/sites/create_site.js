@@ -11,7 +11,7 @@ const { remove_trailing_slash } = require('../utils/str');
 const boilerplateUtil = require('../utils/boilerplate');
 const { ask_create_database_driver, create: create_database, delete: delete_database, exists: database_exists, get_driver_title: get_database_driver_title } = require('../utils/database');
 const { ask_web_server, enable_web_server_site, get_config_filename, get_config_file_path, get_web_server_title, reload_web_server, save_virtual_host_config } = require('../utils/web_server.js');
-const { cyan_line, error_line, line_break, success_line } = require('../utils/log');
+const { cyan_line, error_line, line_break, success_line, yellow_line } = require('../utils/log');
 const log = console.log;
 
 const options_values = [
@@ -297,18 +297,16 @@ async function main() {
     // Hostname
     if (options['hostname']) {
         hostname = options['hostname']; 
-    } else {
-        if (options['hostname'] === '') {
-            hostname = null;
-        } else {
-            if (!web_server && web_server !== '') {
-                web_server = await ask_web_server('Choose Web Server', true);
-            }
+    } else if (options['hostname'] === '') {
+        hostname = null;
+    }
 
-            if (web_server) {
-                hostname = await ask_input('Enter hostname (e.g. domain.loc):');
-            }
-        }
+    if (!web_server && web_server !== '') {
+        web_server = await ask_web_server('Choose Web Server', true);
+    }
+
+    if (web_server && !hostname) {
+        hostname = await ask_input('Enter hostname (e.g. domain.loc):');
     }
 
     if (hostname) {
@@ -358,9 +356,7 @@ async function main() {
         let do_create_database = false;
 
         if (database_exists(database_driver, database_name)) {
-            console.log('DATABASE EXIST!');
-            if (overwrite) {
-                console.log('DELETE!');
+            if (overwrite || (force || await ask_confirm(`${get_database_driver_title(database_driver)} database "${database_name}" already exist, do you want to replace it?`))) {
                 delete_database(database_driver, database_name);
                 
                 do_create_database = true;
@@ -386,7 +382,6 @@ async function main() {
 
     // Save virtual host configuration file
     if (hostname) {
-        console.log('configuration_file_path', configuration_file_path);
         save_virtual_host_config(configuration_file_path, web_server, hostname, public_dir, php_version, overwrite_web_server_conf_file);
 
         try {
@@ -482,6 +477,9 @@ async function main() {
 
         line_break();
         cyan_line(url);
+
+        line_break();
+        yellow_line(`*NOTE* Copy "127.0.0.1 ${hostname}" to local/host /etc/hosts file.`);
 
         if (!options['show-command']) {
             line_break();

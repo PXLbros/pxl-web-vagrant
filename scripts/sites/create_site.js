@@ -11,7 +11,7 @@ const { remove_trailing_slash } = require('../utils/str');
 const boilerplateUtil = require('../utils/boilerplate');
 const { ask_create_database_driver, create: create_database, delete: delete_database, exists: database_exists, get_driver_title: get_database_driver_title } = require('../utils/database');
 const { ask_web_server, enable_web_server_site, get_config_filename, get_config_file_path, get_installed_web_servers, get_web_server_title, reload_web_server, save_virtual_host_config } = require('../utils/web_server.js');
-const { blue_line, cyan_line, error_line, line_break, success_line } = require('../utils/log');
+const { cyan_line, error_line, line_break, success_line } = require('../utils/log');
 const log = console.log;
 
 const options_values = [
@@ -77,7 +77,7 @@ async function main() {
     site_dir = `${process.env.PROJECTS_DIR}/${site_dir}`;
 
     let boilerplate;
-    let boilerplate_pxl_config;
+    let boilerplate_pxl_config = {};
     let pxl_config;
 
     // let public_dir_input = (options['public-dir'] || null);
@@ -119,11 +119,11 @@ async function main() {
 
         if (boilerplate && boilerplate.pxl_config) {
             boilerplate.pxl_config['site-dir'] = site_dir;
-console.log('HELLO!');
+
             boilerplate_pxl_config = boilerplate.pxl_config;
             boilerplate_pxl_config.hostname = hostname;
         }
-console.log('boilerplate_pxl_config', boilerplate_pxl_config);
+
         if (boilerplate_pxl_config['hostname']) {
             if (boilerplate_pxl_config && boilerplate_pxl_config['public-dir']) {
                 public_dir_full = boilerplate_pxl_config['public-site-dir'];
@@ -165,14 +165,12 @@ console.log('boilerplate_pxl_config', boilerplate_pxl_config);
                 exec(`sudo rm -rf ${site_dir}`);
 
                 cyan_line(`Removed existing directory ${site_dir}.`);
-                line_break();
             }
         } else {
             // No backup, delete existing site directory
             exec(`sudo rm -rf ${site_dir}`);
 
             cyan_line(`Removed existing directory ${site_dir}.`);
-            line_break();
         }
     }
 
@@ -354,7 +352,7 @@ console.log('boilerplate_pxl_config', boilerplate_pxl_config);
         let do_create_database = false;
 
         if (database_exists(database_driver, database_name)) {
-            if (force) {
+            if (overwrite) {
                 delete_database(database_driver, database_name);
                 
                 do_create_database = true;
@@ -373,6 +371,8 @@ console.log('boilerplate_pxl_config', boilerplate_pxl_config);
             } catch (create_database_error) {
                 error_line(create_database_error.message);
             }
+
+            line_break();
         }
     }   
 
@@ -394,7 +394,7 @@ console.log('boilerplate_pxl_config', boilerplate_pxl_config);
         const add_etc_hosts_entry_result = exec(`sudo hostile set 127.0.0.1 ${hostname}`, { silent: true });
 
         if (add_etc_hosts_entry_result.code === 0) {
-            blue_line(`Added ${hostname} /etc/hosts entry.`);
+            success_line(`Added ${hostname} /etc/hosts entry.`);
         } else {
             console.log(add_etc_hosts_entry_result);
 
@@ -424,7 +424,7 @@ console.log('boilerplate_pxl_config', boilerplate_pxl_config);
             try {
                 const pxl_config_dir = create_pxl_config_in_dir(site_dir, public_dir, php_version, database_driver, database_name, boilerplate ? boilerplate.pxl_config.name : null);
 
-                cyan_line(`PXL Web Vagrant configuration ${pxl_config_dir} created.`);
+                success_line(`PXL Web Vagrant configuration ${pxl_config_dir} created.`);
             } catch (create_pxl_config_error) {
                 error_line(create_pxl_config_error.message);
             }
@@ -461,7 +461,7 @@ console.log('boilerplate_pxl_config', boilerplate_pxl_config);
     }
 
     if (database_driver) {
-        log(`${cyan(bold('Database Driver:'))} ${database_driver}`);
+        log(`${cyan(bold('Database Driver:'))} ${get_database_driver_title(database_driver)}`);
     }
 
     if (database_name) {
@@ -473,6 +473,10 @@ console.log('boilerplate_pxl_config', boilerplate_pxl_config);
 
         line_break();
         cyan_line(url);
+
+        if (!options['show-command']) {
+            line_break();
+        }
     }
 
     if (options['show-command']) {
@@ -528,6 +532,8 @@ console.log('boilerplate_pxl_config', boilerplate_pxl_config);
 
         log(`\n${cyan(bold('Command:'))}`);
         log(command_str);
+
+        line_break();
     }
 }
 

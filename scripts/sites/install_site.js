@@ -5,7 +5,7 @@ const { ask_input, ask_confirm } = require('../utils/ask');
 const { yellow } = require('chalk');
 const { run_install_script_from_pxl_config, load_pxl_config_from_dir, print_pxl_config } = require('../utils/pxl');
 const { get_config_filename, enable_web_server_site, get_config_file_path, reload_web_server, save_virtual_host_config } = require('../utils/web_server');
-const { blue_line, error_line, line_break, title_line } = require('../utils/log');
+const { error_line, line_break, success_line, title_line } = require('../utils/log');
 const log = console.log;
 
 const options = commandLineArgs([
@@ -96,7 +96,7 @@ async function main() {
             });
 
             if (add_etc_hosts_entry_result.code === 0) {
-                blue_line(`Added ${pxl_config['hostname']} /etc/hosts entry.`);
+                success_line(`Added ${pxl_config['hostname']} /etc/hosts entry.`);
             } else {
                 console.log(add_etc_hosts_entry_result);
 

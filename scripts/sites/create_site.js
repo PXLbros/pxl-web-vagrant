@@ -15,10 +15,10 @@ const { blue_line, cyan_line, error_line, highlight_line, line_break, success_li
 const log = console.log;
 
 const options_values = [
-    { name: 'web-server', type: String, description: 'Web server.' },
-    { name: 'hostname', type: String, description: 'Site hostname.' },
     { name: 'site-dir', type: String, description: 'Site root directory.' },
     { name: 'public-dir', type: String, description: 'Site public directory.' },
+    { name: 'hostname', type: String, description: 'Site hostname.' },
+    { name: 'web-server', type: String, description: 'Web server.' },
     { name: 'git-repo', type: String, description: 'Git repository.' },
     { name: 'git-branch', type: String, description: 'Initial Git branch.' },
     { name: 'boilerplate', type: String, description: 'Boilerplate.' },
@@ -75,30 +75,7 @@ async function main() {
     const no_backup = (options['no-backup'] || false);
     const force = (options['force'] || false);
 
-    const installed_web_servers = get_installed_web_servers();
-
     let hostname;
-
-    if (options['hostname']) {
-        hostname = options['hostname']; 
-    } else {
-        if (options['hostname'] === '') {
-            hostname = null;
-        } else {
-            hostname = await ask_input('Enter hostname (e.g. domain.loc or leave empty for none):');
-        }
-    }
-
-    let web_server = options['web-server'];
-    
-    if (!web_server) {
-        // if (installed_web_servers.length === 1) {
-        //     web_server = installed_web_servers[0].value;
-        // } else {
-        web_server = (!hostname || web_server === '' ? null : await ask_web_server('What web server should be used?'));
-    }
-
-    const web_server_title = (web_server ? get_web_server_title(web_server) : null);
     
     let site_dir = (options['site-dir'] || await ask_input('Enter site directory:', null, '', ` ${process.env.PROJECTS_DIR}/`));
     
@@ -128,6 +105,16 @@ async function main() {
 
     // If not Git repository, check for boilerplate
     if (!git_repo) {
+        if (options['hostname']) {
+            hostname = options['hostname']; 
+        } else {
+            if (options['hostname'] === '') {
+                hostname = null;
+            } else {
+                hostname = await ask_input('Enter hostname (e.g. domain.loc or leave empty for none):');
+            }
+        }
+
         if (boilerplate_input) {
             let boilerplate_type_input = 'default';
             let boilerplate_name_input = boilerplate_input;
@@ -176,7 +163,7 @@ async function main() {
         if (!no_backup || no_backup !== true) {
             const backup_dir = `${site_dir}_${format(new Date(), 'YYYY-MM-DD_H-mm-ss')}`;
 
-            if (await ask_confirm(`Site directory ${site_dir} already exists, do you want to take a backup?`)) {
+            if (force || await ask_confirm(`Site directory ${site_dir} already exists, do you want to take a backup?`)) {
                 exec(`sudo mv ${site_dir} ${backup_dir}`, { silent: true });
 
                 log(yellow(`Backed up existing directory ${site_dir} to ${backup_dir}.`));
@@ -218,14 +205,20 @@ async function main() {
             return;
         }
 
-        highlight_line(`Git repository cloned to ${site_dir}.`);
+        success_line(`Git repository cloned to ${site_dir}.`);
 
         // Check for .pxl/config.yaml file
         try {
             pxl_config = load_pxl_config_from_dir(`${site_dir}/.pxl`);
 
             if (pxl_config) {
-                if (hostname && !pxl_config.hostname) {
+                if (pxl_config.hostname) {
+                    if (hostname) {
+                        error_line('WARNING: Overwriting --hostname from PXL Web Vagrant configuration file.');
+                    }
+
+                    hostname = pxl_config.hostname;
+                } else if (hostname && !pxl_config.hostname) {
                     pxl_config.hostname = hostname;
                 }
 
@@ -281,6 +274,16 @@ async function main() {
             exec(`mkdir -p ${public_dir_full}`);
         }
     }
+
+    let web_server = options['web-server'];
+    
+    if (!web_server) {
+        const installed_web_servers = get_installed_web_servers();
+
+        web_server = (!hostname || web_server === '' ? null : (installed_web_servers.length === 1 ? installed_web_servers[0].value : await ask_web_server('What web server should be used?')));
+    }
+
+    const web_server_title = (web_server ? get_web_server_title(web_server) : null);
     
     let overwrite_web_server_conf_file = (options['overwrite'] || false);
 

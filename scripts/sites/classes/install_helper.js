@@ -2,6 +2,7 @@ const { existsSync } = require('fs');
 const { cd, cp, exec, mv } = require('shelljs');
 const { getLastDirectory, remove_trailing_slash } = require('../../utils/str');
 const { blue_line, figlet, highlight_line, line_break, success_line } = require('../../utils/log');
+const warn = console.warn;
 
 class InstallHelper
 {
@@ -39,8 +40,8 @@ class InstallHelper
     }
 
     finish_install() {
-        highlight_line(`Finish installation...`);
-        line_break();
+        // highlight_line(`Finish installation...`);
+        // line_break();
 
         if (this.file_exists(this.pxl_config['custom-files-dir'])) {
             blue_line(`Found custom-files-dir directory, sync...`);
@@ -49,9 +50,6 @@ class InstallHelper
         }
 
         // Summary
-        success_line(`Installed!`);
-        line_break();
-
         if (this.site_dir) {
             blue_line(`Site Directory: ${this.site_dir}`);
         }
@@ -61,8 +59,12 @@ class InstallHelper
         }
 
         if (this.site_url) {
-            blue_line(`URL: ${this.site_url}.`);
+            blue_line(`URL: ${this.site_url}`);
         }
+
+        line_break();
+        success_line(`Installed!`);
+        line_break();
     }
 
     sync_paths(from_dir, to_dir) {
@@ -102,6 +104,40 @@ class InstallHelper
         const sed_result = exec(`sed -i s~${key}=.*$~${key}=${value}~g ${file}`);
 
         return (sed_result.code === 0);
+    }
+
+    edit_env(file, keys, type = 'dotenv') {
+        if (type === 'dotenv') {
+            let num_total = 0;
+            let num_successful = 0;
+
+            for (let key in keys) {
+                const value = keys[key];
+                
+                const sed_result = exec(`sed -i s~${key}=.*$~${key}=${value}~g ${file}`);
+                
+                if (sed_result.code === 0) {
+                    num_successful++;
+                }
+
+                num_total++;
+
+                // console.log('key', key);
+                // console.log('value', value);
+            }
+
+            const all_successful = (num_successful === num_total);
+
+            if (!all_successful) {
+                return false;
+            }
+
+            return true;
+        } else {
+            warn(`end_env type "${type}" not implemented.`);
+
+            return false;
+        }
     }
 
     replace_env_file(file, from, to) {

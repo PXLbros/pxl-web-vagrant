@@ -9,13 +9,20 @@ const { error_line, line_break } = require('../utils/log');
 const { ask_web_server, get_web_server_title, get_installed_web_servers, get_sites_config_dir, remove_public_from_dir, reload_web_server } = require('../utils/web_server');
 const log = console.log;
 
-const options = commandLineArgs([
+const options_values = [
     { name: 'web-server', type: String, description: 'Web server.' },
     { name: 'hostname', type: String, description: 'Site hostname.' },
     { name: 'site-dir', type: String, description: 'Site root directory.' },
     { name: 'force', type: Boolean, description: `Don't prompt for questions.` },
     { name: 'help', type: Boolean, description: 'Show this help.' }
-]);
+];
+
+const options = commandLineArgs(options_values.map(option => {
+    return {
+        name: option.name,
+        type: option.type
+    };
+}));
 
 async function main() {
     exec('figlet delete site');

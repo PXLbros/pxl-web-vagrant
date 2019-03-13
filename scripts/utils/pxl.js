@@ -183,7 +183,7 @@ function get_pxl_config_title_inline(pxl_config) {
     return str;
 }
 
-function create_pxl_config_in_dir(dir, public_dir, php_version = null, database_driver = null, database_name = null, boilerplate = null) {
+function create_pxl_config_in_dir(dir, public_dir, php_version = null, database_driver = null, database_name = null) {
     dir = remove_trailing_slash(dir);
 
     const config_dir = `${dir}/.pxl`;

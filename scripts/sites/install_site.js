@@ -49,8 +49,6 @@ async function main() {
             throw new Error('Could not find PXL Web Vagrant configuration file.');
         }
 
-        pxl_config['hostname'] = pxl_config.hostname;
-
         line_break();
 
         log(yellow('Found PXL Web Vagrant configuration:'));

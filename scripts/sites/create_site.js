@@ -5,13 +5,13 @@ const { cp, exec } = require('shelljs');
 const { bold, blue, cyan, red, yellow } = require('chalk');
 const { format } = require('date-fns');
 const { create_pxl_config_in_dir, run_install_script_from_pxl_config, load_pxl_config_from_dir, print_pxl_config } = require('../utils/pxl');
-const { ask_create_database, ask_confirm, ask_input, ask_path, ask_php_version } = require('../utils/ask');
+const { ask_create_database, ask_confirm, ask_input, ask_php_version } = require('../utils/ask');
 const { is_public_directory } = require('../utils/web_server');
 const { remove_trailing_slash } = require('../utils/str');
 const boilerplateUtil = require('../utils/boilerplate');
 const { ask_create_database_driver, create: create_database, exists: database_exists, get_driver_title: get_database_driver_title } = require('../utils/database');
 const { ask_web_server, enable_web_server_site, get_config_filename, get_config_file_path, get_installed_web_servers, get_web_server_title, reload_web_server, save_virtual_host_config } = require('../utils/web_server.js');
-const { blue_line, cyan_line, error_line, highlight_line, line_break, success_line } = require('../utils/log');
+const { blue_line, cyan_line, error_line, line_break, success_line } = require('../utils/log');
 const log = console.log;
 
 const options_values = [
@@ -62,13 +62,6 @@ async function main() {
     } else {
         line_break();
     }
-
-    // const my_dir = (await ask_path('/vagrant/projects', 'dir', 'Enter site directory:'));
-    // const my_file = (await ask_path(my_dir.path, 'file', 'Select a file:'));
-
-    // console.log(my_dir);
-    // console.log(my_file);
-    // return;
 
     let boilerplate_input = (options['boilerplate'] || null);
 

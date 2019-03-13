@@ -2,10 +2,18 @@ const commandLineArgs = require('command-line-args');
 const commandLineUsage = require('command-line-usage');
 const { spawn } = require('child_process');
 const { ask_site_configuration_file, ask_web_server, get_installed_web_servers, get_sites_config_dir } = require('../utils/web_server');
+const log = console.log;
 
-const options = commandLineArgs([
+const options_values = [
     { name: 'web-server', type: String, description: 'Web server.' }
-]);
+];
+
+const options = commandLineArgs(options_values.map(option => {
+    return {
+        name: option.name,
+        type: option.type
+    };
+}));
 
 async function main() {
     if (options.help) {

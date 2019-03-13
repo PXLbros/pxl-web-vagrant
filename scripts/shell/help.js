@@ -1,6 +1,5 @@
 const { exec } = require('shelljs');
-const { blue_line, cyan_line, line_break, yellow_line, white_line } = require('../utils/log');
-const log = console.log;
+const { blue_line, cyan_line, line_break } = require('../utils/log');
 
 const package_json = require('../../package.json');
 

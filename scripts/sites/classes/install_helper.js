@@ -1,7 +1,8 @@
 const { existsSync } = require('fs');
 const { cd, cp, exec, mv } = require('shelljs');
 const { getLastDirectory, remove_trailing_slash } = require('../../utils/str');
-const { blue_line, figlet, highlight_line, line_break, success_line } = require('../../utils/log');
+const { blue_line, cyan_line, figlet, highlight_line, line_break, success_line } = require('../../utils/log');
+const resolve = require('path').resolve;
 const warn = console.warn;
 
 class InstallHelper
@@ -51,15 +52,16 @@ class InstallHelper
 
         // Summary
         if (this.site_dir) {
-            blue_line(`Site Directory: ${this.site_dir}`);
+            blue_line(`Site Directory: ${resolve(this.site_dir)}`);
         }
 
         if (this.pxl_config['public-site-dir']) {
-            blue_line(`Site Public Directory: ${this.pxl_config['public-site-dir']}`);
+            blue_line(`Site Public Directory: ${resolve(this.pxl_config['public-site-dir'])}`);
         }
 
         if (this.site_url) {
-            blue_line(`URL: ${this.site_url}`);
+            line_break();
+            cyan_line(`${this.site_url}`);
         }
 
         line_break();

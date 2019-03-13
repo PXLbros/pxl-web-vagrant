@@ -76,18 +76,6 @@ async function main() {
     const force = (options['force'] || false);
 
     const installed_web_servers = get_installed_web_servers();
-    
-    let web_server = options['web-server'];
-    
-    if (!web_server) {
-        if (installed_web_servers.length === 1) {
-            web_server = installed_web_servers[0].value;
-        } else {
-            web_server = await ask_web_server('What web server should be used?');
-        }
-    }
-
-    const web_server_title = get_web_server_title(web_server);
 
     let hostname;
 
@@ -100,6 +88,17 @@ async function main() {
             hostname = await ask_input('Enter hostname (e.g. domain.loc or leave empty for none):');
         }
     }
+
+    let web_server = options['web-server'];
+    
+    if (!web_server) {
+        // if (installed_web_servers.length === 1) {
+        //     web_server = installed_web_servers[0].value;
+        // } else {
+        web_server = (!hostname || web_server === '' ? null : await ask_web_server('What web server should be used?'));
+    }
+
+    const web_server_title = (web_server ? get_web_server_title(web_server) : null);
     
     let site_dir = (options['site-dir'] || await ask_input('Enter site directory:', null, '', ` ${process.env.PROJECTS_DIR}/`));
     
@@ -197,6 +196,8 @@ async function main() {
         }
     }
 
+    let pxl_config_file_exist_but_error = false;
+
     // Create from Git repository
     if (git_repo) {
         line_break();
@@ -237,8 +238,10 @@ async function main() {
                     database_name = pxl_config.database.name;
                 }
 
-                public_dir = pxl_config['public-site-dir'];
-                public_dir_full = `${site_dir}/${public_dir}`;
+                if (pxl_config['public-site-dir']) {
+                    public_dir = pxl_config['public-site-dir'];
+                    public_dir_full = `${site_dir}/${public_dir}`;
+                }
 
                 line_break();
 
@@ -248,7 +251,7 @@ async function main() {
 
                 line_break();
             } else {
-                if (!public_dir_full) {
+                if (!public_dir_full && hostname) {
                     // Check or ask public dir
                     if (is_public_directory(site_dir)) {
                         public_dir_full = site_dir;
@@ -269,6 +272,8 @@ async function main() {
             }
         } catch (load_pxl_config_error) {
             error_line(load_pxl_config_error);
+
+            pxl_config_file_exist_but_error = true;
         }
     } else {
         // If not from Git repo, create site & public directory
@@ -407,7 +412,7 @@ async function main() {
     if (!pxl_config) {
         line_break();
 
-        if (force || options['save-config'] || await ask_confirm(`Do you want to save PXL Web Vagrant configuration?`)) {
+        if (!pxl_config_file_exist_but_error && (force || options['save-config'] || await ask_confirm(`Do you want to save PXL Web Vagrant configuration?`))) {
             try {
                 const pxl_config_dir = create_pxl_config_in_dir(site_dir, public_dir, php_version, database_driver, database_name, boilerplate ? boilerplate.pxl_config.name : null);
 
@@ -425,14 +430,19 @@ async function main() {
 
     line_break();
 
-    log(`${cyan(bold('Web Server:'))} ${web_server}`);
+    if (web_server) {
+        log(`${cyan(bold('Web Server:'))} ${web_server_title}`);
+    }
 
     if (hostname) {
         log(`${cyan(bold('Hostname:'))} ${hostname}`);
     }
 
     log(`${cyan(bold('Site Directory:'))} ${site_dir}`);
-    log(`${cyan(bold('Public Directory:'))} ${public_dir_full}`);
+
+    if (public_dir_full) {
+        log(`${cyan(bold('Public Directory:'))} ${public_dir_full}`);
+    }
 
     if (php_version) {
         log(`${cyan(bold('PHP:'))} ${php_version}`);

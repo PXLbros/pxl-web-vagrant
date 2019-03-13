@@ -9,8 +9,14 @@ class InstallHelper
         this.pxl_config = pxl_config;
 
         this.site_dir = this.pxl_config['site-dir'];
-        this.site_dir_name = getLastDirectory(this.site_dir);
-        this.site_url = `http://${this.pxl_config.hostname}:${process.env.APACHE_PORT_OUT}`;
+
+        if (this.site_dir) {
+            this.site_dir_name = getLastDirectory(this.site_dir);
+        }
+
+        if (this.pxl_config.hostname) {
+            this.site_url = `http://${this.pxl_config.hostname}:${process.env.APACHE_PORT_OUT}`;
+        }
 
         if (this.pxl_config.code && this.pxl_config.code.php) {
             this.php_cli = `php${this.pxl_config.code.php}`;
@@ -46,9 +52,17 @@ class InstallHelper
         success_line(`Installed!`);
         line_break();
 
-        blue_line(`Site Directory: ${this.site_dir}`);
-        blue_line(`Site Public Directory: ${this.pxl_config['public-site-dir']}`);
-        blue_line(`URL: ${this.site_url}.`);
+        if (this.site_dir) {
+            blue_line(`Site Directory: ${this.site_dir}`);
+        }
+
+        if (this.pxl_config['public-site-dir']) {
+            blue_line(`Site Public Directory: ${this.pxl_config['public-site-dir']}`);
+        }
+
+        if (this.site_url) {
+            blue_line(`URL: ${this.site_url}.`);
+        }
     }
 
     sync_paths(from_dir, to_dir) {

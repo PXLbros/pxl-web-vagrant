@@ -42,31 +42,38 @@ function load_pxl_config_from_dir(dir) {
 }
 
 function load_pxl_config(pxl_config_file_path, site_dir = null) {
+    const pxl_config_dir = remove_last_directory(pxl_config_file_path);
+
     try {
-        const pxl_config = yaml.safeLoad(readFileSync(pxl_config_file_path, 'utf8'));
+        let pxl_config_contents = readFileSync(pxl_config_file_path, 'utf8');
+        pxl_config_contents = pxl_config_contents.trim();
 
-        if (!pxl_config) {
-            throw new Error(`Could not load PXL Web Vagrant configuration file "${pxl_config_file_path}".`);
-        }
+        let pxl_config = {};
+        
+        if (pxl_config_contents) {
+            pxl_config = yaml.safeLoad(pxl_config_contents);
 
-        const pxl_config_dir = remove_last_directory(pxl_config_file_path);
-
-        // validate_pxl_config(pxl_config);
-        pxl_config['site-dir'] = (site_dir || remove_last_directory(pxl_config_dir));
-
-        let public_site_dir;
-
-        if (pxl_config['public-dir']) {
-            if (get_public_directories().includes(pxl_config['public-dir'])) {
-                public_site_dir = `${pxl_config['site-dir']}/${pxl_config['public-dir']}`;
-            } else {
-                public_site_dir = pxl_config['public-dir'];
+            if (!pxl_config) {
+                throw new Error(`Could not load PXL Web Vagrant configuration file "${pxl_config_file_path}".`);
             }
-        } else {
-            public_site_dir = pxl_config['site-dir'];
-        }
 
-        pxl_config['public-site-dir'] = public_site_dir;
+            // validate_pxl_config(pxl_config);
+            pxl_config['site-dir'] = (site_dir || remove_last_directory(pxl_config_dir));
+
+            let public_site_dir;
+
+            if (pxl_config['public-dir']) {
+                if (get_public_directories().includes(pxl_config['public-dir'])) {
+                    public_site_dir = `${pxl_config['site-dir']}/${pxl_config['public-dir']}`;
+                } else {
+                    public_site_dir = pxl_config['public-dir'];
+                }
+            } else {
+                public_site_dir = pxl_config['site-dir'];
+            }
+
+            pxl_config['public-site-dir'] = public_site_dir;
+        }
 
         // Check for install/uninstall script
         const install_script_path = `${pxl_config_dir}/install.js`;
@@ -198,9 +205,11 @@ function create_pxl_config_in_dir(dir, public_dir, php_version = null, database_
     //     config_contents += `\nboilerplate: ${boilerplate}`;
     // }
     
-    config_contents = '';
+    let config_contents = '';
 
-    config_contents += `public-dir: ${public_dir}`;
+    if (public_dir) {
+        config_contents += `public-dir: ${public_dir}`;
+    }
 
     if (php_version) {
         config_contents += `\ncode:\n    php: ${php_version}`;
@@ -215,6 +224,23 @@ function create_pxl_config_in_dir(dir, public_dir, php_version = null, database_
 
     if (create_config_result.code !== 0) {
         throw new Error(`Could not create PXL Web Vagrant configuration file ${config_file_path}.`);
+    }
+
+    // Copy install helper template
+    const install_script_file_path = `${config_dir}/install.js`;
+
+    if (!test('-d', install_script_file_path)) {
+        let install_script_template = `const InstallHelper = require('/vagrant/scripts/sites/classes/install_helper');
+
+class InstallScript extends InstallHelper {
+    install() {
+        super.install();
+    }
+};
+
+module.exports = InstallScript;`;
+
+        exec(`echo "${install_script_template}" > ${install_script_file_path}`);
     }
 
     return config_dir;

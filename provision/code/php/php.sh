@@ -22,7 +22,7 @@ title "PHP"
 # Install PHP dependencies
 highlight_text "Install PHP dependencies..."
 exec_command "apt-get -y install software-properties-common"
-exec_command "apt-get -y install python-software-properties"
+# exec_command "apt-get -y install python-software-properties"
 
 # Add PHP 7 PPA
 add_ppa ondrej/apache2 ondrej/php
@@ -61,6 +61,7 @@ for PHP_VERSION in "${PHP_VERSIONS[@]}"; do
                 #     exec_command "echo -e \"\nextension=mcrypt.so\" >> $PHP_INI_FILE_PATH"
                 # fi
                 echo "TODO: PHP ${PHP_VERSION} mcrypt"
+                line_break
             else
                 exec_command "apt-get -y install php${PHP_VERSION}-mcrypt"
             fi
@@ -99,6 +100,10 @@ for PHP_VERSION in "${PHP_VERSIONS[@]}"; do
         # Change PHP error reporting
         exec_command "sed -i -r -e 's/error_reporting=.*/error_reporting = E_ALL | E_STRICT/g' $PHP_INI_FILE"
         exec_command "sed -i -r -e 's/display_errors = Off/display_errors = On/g' $PHP_INI_FILE"
+        exec_command "sed -i 's/memory_limit = .*/memory_limit = '256M'/' $PHP_INI_FILE"
+        exec_command "sed -i 's/post_max_size = .*/post_max_size = '72M'/' $PHP_INI_FILE"
+        exec_command "sed -i 's/upload_max_filesize = .*/upload_max_filesize = '64M'/' $PHP_INI_FILE"
+        exec_command "sed -i 's/max_file_uploads = .*/max_file_uploads = '20'/' $PHP_INI_FILE"
 
         # Enable Apache PHP configuration
         # if [ "$APACHE_ENABLED" == "true" ]; then

@@ -96,9 +96,5 @@ fi
 
 # phpMyAdmin
 if [ ! -z "$PHPMYADMIN" ]; then
-    echo "PHP MY ADMIN YES!"
-    ./mysql/phpmyadmin.sh
-else
-    echo "PHP MY ADMIN NO!"
-    ./mysql/phpmyadmin.sh
+    /vagrant/provision/databases/mysql/phpmyadmin.sh
 fi

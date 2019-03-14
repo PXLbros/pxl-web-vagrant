@@ -97,12 +97,37 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         config.vm.network :private_network, ip: vagrant_config['vm']['ip']
     end
 
+    config.vm.synced_folder '.', '/vagrant', nfs: true
+
     # SSH configuration
     config.ssh.forward_agent = true
 
+    # Calculate memory
+    memory = vagrant_config['vm']['memory']
+
+    if vagrant_config['vm']['memory'] == "auto"
+        host = RbConfig::CONFIG['host_os']
+
+        # Give VM 1/4 system memory 
+        if host =~ /darwin/
+            # sysctl returns Bytes and we need to convert to MB
+            mem = `sysctl -n hw.memsize`.to_i / 1024
+        elsif host =~ /linux/
+            # meminfo shows KB and we need to convert to MB
+            mem = `grep 'MemTotal' /proc/meminfo | sed -e 's/MemTotal://' -e 's/ kB//'`.to_i 
+        elsif host =~ /mswin|mingw|cygwin/
+            # Windows code via https://github.com/rdsubhas/vagrant-faster
+            mem = `wmic computersystem Get TotalPhysicalMemory`.split[1].to_i / 1024
+        end
+
+        memory = mem / 1024 / 4
+    else
+        memory = vagrant_config['vm']['memory']
+    end
+
     # Configure VirtualBox
     config.vm.provider 'virtualbox' do |vb|
-        vb.customize ['modifyvm', :id, '--memory', vagrant_config['vm']['memory'] ||= '1024']
+        vb.customize ['modifyvm', :id, '--memory', memory ||= '1024']
         vb.customize ['modifyvm', :id, '--cpus', vagrant_config['vm']['cpus'] ||= '1']
 
         vb.customize ['modifyvm', :id, '--natdnshostresolver1', vagrant_config['vm']['natdnshostresolver'] ||= 'on']

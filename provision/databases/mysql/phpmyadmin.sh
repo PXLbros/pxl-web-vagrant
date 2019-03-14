@@ -1,12 +1,19 @@
 #!/bin/bash
 
-export LOG_FILE_PATH=databases/phpmyadmin.log
+export LOG_FILE_PATH=databases/mysql/phpmyadmin.log
 
 . /vagrant/provision/helpers/include.sh
 
 title "phpMyAdmin"
 
-exec_command "sudo apt-get update -y"
+highlight_text "Configure..."
+exec_command "sudo debconf-set-selections <<< 'phpmyadmin phpmyadmin/dbconfig-install boolean true'"
+exec_command "sudo debconf-set-selections <<< 'phpmyadmin phpmyadmin/app-password-confirm password root'"
+exec_command "sudo debconf-set-selections <<< 'phpmyadmin phpmyadmin/mysql/admin-pass password root'"
+exec_command "sudo debconf-set-selections <<< 'phpmyadmin phpmyadmin/mysql/app-pass password root'"
+exec_command "sudo debconf-set-selections <<< 'phpmyadmin phpmyadmin/reconfigure-webserver multiselect none'"
+
+highlight_text "Install..."
 exec_command "sudo apt-get install -y phpmyadmin"
 
 PHP_VERSIONS=($PHP_VERSIONS)

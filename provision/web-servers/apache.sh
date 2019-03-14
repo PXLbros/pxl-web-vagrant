@@ -62,6 +62,11 @@ if [ "$APACHE_ENABLED" == "true" ]; then
     # Set error log format
     exec_command 'echo "ErrorLogFormat \"[%t] %M\"" | sudo tee --append /etc/apache2/apache2.cnf > /dev/null'
 
+    # Add EnableMMAP off to conf
+    if ! grep -qF "EnableMMAP" /etc/apache2/apache2.conf; then
+        exec_command "sudo sed -i '/HostnameLookups Off/a EnableMMAP off' /etc/apache2/apache2.conf"
+    fi
+
     # TODO: Set PXL Web Vagrant docs as home page
     highlight_text "Set PXL Web Vagrant documentation as home page at http://$IP_ADDRESS..."
     exec_command "sudo sed -i 's|DocumentRoot /var/www/html|DocumentRoot /vagrant/docs/.vuepress/dist|' $DEFAULT_APACHE_SITE_CONF"

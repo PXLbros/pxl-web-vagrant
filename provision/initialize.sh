@@ -7,6 +7,9 @@ export LOG_FILE_PATH=initialize.log
 
 . /vagrant/provision/helpers/include.sh
 
+# Optimize Apt mirrors
+sudo perl -pi -e 's@^\s*(deb(\-src)?)\s+http://us.archive.*?\s+@\1 mirror://mirrors.ubuntu.com/mirrors.txt @g' /etc/apt/sources.list
+
 # Install figlet
 apt-get -y install figlet &>/dev/null
 

@@ -84,6 +84,7 @@ module.exports = {
 
         let config_to_delete_path;
 
+
         if (web_server === 'apache') {
             contents = `<VirtualHost *:${process.env.APACHE_PORT}>
     ServerName ${hostname}
@@ -107,7 +108,7 @@ module.exports = {
     </FilesMatch>`;
             }
 
-            contents += `</VirtualHost>`;
+            contents += `\n</VirtualHost>`;
 
             contents += '\n\n# vim: syntax=apache';
 

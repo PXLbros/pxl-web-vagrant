@@ -406,11 +406,15 @@ async function main() {
         }
     }
 
+    const is_object_empty = (obj) => {
+        return Object.entries(obj).length === 0 && obj.constructor === Object;
+    };
+
     if (boilerplate_pxl_config || pxl_config) {
         // if (force || (!force && await ask_confirm(`Do you want to install?`))) {
-            if (boilerplate_pxl_config) {
+            if (boilerplate_pxl_config && !is_object_empty(boilerplate_pxl_config)) {
                 run_install_script_from_pxl_config(boilerplate_pxl_config);
-            } else if (pxl_config) {
+            } else if (pxl_config && !is_object_empty(pxl_config)) {
                 run_install_script_from_pxl_config(pxl_config);
             }
         // }

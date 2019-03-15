@@ -1,7 +1,7 @@
 const { existsSync } = require('fs');
 const { cd, cp, exec, mv } = require('shelljs');
 const { getLastDirectory, remove_trailing_slash } = require('../../utils/str');
-const { blue_line, cyan_line, figlet, highlight_line, line_break, success_line } = require('../../utils/log');
+const { blue_line, figlet, highlight_line, line_break } = require('../../utils/log');
 const resolve = require('path').resolve;
 const warn = console.warn;
 
@@ -51,27 +51,24 @@ class InstallHelper
         }
 
         // Summary
-        if (this.site_dir) {
-            blue_line(`Site Directory: ${resolve(this.site_dir)}`);
-        }
+        // if (this.site_dir) {
+        //     blue_line(`Site Directory: ${resolve(this.site_dir)}`);
+        // }
 
-        if (this.pxl_config['public-site-dir']) {
-            blue_line(`Site Public Directory: ${resolve(this.pxl_config['public-site-dir'])}`);
-        }
+        // if (this.pxl_config['public-site-dir']) {
+        //     blue_line(`Site Public Directory: ${resolve(this.pxl_config['public-site-dir'])}`);
+        // }
 
-        if (this.site_url) {
-            line_break();
-            cyan_line(`${this.site_url}`);
-        }
-
-        line_break();
-        success_line(`Installed!`);
-        line_break();
+        // if (this.site_url) {
+        //     line_break();
+        //     cyan_line(`${this.site_url}`);
+        // }
     }
 
     sync_paths(from_dir, to_dir) {
         console.log('sync_paths disabled');
         return true;
+        
         // const rsync_result = exec(`rsync -a ${from_dir}/ ${to_dir}`);
 
         // return (rsync_result.code === 0);

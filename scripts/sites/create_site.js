@@ -2,7 +2,7 @@ const commandLineArgs = require('command-line-args');
 const commandLineUsage = require('command-line-usage');
 const { existsSync } = require('fs');
 const { cp, exec } = require('shelljs');
-const { bold, blue, cyan, red, yellow } = require('chalk');
+const { bold, cyan, red, yellow } = require('chalk');
 const { format } = require('date-fns');
 const { create_pxl_config_in_dir, run_install_script_from_pxl_config, load_pxl_config_from_dir, print_pxl_config } = require('../utils/pxl');
 const { ask_create_database, ask_confirm, ask_input, ask_php_version } = require('../utils/ask');
@@ -10,8 +10,9 @@ const { is_public_directory } = require('../utils/web_server');
 const { remove_trailing_slash } = require('../utils/str');
 const boilerplateUtil = require('../utils/boilerplate');
 const { ask_create_database_driver, create: create_database, delete: delete_database, exists: database_exists, get_driver_title: get_database_driver_title } = require('../utils/database');
-const { ask_web_server, enable_web_server_site, get_config_filename, get_config_file_path, get_web_server_title, reload_web_server, save_virtual_host_config } = require('../utils/web_server.js');
-const { cyan_line, error_line, line_break, success_line, yellow_line } = require('../utils/log');
+const { ask_web_server, enable_web_server_site, get_config_filename, get_config_file_path, get_installed_web_servers, get_web_server_title, reload_web_server, save_virtual_host_config } = require('../utils/web_server.js');
+const { blue_line, error_line, line_break, success_line, yellow_line } = require('../utils/log');
+const git_branches = require('list-git-branches');
 const log = console.log;
 
 const options_values = [
@@ -66,8 +67,6 @@ async function main() {
 
         log(usage);
         return;
-    } else {
-        line_break();
     }
 
     let boilerplate_input = (options['boilerplate'] || null);
@@ -148,7 +147,7 @@ async function main() {
     let git_clone_error;
 
     // If site directory already exist, take backup/delete existing
-    if (existsSync(site_dir)) {            
+    if (existsSync(site_dir)) {
         // Take backup
         if (!no_backup || no_backup !== true) {
             const backup_dir = `${site_dir}_${format(new Date(), 'YYYY-MM-DD_H-mm-ss')}`;
@@ -161,13 +160,13 @@ async function main() {
                 // No backup, delete existing site directory
                 exec(`sudo rm -rf ${site_dir}`);
 
-                cyan_line(`Removed existing directory ${site_dir}.`);
+                blue_line(`Removed existing directory ${site_dir}.`);
             }
         } else {
             // No backup, delete existing site directory
             exec(`sudo rm -rf ${site_dir}`);
 
-            cyan_line(`Removed existing directory ${site_dir}.`);
+            blue_line(`Removed existing directory ${site_dir}.`);
         }
     }
 
@@ -177,11 +176,11 @@ async function main() {
     if (git_repo) {
         line_break();
 
-        log(blue(`Cloning ${git_branch ? `branch "${git_branch}" from ` : ''}Git repository ${git_repo} into ${site_dir}...`));
+        log(cyan(`Cloning ${git_branch ? `branch "${git_branch}" from ` : ''}Git repository ${git_repo} into ${site_dir}...`));
 
         // Clone Git repository
         try {
-            const git_clone_result = exec(`git clone ${git_repo}${git_branch ? ` --single-branch --branch=${git_branch}` : ''} ${site_dir}`, { silent: true });
+            const git_clone_result = exec(`git clone ${git_repo}${git_branch ? ` --single-branch --branch=${git_branch}` : ''} ${site_dir}`); // { silent: true }
             git_clone_error = (git_clone_result.code !== 0 ? git_clone_result.stderr : null);
 
             if (git_clone_error) {
@@ -194,6 +193,13 @@ async function main() {
         }
 
         success_line(`Git repository cloned to ${site_dir}.`);
+
+        // Fetch Git
+        exec(`cd ${site_dir} && git fetch`, { silent: true });
+
+        // Ask for Git branch
+        const cwd = site_dir;
+        console.log(git_branches.sync(cwd));
 
         // Check for .pxl/config.yaml file
         try {
@@ -221,7 +227,7 @@ async function main() {
 
                 if (pxl_config['public-site-dir']) {
                     public_dir = pxl_config['public-site-dir'];
-                    public_dir_full = `${site_dir}/${public_dir}`;
+                    public_dir_full = public_dir;
                 }
 
                 line_break();
@@ -302,7 +308,13 @@ async function main() {
     }
 
     if (!web_server && web_server !== '') {
-        web_server = await ask_web_server('Choose Web Server', true);
+        const installed_web_servers = get_installed_web_servers();
+
+        if (installed_web_servers.length === 1) {
+            web_server = installed_web_servers[0].value;
+        } else {
+            web_server = await ask_web_server('Choose Web Server', true);
+        }
     }
 
     if (web_server && !hostname) {
@@ -440,11 +452,11 @@ async function main() {
     }
 
     // Show summary
-    line_break();
+    // line_break();
 
-    success_line(`Success!`);
+    // success_line(`Success!`);
 
-    line_break();
+    // line_break();
 
     if (web_server) {
         log(`${cyan(bold('Web Server:'))} ${get_web_server_title(web_server)}`);
@@ -480,7 +492,7 @@ async function main() {
         let url = `http://${hostname}:${process.env.APACHE_PORT_OUT}`;
 
         line_break();
-        cyan_line(url);
+        blue_line(url);
 
         line_break();
         yellow_line(`*NOTE* Copy "127.0.0.1 ${hostname}" to local/host /etc/hosts file.`);

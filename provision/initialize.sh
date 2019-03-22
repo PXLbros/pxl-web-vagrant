@@ -45,8 +45,10 @@ highlight_text "Update APT..."
 exec_command "apt-get update"
 
 # Upgrade APT
-highlight_text "Upgrade APT..."
-exec_command "apt-get -y upgrade -o Dpkg::Options::=\"--force-confdef\" -o Dpkg::Options::=\"--force-confold\""
+if [ "$PROVISION_UPGRADE_APT" == "true" ]; then
+    highlight_text "Upgrade APT..."
+    exec_command "apt-get -y upgrade -o Dpkg::Options::=\"--force-confdef\" -o Dpkg::Options::=\"--force-confold\""
+fi
 
 # Install required APT packages
 highlight_text "Install required APT packages..."

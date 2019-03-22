@@ -14,16 +14,18 @@ USER_TMUX_CONF_PATH="$PROVISION_USER_DIR/.tmux.conf"
 for file in "$PROVISION_USER_DIR/*.sh"; do
     [ ! -f "$file" ] || break
 
-    USER_SCRIPT_FILENAME="$(basename -- $file)"
+    if [ -f "$file" ]; then
+        USER_SCRIPT_FILENAME="$(basename -- $file)"
 
-    chmod +x $file
+        sudo chmod +x $file
 
-    highlight_text "Run user script ($USER_SCRIPT_FILENAME)..."
+        highlight_text "Run user script ($USER_SCRIPT_FILENAME)..."
 
-    # Execute
-    $file
+        # Execute
+        $file
 
-    line_break
+        line_break
+    fi
 done
 
 # .bash_profile

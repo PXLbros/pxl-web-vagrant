@@ -103,7 +103,7 @@ module.exports = {
             // contents += (php_version !== null ? `\n\n    Include /etc/apache2/conf-available/php${php_version}-fpm.conf\n` : `\n`);
 
             if (php_version !== null) {
-                contents += `\n\n    <FilesMatch \.php$>
+                contents += `\n\n    <FilesMatch .php$>
         SetHandler "proxy:unix:/var/run/php/php${php_version}-fpm.sock|fcgi://localhost/"
     </FilesMatch>`;
             }

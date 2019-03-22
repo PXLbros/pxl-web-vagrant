@@ -1,7 +1,7 @@
 vm:
     name: pxl-web-vagrant
     ip: 192.168.88.99
-    memory: 1024
+    memory: auto
     cpus: 1
     locale:
         timezone: UTC
@@ -12,6 +12,7 @@ vm:
         show-command-execution-time: true
         show-command-exit-code: false
         abort-on-error: false
+        upgrade-apt: true
     home-dir: /vagrant/projects
     projects-dir: /vagrant/projects
 web-servers:

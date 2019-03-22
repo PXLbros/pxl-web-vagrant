@@ -41,7 +41,7 @@ alias delete_site='node $SCRIPTS_SITES_DIR/delete_site.js'
 alias install_site='node $SCRIPTS_SITES_DIR/install_site.js'
 
 # Git
-alias git_repo_info='node ${$SCRIPTS_SITES_DIR}/git/git_repo_info.js'
+alias git_repo_info='node $SCRIPTS_SITES_DIR/git/git_repo_info.js'
 "
 
 if [ "$APACHE_ENABLED" == "true" ]

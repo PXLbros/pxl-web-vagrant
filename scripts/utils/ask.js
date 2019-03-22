@@ -1,8 +1,8 @@
 const { lstatSync, readdirSync } = require('fs');
 const { join } = require('path');
 const { prompt } = require('inquirer');
-const { exec } = require('shelljs');
 const inquirer = require('inquirer');
+const { exec } = require('shelljs');
 const { choose } = require('./choose.js');
 
 inquirer.registerPrompt('fuzzypath', require('inquirer-fuzzy-path'));
@@ -110,7 +110,7 @@ module.exports = {
                 
                 excludePath: nodePath => {
                     for (let excluded_dir of excluded_dirs) {
-                        if (nodePath.startsWith(excluded_dir)) {
+                        if (nodePath.indexOf(excluded_dir) !== -1) {
                             return true;
                         }
                     }

@@ -19,7 +19,8 @@ try {
     }));
 } catch (e) {
     console.log(e.message);
-    return;
+    
+    process.exit();
 }
 
 async function main() {

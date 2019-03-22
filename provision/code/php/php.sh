@@ -82,6 +82,8 @@ done
 
 for PHP_VERSION in "${PHP_VERSIONS[@]}"; do
     if [ -x "$(command -v php$PHP_VERSION)" ]; then
+        line_break
+        
         highlight_text "Fix PHP $PHP_VERSION permissions..."
 
         PHP_WWW_CONF_FILE=/etc/php/${PHP_VERSION}/fpm/pool.d/www.conf

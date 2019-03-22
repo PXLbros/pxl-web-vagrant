@@ -55,6 +55,7 @@ GLOBAL_VARIABLES = {
     'PROVISION_SHOW_COMMAND_EXECUTION_TIME': vagrant_config['vm']['provision']['show-command-execution-time'],
     'PROVISION_SHOW_COMMAND_EXIT_CODE': vagrant_config['vm']['provision']['show-command-exit-code'],
     'PROVISION_ABORT_ON_ERROR': vagrant_config['vm']['provision']['abort-on-error'],
+    'PROVISION_UPGRADE_APT': vagrant_config['vm']['provision']['upgrade-apt'],
 
     'APACHE_ENABLED': vagrant_config['web-servers']['apache']['enabled'],
     'NGINX_ENABLED': vagrant_config['web-servers']['nginx']['enabled'],
@@ -108,15 +109,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     if vagrant_config['vm']['memory'] == "auto"
         host = RbConfig::CONFIG['host_os']
 
-        # Give VM 1/4 system memory 
+        # Give VM 1/4 system memory
         if host =~ /darwin/
-            # sysctl returns Bytes and we need to convert to MB
             mem = `sysctl -n hw.memsize`.to_i / 1024
         elsif host =~ /linux/
-            # meminfo shows KB and we need to convert to MB
             mem = `grep 'MemTotal' /proc/meminfo | sed -e 's/MemTotal://' -e 's/ kB//'`.to_i 
         elsif host =~ /mswin|mingw|cygwin/
-            # Windows code via https://github.com/rdsubhas/vagrant-faster
             mem = `wmic computersystem Get TotalPhysicalMemory`.split[1].to_i / 1024
         end
 
@@ -178,15 +176,18 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Install web servers
     if vagrant_config.has_key?('web-servers')
         web_server_port_in = 80
+        web_server_ssl_port_in = 443
 
         vagrant_config['web-servers'].each do |web_server_name, web_server_vagrant_config|
             if web_server_name === 'apache'
                 port_out = (web_server_vagrant_config['port'] || 7001)
+                ssl_port_out = 7005
 
                 GLOBAL_VARIABLES['APACHE_PORT'] = web_server_port_in
                 GLOBAL_VARIABLES['APACHE_PORT_OUT'] = port_out
             elsif web_server_name === 'nginx'
                 port_out = (web_server_vagrant_config['port'] || 7002)
+                ssl_port_out = 7006
 
                 GLOBAL_VARIABLES['NGINX_PORT'] = web_server_port_in
                 GLOBAL_VARIABLES['NGINX_PORT_OUT'] = port_out
@@ -197,6 +198,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
             # Bind web server port
             config.vm.network :forwarded_port, guest: web_server_port_in, host: port_out
+            config.vm.network :forwarded_port, guest: web_server_ssl_port_in, host: ssl_port_out
 
             # Increment port number
             web_server_port_in += 1

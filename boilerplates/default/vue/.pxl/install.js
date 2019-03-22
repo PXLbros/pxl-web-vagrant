@@ -23,6 +23,10 @@ class InstallScript extends InstallHelper {
         // this.yarn('build');
 
         line_break();
+
+        if (this.pxl_config.hostname) {
+            this.run('vue build');
+        }
     }
 };
 

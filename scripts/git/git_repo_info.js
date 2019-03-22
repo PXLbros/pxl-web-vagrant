@@ -1,7 +1,8 @@
 // const getRepoInfo = require('git-repo-info');
 const { figlet, highlight_line, line_break, title_line, white_line } = require('../utils/log');
 
-const Octokit = require('@octokit/rest')
+const Octokit = require('@octokit/rest');
+
 const octokit = new Octokit({
     auth: undefined,
     userAgent: 'octokit/rest.js v1.2.3',

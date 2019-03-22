@@ -5,7 +5,7 @@ const { cp, exec } = require('shelljs');
 const { bold, cyan, red, yellow } = require('chalk');
 const { format } = require('date-fns');
 const { create_pxl_config_in_dir, run_install_script_from_pxl_config, load_pxl_config_from_dir, print_pxl_config } = require('../utils/pxl');
-const { ask_create_database, ask_confirm, ask_input, ask_php_version } = require('../utils/ask');
+const { ask_create_database, ask_confirm, ask_input, ask_path, ask_php_version } = require('../utils/ask');
 const { is_public_directory } = require('../utils/web_server');
 const { remove_trailing_slash } = require('../utils/str');
 const boilerplateUtil = require('../utils/boilerplate');
@@ -34,22 +34,23 @@ const options_values = [
     { name: 'help', type: Boolean, description: 'Show this help.' }
 ];
 
-let options;
-
-try {
-    options = commandLineArgs(options_values.map(option => {
-        return {
-            name: option.name,
-            type: option.type
-        };
-    }));
-} catch (e) {
-    console.log(e.message);
-    return;
-}
-
 async function main() {
     exec('figlet create site');
+
+    let options;
+
+    try {
+        options = commandLineArgs(options_values.map(option => {
+            return {
+                name: option.name,
+                type: option.type
+            };
+        }));
+    } catch (e) {
+        console.log(e.message);
+        
+        return;
+    }
 
     if (options.help) {
         const usage = commandLineUsage([

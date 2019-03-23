@@ -22,9 +22,9 @@ echo -e "${BLUE}Documentation: https://pxlbros.github.io/pxl-web-vagrant${NC}"
 
 line_break
 
-echo -e "${CYAN}*NEW VERSION* You can stop current provision with Cmd+C and upgrade with: ./upgrade.sh${NC}"
+# echo -e "${CYAN}*NEW VERSION* You can stop current provision with Cmd+C and upgrade with: ./upgrade.sh${NC}"
 
-line_break
+# line_break
 
 # Initialize empty log directory
 rm -rf /vagrant/logs

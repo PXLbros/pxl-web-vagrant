@@ -8,7 +8,7 @@ title: .pxl
 
 ```yaml
 site-dir: /vagrant/projects/test.loc
-public-dir: /vagrant/projects/test.loc
+public-dir: public
 code:
     php: 7.3
 database:

@@ -1,7 +1,7 @@
 const { existsSync, writeFileSync } = require('fs');
 const { exec } = require('shelljs');
 const { choose } = require('./choose');
-const { getFilenameFromPath, remove_trailing_slash } = require('./str');
+const { get_filename_from_path, remove_trailing_slash } = require('./str');
 const { choose_files_from_dir } = require('./choose');
 const { blue_line, cyan_line, success_line } = require('./log');
 
@@ -76,7 +76,7 @@ module.exports = {
     get_web_server_title,
 
     save_virtual_host_config(file_path, web_server, hostname, public_dir, php_version = null, overwrite = false) {
-        const config_filename = getFilenameFromPath(file_path);
+        const config_filename = get_filename_from_path(file_path);
 
         // blue_line(`Create ${get_web_server_title(web_server)} site configuration file ${config_filename}.`);
 

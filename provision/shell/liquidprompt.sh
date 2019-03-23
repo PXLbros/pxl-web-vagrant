@@ -17,7 +17,7 @@ fi
 if ! grep -qF "source ~/liquidprompt/liquidprompt" $HOME/.bashrc
 then
     highlight_text "Set to automatically run LiquidPrompt..."
-    exec_command "echo -e \"\n[[ \$\- = *i* ]] && source ~/liquidprompt/liquidprompt\" >> \$HOME/.bashrc"
+    exec_command "echo -e \"\n[[ \$- = *i* ]] && source ~/liquidprompt/liquidprompt\" >> \$HOME/.bashrc"
 fi
 
 # Create configuration file

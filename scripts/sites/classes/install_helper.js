@@ -1,6 +1,6 @@
 const { existsSync } = require('fs');
 const { cd, cp, exec, mv } = require('shelljs');
-const { getLastDirectory, remove_trailing_slash } = require('../../utils/str');
+const { get_last_directory, remove_trailing_slash } = require('../../utils/str');
 const { blue_line, figlet, highlight_line, line_break } = require('../../utils/log');
 const resolve = require('path').resolve;
 const warn = console.warn;
@@ -13,7 +13,7 @@ class InstallHelper
         this.site_dir = this.pxl_config['site-dir'];
 
         if (this.site_dir) {
-            this.site_dir_name = getLastDirectory(this.site_dir);
+            this.site_dir_name = get_last_directory(this.site_dir);
         }
 
         if (this.pxl_config.hostname) {

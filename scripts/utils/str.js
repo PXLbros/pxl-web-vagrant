@@ -10,13 +10,13 @@ module.exports = {
         return new_path.join('/');
     },
 
-    getLastDirectory(path) {
+    get_last_directory(path) {
         let new_path = path.split('/');
 
         return new_path[new_path.length - 1];
     },
     
-    getFilenameFromPath(path) {
+    get_filename_from_path(path) {
         return path.substring(path.lastIndexOf('/') + 1);
     }
 };

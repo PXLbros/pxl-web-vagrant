@@ -496,7 +496,7 @@ async function main() {
         blue_line(url);
 
         line_break();
-        yellow_line(`*NOTE* Copy "127.0.0.1 ${hostname}" to local/host /etc/hosts file.`);
+        yellow_line(`*NOTE* Copy "127.0.0.1 ${hostname}" to local /etc/hosts file.`);
 
         if (!options['show-command']) {
             line_break();

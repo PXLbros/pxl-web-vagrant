@@ -115,21 +115,19 @@ async function main() {
             boilerplate_pxl_config.hostname = hostname;
         }
 
-        if (boilerplate_pxl_config['hostname']) {
-            if (boilerplate_pxl_config && boilerplate_pxl_config['public-dir']) {
-                public_dir_full = boilerplate_pxl_config['public-site-dir'];
-            } else if (options['public-dir']) {
-                public_dir_full = `${site_dir}/${options['public-dir']}`;
-            } else if (is_public_directory(site_dir) || options['public-dir'] === '') {
-                public_dir_full = site_dir;
-            } else {
-                let public_dir_input = await ask_input('What is the public site directory? (leave empty for same as site directory)'); // TODO: Can we wait with this question till after cloning git? Because it'll say in .pxl config file from clone if
-        
-                if (public_dir_input) {
-                    public_dir_input = remove_trailing_slash(public_dir_input);
-        
-                    public_dir_full = `${site_dir}/${public_dir_input}`;
-                }
+        if (boilerplate_pxl_config && boilerplate_pxl_config['public-dir']) {
+            public_dir_full = boilerplate_pxl_config['public-site-dir'];
+        } else if (options['public-dir']) {
+            public_dir_full = `${site_dir}/${options['public-dir']}`;
+        } else if (is_public_directory(site_dir) || options['public-dir'] === '') {
+            public_dir_full = site_dir;
+        } else {
+            let public_dir_input = await ask_input('What is the public site directory? (leave empty for same as site directory)'); // TODO: Can we wait with this question till after cloning git? Because it'll say in .pxl config file from clone if
+    
+            if (public_dir_input) {
+                public_dir_input = remove_trailing_slash(public_dir_input);
+    
+                public_dir_full = `${site_dir}/${public_dir_input}`;
             }
         }
     }
@@ -264,8 +262,8 @@ async function main() {
             pxl_config_file_exist_but_error = true;
         }
     } else {
-        // If not from Git repo, create site & public directory
-        if (!existsSync(public_dir_full)) {
+        // If not from Git repo, create site & public directory (don't do it if boilerplate)
+        if (!existsSync(public_dir_full) && !boilerplate) {
             exec(`mkdir -p ${public_dir_full}`);
         }
     }

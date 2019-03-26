@@ -11,9 +11,11 @@ SSH_KNOWN_HOSTS_FILE_PATH=~/.ssh/known_hosts
 # Add github.com to ~/.ssh/known_hosts file
 GITHUB_COM_SSH_KEYSCAN_OUTPUT=$(ssh-keyscan github.com)
 
-if ! grep -q "$GITHUB_COM_SSH_KEYSCAN_OUTPUT" "$SSH_KNOWN_HOSTS_FILE_PATH"; then
-    highlight_text "Add github.com to ~/.ssh/known_hosts file..."
-    exec_command "$GITHUB_COM_SSH_KEYSCAN_OUTPUT >> ~/.ssh/known_hosts"
-else
-    echo "GITHUB ALREADY ADDED TO KNOWN HOSTS"
+if [ -f "$SSH_KNOWN_HOSTS_FILE_PATH" ]; then
+    if ! grep -q "$GITHUB_COM_SSH_KEYSCAN_OUTPUT" "$SSH_KNOWN_HOSTS_FILE_PATH"; then
+        highlight_text "Add github.com to ~/.ssh/known_hosts file..."
+        exec_command "$GITHUB_COM_SSH_KEYSCAN_OUTPUT >> ~/.ssh/known_hosts"
+    else
+        echo "GITHUB ALREADY ADDED TO KNOWN HOSTS"
+    fi
 fi

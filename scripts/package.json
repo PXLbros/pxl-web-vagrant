@@ -19,6 +19,7 @@
     "inquirer": "^6.2.2",
     "inquirer-fuzzy-path": "^2.0.2",
     "js-yaml": "^3.12.2",
+    "octonode": "^0.9.5",
     "shelljs": "^0.8.3",
     "slugify": "^1.3.4"
   },

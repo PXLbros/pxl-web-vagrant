@@ -8,14 +8,28 @@ const { format } = require('date-fns');
 const { create_pxl_config_in_dir, run_install_script_from_pxl_config, load_pxl_config_from_dir, print_pxl_config } = require('../utils/pxl');
 const { ask_create_database, ask_confirm, ask_input, ask_path, ask_php_version } = require('../utils/ask');
 const { is_public_directory } = require('../utils/web_server');
-const { remove_trailing_slash } = require('../utils/str');
+const { get_last_directory, remove_trailing_slash } = require('../utils/str');
 const boilerplateUtil = require('../utils/boilerplate');
 const { ask_create_database_driver, create: create_database, delete: delete_database, exists: database_exists, get_driver_title: get_database_driver_title } = require('../utils/database');
 const { ask_web_server, enable_web_server_site, get_config_filename, get_config_file_path, get_installed_web_servers, get_web_server_title, reload_web_server, save_virtual_host_config } = require('../utils/web_server.js');
 const { blue_line, error_line, line_break, success_line, yellow_line } = require('../utils/log');
 const { uniq } = require('lodash');
+// const github = require('octonode');
 const git_branches = require('list-git-branches');
 const log = console.log;
+
+// var client = github.client({
+//   username: 'dennis@dreamhuman.com',
+//   password: '',
+//   otp: ''
+// });
+
+// client.get('/user', {}, function (err, status, body, headers) {
+//     console.log(err);
+//     console.log(status);
+//   console.log(body);
+// });
+// return;
 
 const options_values = [
     { name: 'site-dir', type: String, description: 'Site root directory.' },
@@ -89,12 +103,11 @@ async function main() {
     let boilerplate_pxl_config = {};
     let pxl_config;
 
-    // let public_dir_input = (options['public-dir'] || null);
-    let public_dir;
+    let public_dir = (options['public-dir'] || null);
     let public_dir_full;
     let php_version = (options['php'] || null);
-    let database_driver;
-    let database_name;
+    let database_driver = 'mysql';
+    let database_name = (options['db-name'] || null);
 
     let git_repo = (options['git-repo'] || null);
     let git_branch = (options['git-branch'] || null);
@@ -279,6 +292,17 @@ async function main() {
         }
     }
 
+    // FRAGA PUBLIC DIR OM INTE FINNS
+    if (!public_dir) {
+        let public_dir_input = await ask_input('What is the public site directory? (leave empty for same as site directory)'); // TODO: Can we wait with this question till after cloning git? Because it'll say in .pxl config file from clone if
+
+        if (public_dir_input) {
+            public_dir_input = remove_trailing_slash(public_dir_input);
+
+            public_dir_full = `${site_dir}/${public_dir_input}`;
+        }
+    }
+
     let web_server = options['web-server'];
     let overwrite_web_server_conf_file = (options['overwrite'] || false);
 
@@ -362,12 +386,14 @@ async function main() {
 
     // Database
     if (!pxl_config && (options['db-driver'] !== '' && options['db-name'] !== '') && (!database_driver || !database_name)) {
-        if (!database_driver) {
-            database_driver = await ask_create_database_driver();
-        }
+        // if (!database_driver) {
+        //     database_driver = await ask_create_database_driver();
+        // }
 
-        if (database_driver) {
-            const database = await ask_create_database(database_driver);
+        if (database_driver && !database_name) {
+            if (await ask_confirm(`Create ${get_database_driver_title(database_driver)} database?`)) {
+                database = await ask_create_database(database_driver);
+            }
 
             database_driver = database.driver;
             database_name = database.name;
@@ -400,11 +426,22 @@ async function main() {
 
             line_break();
         }
-    }   
+    }
+
+    // Default to site directory if no public directory specified
+    if (!public_dir) {
+        if (public_dir_full) {
+            public_dir = get_last_directory(public_dir_full);
+        } else {
+            public_dir = site_dir;
+        }
+    } else if (!public_dir_full) {
+        public_dir_full = `${site_dir}/${public_dir}`;
+    }
 
     // Save virtual host configuration file
     if (hostname) {
-        save_virtual_host_config(configuration_file_path, web_server, hostname, public_dir, php_version, overwrite_web_server_conf_file);
+        save_virtual_host_config(configuration_file_path, web_server, hostname, public_dir_full, php_version, overwrite_web_server_conf_file);
 
         try {
             // Enable web server site

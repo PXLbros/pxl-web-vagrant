@@ -1,5 +1,5 @@
 const InstallHelper = require('/vagrant/scripts/sites/classes/install_helper');
-const { get_last_directory, remove_last_directory } = require('/vagrant/scripts/utils/str');
+const { get_last_directory } = require('/vagrant/scripts/utils/str');
 const { highlight_line } = require('/vagrant/scripts/utils/log');
 
 class InstallScript extends InstallHelper {
@@ -19,6 +19,7 @@ class InstallScript extends InstallHelper {
 
         this.go_to_dir(this.site_dir);
 
+        // Update .editorconfig file
         this.edit_env('.editorconfig', {
             'indent_size': 4
         }, 'dotenv');

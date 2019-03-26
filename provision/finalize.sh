@@ -14,8 +14,7 @@ if [ ! -z "$HOME_DIR" ]; then
     SET_HOME_DIR_COMMAND="cd $HOME_DIR"
 
     # Add change directory directive to .bashrc
-    if ! grep -qF "$SET_HOME_DIR_COMMAND" $HOME/.bashrc
-    then        
+    if ! grep -qF "$SET_HOME_DIR_COMMAND" $HOME/.bashrc; then
         exec_command "echo -e \"\n$SET_HOME_DIR_COMMAND\" >> $HOME/.bashrc"
     fi
 fi

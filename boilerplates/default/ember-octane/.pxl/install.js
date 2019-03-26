@@ -21,7 +21,7 @@ class InstallScript extends InstallHelper {
 
         this.edit_env('.editorconfig', {
             'indent_size': 4
-        }, 'editorconfig');
+        }, 'dotenv');
 
         // Build
         this.run('ember build');

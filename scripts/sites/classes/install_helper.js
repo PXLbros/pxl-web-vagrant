@@ -104,7 +104,7 @@ class InstallHelper
             } else if (type === 'wordpress') {
                 sed_command = `sed -i s~${key}~${value}~g ${file}`;
             } else if (type === 'editorconfig') {
-                sed_command = `sed -i s~${key}\s=\s.*$~${key}\s=\s${value}~g ${file}`;
+                // sed_command = `sed -i s~${key}\s=\s.*$~${key}\s=\s${value}~g ${file}`;
             } else {
                 warn(`end_env type "${type}" not implemented.`);
 

@@ -71,10 +71,9 @@ if [ "$APACHE_ENABLED" == "true" ]; then
     highlight_text "Set PXL Web Vagrant documentation as home page at http://$IP_ADDRESS..."
     exec_command "sudo sed -i 's|DocumentRoot /var/www/html|DocumentRoot /vagrant/docs/.vuepress/dist|' $DEFAULT_APACHE_SITE_CONF"
 
-    if ! grep -qF "<Directory /vagrant/docs/.vuepress/dist>" $DEFAULT_APACHE_SITE_CONF; then
-        # TODO: THE FOLLOWING DOESN'T SAVE TO THE FILE, JUST OUTPUTS IT
-        sudo sed -e '/^<VirtualHost[ ]\*:80>/,/<\/VirtualHost>/ { /<\/VirtualHost>/ i\\n\t<Directory /vagrant/docs/.vuepress/dist>\n\t\tRequire all granted\n\t</Directory>' -e '}' $DEFAULT_APACHE_SITE_CONF
-    fi
+    # if ! grep -qF "<Directory /vagrant/docs/.vuepress/dist>" $DEFAULT_APACHE_SITE_CONF; then
+        exec_command "sudo cp /vagrant/provision/web-servers/apache/default.conf $DEFAULT_APACHE_SITE_CONF"
+    # fi
 
     # Restart Apache
     highlight_text "Restart Apache..."

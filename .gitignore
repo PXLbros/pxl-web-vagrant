@@ -1,6 +1,7 @@
 /logs/
 
 /projects/*
+!/projects/.gitkeep 
 
 /boilerplates/user/*
 !/boilerplates/user/.gitkeep 

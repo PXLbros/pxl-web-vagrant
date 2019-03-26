@@ -98,7 +98,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         config.vm.network :private_network, ip: vagrant_config['vm']['ip']
     end
 
-    config.vm.synced_folder '.', '/vagrant', nfs: true
+    # config.vm.synced_folder '.', '/vagrant', nfs: true
 
     # SSH configuration
     config.ssh.forward_agent = true
@@ -125,8 +125,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     # Configure VirtualBox
     config.vm.provider 'virtualbox' do |vb|
-        vb.customize ['modifyvm', :id, '--memory', memory ||= '1024']
-        vb.customize ['modifyvm', :id, '--cpus', vagrant_config['vm']['cpus'] ||= '1']
+        vb.customize ['modifyvm', :id, '--memory', memory ||= 1024]
+        vb.customize ['modifyvm', :id, '--cpus', vagrant_config['vm']['cpus'] ||= 1]
 
         vb.customize ['modifyvm', :id, '--natdnshostresolver1', vagrant_config['vm']['natdnshostresolver'] ||= 'on']
         vb.customize ['modifyvm', :id, '--natdnsproxy1', vagrant_config['vm']['natdnsproxy'] ||= 'on']

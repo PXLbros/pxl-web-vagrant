@@ -21,9 +21,9 @@ blue_text 'https://github.com/PXLbros/pxl-web-vagrant'
 
 line_break
 
-cyan_text 'Configuration:'
-cyan_text 'Name: $VAGRANT_NAME'
+cyan_text '~ $VAGRANT_NAME ~'
 cyan_text 'IP: $IP_ADDRESS'
+cyan_text 'Apache: $IP_ADDRESS:$APACHE_PORT_OUT'
 
 line_break"
 

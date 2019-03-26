@@ -39,30 +39,30 @@ module.exports = {
     ask_input,
     ask_confirm,
 
-    async ask_git_branch() {
-        const branches_str = exec('git branch', { silent: true });
-        const branches = branches_str.replace(/\n$/, '').split('\n');
-        const default_branch = branches.find(branch => branch.substring(0, 2) === '* ');
+    // async ask_git_branch() {
+    //     // const branches_str = exec('git branch', { silent: true });
+    //     // const branches = branches_str.replace(/\n$/, '').split('\n');
+    //     // const default_branch = branches.find(branch => branch.substring(0, 2) === '* ');
 
-        const prompt_result = await prompt([
-            {
-                type: 'list',
-                name: 'value',
-                message: 'Choose Git branch',
-                default: default_branch,
-                choices: branches.map(branch => {
-                    branch = (branch === default_branch ? branch.substring(2) : branch);
+    //     const prompt_result = await prompt([
+    //         {
+    //             type: 'list',
+    //             name: 'value',
+    //             message: 'Choose Git branch',
+    //             default: default_branch,
+    //             choices: branches.map(branch => {
+    //                 branch = (branch === default_branch ? branch.substring(2) : branch);
 
-                    return {
-                        name: branch,
-                        value: branch
-                    };
-                }).reverse()
-            }
-        ]);
+    //                 return {
+    //                     name: branch,
+    //                     value: branch
+    //                 };
+    //             }).reverse()
+    //         }
+    //     ]);
 
-        return prompt_result.value;
-    },
+    //     return prompt_result.value;
+    // },
 
     async ask_php_version(question, no_text = 'No') {
         const is_directory = source => lstatSync(source).isDirectory();

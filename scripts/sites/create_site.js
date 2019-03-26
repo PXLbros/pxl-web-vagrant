@@ -1,5 +1,6 @@
 const commandLineArgs = require('command-line-args');
 const commandLineUsage = require('command-line-usage');
+const { prompt } = require('inquirer');
 const { existsSync } = require('fs');
 const { cp, exec } = require('shelljs');
 const { bold, cyan, red, yellow } = require('chalk');
@@ -12,6 +13,7 @@ const boilerplateUtil = require('../utils/boilerplate');
 const { ask_create_database_driver, create: create_database, delete: delete_database, exists: database_exists, get_driver_title: get_database_driver_title } = require('../utils/database');
 const { ask_web_server, enable_web_server_site, get_config_filename, get_config_file_path, get_installed_web_servers, get_web_server_title, reload_web_server, save_virtual_host_config } = require('../utils/web_server.js');
 const { blue_line, error_line, line_break, success_line, yellow_line } = require('../utils/log');
+const { uniq } = require('lodash');
 const git_branches = require('list-git-branches');
 const log = console.log;
 
@@ -121,14 +123,6 @@ async function main() {
             public_dir_full = `${site_dir}/${options['public-dir']}`;
         } else if (is_public_directory(site_dir) || options['public-dir'] === '') {
             public_dir_full = site_dir;
-        } else {
-            let public_dir_input = await ask_input('What is the public site directory? (leave empty for same as site directory)'); // TODO: Can we wait with this question till after cloning git? Because it'll say in .pxl config file from clone if
-    
-            if (public_dir_input) {
-                public_dir_input = remove_trailing_slash(public_dir_input);
-    
-                public_dir_full = `${site_dir}/${public_dir_input}`;
-            }
         }
     }
 
@@ -175,7 +169,7 @@ async function main() {
     if (git_repo) {
         line_break();
 
-        log(cyan(`Cloning ${git_branch ? `branch "${git_branch}" from ` : ''}Git repository ${git_repo} into ${site_dir}...`));
+        log(cyan(`Cloning ${git_branch ? `branch "${git_branch}" from ` : ''}Git repository ${git_repo} to ${site_dir}...`));
 
         // Clone Git repository
         try {
@@ -197,8 +191,25 @@ async function main() {
         exec(`cd ${site_dir} && git fetch`, { silent: true });
 
         // Ask for Git branch
-        const cwd = site_dir;
-        console.log(git_branches.sync(cwd));
+        if (!git_branch) {
+            const cwd = site_dir;
+            const git_repo_branches = git_branches.sync(cwd);
+            
+            const prompt_result = await prompt([{
+                type: 'list',
+                name: 'value',
+                message: 'Choose Git branch',
+                default: 'master',
+                choices: uniq(git_repo_branches).map(branch => {
+                    return {
+                        name: branch,
+                        value: branch
+                    };
+                }).reverse()
+            }]);
+
+            git_branch = prompt_result.value;
+        }
 
         // Check for .pxl/config.yaml file
         try {

@@ -1,6 +1,6 @@
 const { existsSync } = require('fs');
 const { cd, cp, exec, mv } = require('shelljs');
-const { getLastDirectory, remove_trailing_slash } = require('../../utils/str');
+const { get_last_directory, remove_trailing_slash } = require('../../utils/str');
 const { blue_line, figlet, highlight_line, line_break } = require('../../utils/log');
 const resolve = require('path').resolve;
 const warn = console.warn;
@@ -13,7 +13,7 @@ class InstallHelper
         this.site_dir = this.pxl_config['site-dir'];
 
         if (this.site_dir) {
-            this.site_dir_name = getLastDirectory(this.site_dir);
+            this.site_dir_name = get_last_directory(this.site_dir);
         }
 
         if (this.pxl_config.hostname) {
@@ -41,37 +41,20 @@ class InstallHelper
     }
 
     finish_install() {
-        // highlight_line(`Finish installation...`);
-        // line_break();
-
         if (this.file_exists(this.pxl_config['custom-files-dir'])) {
-            blue_line(`Found custom-files-dir directory, sync...`);
+            blue_line(`Found custom-files-dir directory, sync ${this.pxl_config['site-dir']} with ${this.pxl_config['custom-files-dir']}...`);
 
-            this.sync_paths(this.pxl_config['custom-files-dir'], this.pxl_config['site-dir'])
+            this.sync_paths(this.pxl_config['custom-files-dir'], this.pxl_config['site-dir']);
         }
-
-        // Summary
-        // if (this.site_dir) {
-        //     blue_line(`Site Directory: ${resolve(this.site_dir)}`);
-        // }
-
-        // if (this.pxl_config['public-site-dir']) {
-        //     blue_line(`Site Public Directory: ${resolve(this.pxl_config['public-site-dir'])}`);
-        // }
-
-        // if (this.site_url) {
-        //     line_break();
-        //     cyan_line(`${this.site_url}`);
-        // }
     }
 
     sync_paths(from_dir, to_dir) {
-        console.log('sync_paths disabled');
-        return true;
+        from_dir = remove_trailing_slash(from_dir);
+        to_dir = remove_trailing_slash(to_dir);
         
-        // const rsync_result = exec(`rsync -a ${from_dir}/ ${to_dir}`);
+        const rsync_result = exec(`rsync -a ${from_dir}/ ${to_dir}/`);
 
-        // return (rsync_result.code === 0);
+        return (rsync_result.code === 0);
     }
 
     php(command) {
@@ -120,6 +103,8 @@ class InstallHelper
                 sed_command = `sed -i s~${key}=.*$~${key}=${value}~g ${file}`;
             } else if (type === 'wordpress') {
                 sed_command = `sed -i s~${key}~${value}~g ${file}`;
+            } else if (type === 'editorconfig') {
+                // sed_command = `sed -i s~${key}\s=\s.*$~${key}\s=\s${value}~g ${file}`;
             } else {
                 warn(`end_env type "${type}" not implemented.`);
 

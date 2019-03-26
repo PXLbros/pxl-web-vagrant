@@ -1,7 +1,7 @@
 const { existsSync, readdirSync } = require('fs');
 const { ask_confirm } = require('./ask');
 const { choose } = require('./choose');
-const { getLastDirectory } = require('./str');
+const { get_last_directory } = require('./str');
 const { load_pxl_config } = require('./pxl');
 
 const boilerplateUtil = {
@@ -88,7 +88,7 @@ const boilerplateUtil = {
                 console.log(load_pxl_config_error.message);
             }
         } else {
-            boilerplate.name = getLastDirectory(boilerplate.dir);
+            boilerplate.name = get_last_directory(boilerplate.dir);
         }
 
         return boilerplate;

@@ -38,4 +38,3 @@ clear_provisioning_stats
 rm $PROVISIONING_COMMAND_FILE_PATH
 
 line_break
-line_break

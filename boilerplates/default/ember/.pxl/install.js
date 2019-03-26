@@ -11,21 +11,16 @@ class InstallScript extends InstallHelper {
         this.run(`npm i -g ember-cli`);
 
         // Create Ember project
-        highlight_line('\nCreate Ember project...');
-        // this.run(`ember new --no-welcome --yarn`);
+        highlight_line('\nCreate Ember.js project...');
 
         const pre_site_dir = remove_last_directory(this.site_dir);
-        // this.run(`mkdir -p ${pre_site_dir}`);
-        // this.go_to_dir(pre_site_dir);
-
-        console.log(`cd ${pre_site_dir} && pwd && ember new --dir=${this.site_dir} --no-welcome --yarn`);
         
         this.run(`cd ${pre_site_dir} && pwd && ember new --dir=${this.site_dir} --no-welcome --yarn`);
 
-        // Build
-        // this.yarn('build');
+        this.go_to_dir(this.site_dir);
 
-        line_break();
+        // Build
+        this.run('ember build');
     }
 };
 

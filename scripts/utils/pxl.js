@@ -87,6 +87,11 @@ function load_pxl_config(pxl_config_file_path, site_dir = null) {
             pxl_config['uninstall-script'] = uninstall_script_path;
         }
 
+        // Fix PHP if 7.0 (removes .0)
+        if (pxl_config.code && pxl_config.code.php === 7) {
+            pxl_config.code.php = '7.0';
+        }
+
         return pxl_config;
     } catch (e) {
         throw e;

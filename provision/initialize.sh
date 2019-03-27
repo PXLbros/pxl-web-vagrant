@@ -52,7 +52,7 @@ fi
 
 # Install required APT packages
 highlight_text "Install required APT packages..."
-exec_command "apt-get -y install build-essential libevent-dev libncurses-dev zip unzip"
+exec_command "apt-get -y install build-essential libevent-dev libncurses-dev zip unzip libpng-dev"
 
 # Add Vagrant info to .bashrc
 BASHRC_PATH=/home/vagrant/.bashrc

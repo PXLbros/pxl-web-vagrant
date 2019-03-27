@@ -206,22 +206,27 @@ async function main() {
         // Ask for Git branch
         if (!git_branch) {
             const cwd = site_dir;
-            const git_repo_branches = git_branches.sync(cwd);
+            let git_repo_branches = git_branches.sync(cwd);
+            git_repo_branches = uniq(git_repo_branches);
             
-            const prompt_result = await prompt([{
-                type: 'list',
-                name: 'value',
-                message: 'Choose Git branch',
-                default: 'master',
-                choices: uniq(git_repo_branches).map(branch => {
-                    return {
-                        name: branch,
-                        value: branch
-                    };
-                }).reverse()
-            }]);
+            if (git_repo_branches.length > 1) {
+                const prompt_result = await prompt([{
+                    type: 'list',
+                    name: 'value',
+                    message: 'Choose Git branch',
+                    default: 'master',
+                    choices: git_repo_branches.map(branch => {
+                        return {
+                            name: branch,
+                            value: branch
+                        };
+                    }).reverse()
+                }]);
 
-            git_branch = prompt_result.value;
+                git_branch = prompt_result.value;
+            } else if (git_repo_branches.length === 1) {
+                git_branch = git_repo_branches[0];
+            }
         }
 
         // Check for .pxl/config.yaml file

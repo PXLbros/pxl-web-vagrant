@@ -103,7 +103,6 @@ async function main() {
 
         const document_root_result = exec(`awk '/DocumentRoot/ {print $2}' ${selected_site_configuration_file_path}`, { silent: true });
         document_root = (document_root_result.code === 0 && document_root_result.stdout ? document_root_result.stdout.trim() : null);
-        console.log('document_root', document_root);
         document_root_without_public = remove_public_from_dir(document_root);
 
         const get_server_name_result = exec(`awk '/ServerName/ {print $2}' ${selected_site_configuration_file_path}`, { silent: true });

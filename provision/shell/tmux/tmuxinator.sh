@@ -36,12 +36,7 @@ then
   - Apache Log:
       root: /var/log/apache2
       panes:
-        - access_log:
-          - sudo su -
-          - tail -f access.log 2> /dev/null
-        - error_log:
-          - sudo su -
-          - tail -f error.log 2> /dev/null"
+        - sudo lnav /var/log/apache2"
 fi
 
 if [ "$NGINX_ENABLED" = "true" ];
@@ -53,12 +48,7 @@ then
 - nginx Log:
     root: /var/log/nginx
     panes:
-      - access_log:
-        - sudo su -
-        - tail -f access.log 2> /dev/null
-      - error_log:
-        - sudo su -
-        - tail -f error.log 2> /dev/null"
+      - - sudo lnav /var/log/nginx"
 fi
 
 # Save tmuxinator "Home" project

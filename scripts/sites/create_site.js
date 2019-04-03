@@ -6,11 +6,11 @@ const { cp, exec } = require('shelljs');
 const { bold, cyan, red, yellow } = require('chalk');
 const { format } = require('date-fns');
 const { create_pxl_config_in_dir, run_install_script_from_pxl_config, load_pxl_config_from_dir, print_pxl_config } = require('../utils/pxl');
-const { ask_create_database, ask_confirm, ask_input, ask_path, ask_php_version } = require('../utils/ask');
+const { ask_create_database, ask_confirm, ask_input, ask_php_version } = require('../utils/ask');
 const { is_public_directory } = require('../utils/web_server');
 const { get_last_directory, remove_trailing_slash } = require('../utils/str');
 const boilerplateUtil = require('../utils/boilerplate');
-const { ask_create_database_driver, create: create_database, delete: delete_database, exists: database_exists, get_driver_title: get_database_driver_title } = require('../utils/database');
+const { create: create_database, delete: delete_database, exists: database_exists, get_driver_title: get_database_driver_title } = require('../utils/database');
 const { ask_web_server, enable_web_server_site, get_config_filename, get_config_file_path, get_installed_web_servers, get_web_server_title, reload_web_server, save_virtual_host_config } = require('../utils/web_server.js');
 const { blue_line, error_line, line_break, success_line, yellow_line } = require('../utils/log');
 const { uniq } = require('lodash');
@@ -112,6 +112,39 @@ async function main() {
     let git_repo = (options['git-repo'] || null);
     let git_branch = (options['git-branch'] || null);
     
+    let project_type;
+
+    if (git_repo) {
+        project_type = 'git';
+    } else if (boilerplate) {
+        project_type = 'boilerplate';
+    } else {
+        const project_type_result = await prompt([{
+            type: 'list',
+            name: 'value',
+            message: 'Choose project type:',
+            default: 'master',
+            choices: [
+                {
+                    name: 'Empty project',
+                    value: 'empty'
+                },
+                {
+                    name: 'From boilerplate',
+                    value: 'boilerplate'
+                },
+                {
+                    name: 'From existing Git repository',
+                    value: 'git'
+                }
+            ]
+        }]);
+
+        project_type = project_type_result.value;
+    }
+
+    console.log('project_type', project_type);
+
     // If not Git repository, check for boilerplate
     if (!git_repo) {
         if (boilerplate_input) {
@@ -541,7 +574,7 @@ async function main() {
     }
 
     if (hostname) {
-        let url = `http://${hostname}:${process.env.APACHE_PORT_OUT}`;
+        let url = `http://${hostname}:${process.env.APACHE_PORT_HTTP_OUT}`;
 
         line_break();
         blue_line(url);

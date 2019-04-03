@@ -7,8 +7,12 @@ export LOG_FILE_PATH=web-servers/nginx.log
 if [ "$NGINX_ENABLED" == "true" ]; then
     title "NGINX"
 
-    if ! grep -qF "export NGINX_PORT" /home/vagrant/.bashrc; then
-        exec_command "echo -e \"\nexport NGINX_PORT=$NGINX_PORT\" >> /home/vagrant/.bashrc"
+    if ! grep -qF "export NGINX_PORT_HTTP" /home/vagrant/.bashrc; then
+        exec_command "echo -e \"\nexport NGINX_PORT_HTTP=$NGINX_PORT_HTTP\" >> /home/vagrant/.bashrc"
+    fi
+
+    if ! grep -qF "export NGINX_PORT_HTTPS" /home/vagrant/.bashrc; then
+        exec_command "echo -e \"\nexport NGINX_PORT_HTTPS=$NGINX_PORT_HTTPS\" >> /home/vagrant/.bashrc"
     fi
 
     # Install NGINX
@@ -21,7 +25,7 @@ if [ "$NGINX_ENABLED" == "true" ]; then
         exec_command "sudo chown -R vagrant:vagrant /etc/nginx/sites-available"
 
         # Update port in default site
-        if [ "$NGINX_PORT" != "80" ]; then
+        if [ "$NGINX_PORT_HTTP" != "80" ]; then
             if [ ! -z "$PORT" ]; then
                 exec_command "sed -i \"s/80/$PORT/g\" /etc/nginx/sites-available/default"
             fi

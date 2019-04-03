@@ -18,10 +18,12 @@ vm:
 web-servers:
     apache:
         enabled: true
-        port: 7001
+        port:
+            http: 7001
+            https: 7002
     nginx:
         enabled: false
-        port: 7002
+        port: 8001
 code:
     php:
         versions:

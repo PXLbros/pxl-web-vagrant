@@ -9,12 +9,16 @@ if [ "$APACHE_ENABLED" == "true" ]; then
 
     DEFAULT_APACHE_SITE_CONF=/etc/apache2/sites-available/000-default.conf
 
-    if ! grep -qF "export APACHE_PORT" $HOME/.bashrc; then
-        exec_command "echo -e \"\nexport APACHE_PORT=$APACHE_PORT\" >> $HOME/.bashrc"
+    if ! grep -qF "export APACHE_PORT_HTTP" $HOME/.bashrc; then
+        exec_command "echo -e \"\nexport APACHE_PORT_HTTP=$APACHE_PORT_HTTP\" >> $HOME/.bashrc"
     fi
 
-    if ! grep -qF "export APACHE_PORT_OUT" $HOME/.bashrc; then
-        exec_command "echo -e \"export APACHE_PORT_OUT=$APACHE_PORT_OUT\" >> $HOME/.bashrc"
+    if ! grep -qF "export APACHE_PORT_HTTP_OUT" $HOME/.bashrc; then
+        exec_command "echo -e \"export APACHE_PORT_HTTP_OUT=$APACHE_PORT_HTTP_OUT\" >> $HOME/.bashrc"
+    fi
+
+    if ! grep -qF "export APACHE_PORT_HTTPS_OUT" $HOME/.bashrc; then
+        exec_command "echo -e \"export APACHE_PORT_HTTPS_OUT=$APACHE_PORT_HTTPS_OUT\" >> $HOME/.bashrc"
     fi
 
     # Install Apache
@@ -74,6 +78,10 @@ if [ "$APACHE_ENABLED" == "true" ]; then
     # if ! grep -qF "<Directory /vagrant/docs/.vuepress/dist>" $DEFAULT_APACHE_SITE_CONF; then
         exec_command "sudo cp /vagrant/provision/web-servers/apache/default.conf $DEFAULT_APACHE_SITE_CONF"
     # fi
+
+    # Create self-signed SSL certificate
+    highlight_text "Create self-seigned SSL certificate..."
+    exec_command "sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt -subj \"/C=US/ST=California/L=Los Angeles/O=PXL/OU=Vagrant/CN=${process.env.IP_ADDRESS}\""
 
     # Restart Apache
     highlight_text "Restart Apache..."

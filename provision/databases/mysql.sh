@@ -30,7 +30,7 @@ if [ ! -x "$(command -v mysql)" ]; then
         exec_command "dpkg -i mysql-apt-config_0.8.10-1_all.deb"
         exec_command "sed -i 's/mysql-5.7/mysql-8.0/g' /etc/apt/sources.list.d/mysql.list"
         exec_command "rm -rf mysql-apt-config_0.8.10-1_all.deb"
-        exec_command "apt-get update"
+        exec_command "apt-get update -y"
         exec_command "apt-get install -y mysql-server"
 
         exec_command "debconf-set-selections <<< \"mysql-server mysql-server/data-dir select ''\""
@@ -42,7 +42,13 @@ if [ ! -x "$(command -v mysql)" ]; then
     ## Install MySQL
     highlight_text "Install MySQL..."
 
-    exec_command apt-get install -y mysql-server
+    if [ "$MYSQL_VERSION" == "5.5" ]; then
+        exec_command "apt-get install -y mysql-server-5.5"
+    elif [ "$MYSQL_VERSION" == "5.6" ]; then
+        exec_command "apt-get install -y mysql-server-5.6"
+    elif [ "$MYSQL_VERSION" == "5.7" ]; then
+        exec_command "apt-get install -y mysql-server"
+    fi
 
     if [ -x "$(command -v mysql)" ];
     then

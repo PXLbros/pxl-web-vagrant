@@ -17,7 +17,7 @@ class InstallHelper
         }
 
         if (this.pxl_config.hostname) {
-            this.site_url = `http://${this.pxl_config.hostname}:${process.env.APACHE_PORT_OUT}`;
+            this.site_url = `http://${this.pxl_config.hostname}:${process.env.APACHE_PORT_HTTP_OUT}`;
         }
 
         if (this.pxl_config.code && this.pxl_config.code.php) {

@@ -86,7 +86,7 @@ module.exports = {
 
 
         if (web_server === 'apache') {
-            contents = `<VirtualHost *:${process.env.APACHE_PORT}>
+            contents = `<VirtualHost *:${process.env.APACHE_PORT_HTTP}>
     ServerName ${hostname}
     DocumentRoot ${public_dir}
 
@@ -110,6 +110,33 @@ module.exports = {
 
             contents += `\n</VirtualHost>`;
 
+            // HTTPS
+            contents += `\n<VirtualHost *:${process.env.APACHE_PORT_HTTPS}>
+    ServerName ${hostname}
+    DocumentRoot ${public_dir}
+
+    <Directory />
+        Options Indexes FollowSymLinks MultiViews
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    LogLevel error
+    ErrorLog /var/log/apache2/${hostname}-error.log
+    CustomLog /var/log/apache2/${hostname}-access.log combined
+
+    SSLEngine on
+    SSLCertificateFile /etc/ssl/certs/apache-selfsigned.crt
+    SSLCertificateKeyFile /etc/ssl/private/apache-selfsigned.key
+
+    <FilesMatch "\.(cgi|shtml|phtml|php)$">
+        SSLOptions +StdEnvVars
+    </FilesMatch>
+    <Directory /usr/lib/cgi-bin>
+        SSLOptions +StdEnvVars
+    </Directory>
+</VirtualHost>`;
+
             contents += '\n\n# vim: syntax=apache';
 
             if (overwrite) {
@@ -121,7 +148,7 @@ module.exports = {
             }
         } else if (web_server === 'nginx') {
             contents = `server {
-    listen ${process.env.NGINX_PORT};
+    listen ${process.env.NGINX_PORT_HTTP};
     root ${public_dir};
     index index.php;
     server_name ${hostname};

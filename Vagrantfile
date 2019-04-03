@@ -174,9 +174,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
 
     # LNAV
-    if vagrant_config['shell']['lnav']['enabled']
-        config.vm.provision 'shell', name: 'LNAV', path: "#{VAGRANT_DIR}/provision/shell/lnav.sh", run: 'once', privileged: false, env: GLOBAL_VARIABLES
-    end
+    config.vm.provision 'shell', name: 'LNAV', path: "#{VAGRANT_DIR}/provision/shell/lnav.sh", run: 'once', privileged: false, env: GLOBAL_VARIABLES
 
     # Install web servers
     if vagrant_config.has_key?('web-servers')

@@ -7,7 +7,7 @@ vm:
         timezone: UTC
         language-iso: en_US
     provision:
-        show-command: true
+        show-command: false
         show-command-output: false
         show-command-execution-time: true
         show-command-exit-code: false

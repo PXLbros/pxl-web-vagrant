@@ -1,5 +1,6 @@
 const InstallHelper = require('/vagrant/scripts/sites/classes/install_helper');
 const { highlight_line, line_break } = require('/vagrant/scripts/utils/log');
+const resolve = require('path').resolve;
 
 class InstallScript extends InstallHelper {
     install() {
@@ -16,16 +17,22 @@ class InstallScript extends InstallHelper {
 
         const tmp_lib_dir = '_slim-framework-lib';
 
+        if (this.exists(tmp_lib_dir)) {
+            this.delete(tmp_lib_dir, true);
+        }
+
         this.composer(`create-project slim/slim-skeleton ${tmp_lib_dir}`);
 
-        if (!this.file_exists(tmp_lib_dir)) {
+        const tmp_lib_dir_full = resolve(tmp_lib_dir);
+
+        if (!this.file_exists(tmp_lib_dir_full)) {
             console.log('Could not create Slim Framework project.');
             return;
         }
 
         this.delete('public/', true);
-        this.move_files(`${this.site_dir}/${tmp_lib_dir}/`, `${this.site_dir}/`);
-        this.delete(`${this.site_dir}/${tmp_lib_dir}/`, true);
+        this.move_files(tmp_lib_dir_full, this.site_dir, true);
+        this.delete(`${tmp_lib_dir_full}/`, true);
 
         line_break();
     }

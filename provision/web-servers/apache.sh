@@ -93,8 +93,7 @@ if [ "$APACHE_ENABLED" == "true" ]; then
 
     # Restart Apache
     highlight_text "Restart Apache..."
-    exec_command "sudo service apache2 stop"
-    exec_command "sudo service apache2 start"
+    exec_command "sudo service apache2 restart"
 else
     if [ -x "$(command -v apachectl)" ]; then
         highlight_text "Uninstall Apache..."

@@ -2,6 +2,9 @@
 
 . /vagrant/provision/helpers/include.sh
 
+highlight_text "Restart Apache..."
+exec_command "sudo service apache2 restart"
+
 # Set home directory
 if [ ! -z "$HOME_DIR" ]; then
     highlight_text "Set home directory..."

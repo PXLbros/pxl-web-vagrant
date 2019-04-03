@@ -69,6 +69,10 @@ class InstallHelper
         return existsSync(path);
     }
 
+    exists(path) {
+        return existsSync(path);
+    }
+
     go_to_dir(dir) {
         cd(dir);
     }
@@ -85,7 +89,11 @@ class InstallHelper
         cp(from, to);
     }
 
-    move_files(from_dir, to_dir) {
+    move_files(from_dir, to_dir, create_to_dir_if_not_exists = false) {
+        if (create_to_dir_if_not_exists && !existsSync(to_dir)) {
+            mkdir('-p', to_dir);
+        }
+
         from_dir = remove_trailing_slash(from_dir);
         to_dir = remove_trailing_slash(to_dir);
 

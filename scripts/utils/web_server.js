@@ -111,7 +111,7 @@ module.exports = {
             contents += `\n</VirtualHost>`;
 
             // HTTPS
-            contents += `\n<VirtualHost *:${process.env.APACHE_PORT_HTTPS}>
+            contents += `\n\n<VirtualHost *:${process.env.APACHE_PORT_HTTPS}>
     ServerName ${hostname}
     DocumentRoot ${public_dir}
 
@@ -123,8 +123,15 @@ module.exports = {
 
     LogLevel error
     ErrorLog /var/log/apache2/${hostname}-error.log
-    CustomLog /var/log/apache2/${hostname}-access.log combined
+    CustomLog /var/log/apache2/${hostname}-access.log combined`;
 
+            if (php_version !== null) {
+                contents += `\n\n    <FilesMatch .php$>
+        SetHandler "proxy:unix:/var/run/php/php${php_version}-fpm.sock|fcgi://localhost/"
+    </FilesMatch>`;
+            }
+
+    contents += `\n
     SSLEngine on
     SSLCertificateFile /etc/ssl/certs/apache-selfsigned.crt
     SSLCertificateKeyFile /etc/ssl/private/apache-selfsigned.key

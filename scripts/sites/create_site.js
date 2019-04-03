@@ -204,13 +204,13 @@ async function main() {
                 // No backup, delete existing site directory
                 exec(`sudo rm -rf ${site_dir}`);
 
-                blue_line(`Removed existing directory ${site_dir}.`);
+                log(red(`Removed existing directory ${site_dir}.`));
             }
         } else {
             // No backup, delete existing site directory
             exec(`sudo rm -rf ${site_dir}`);
 
-            blue_line(`Removed existing directory ${site_dir}.`);
+            log(red(`Removed existing directory ${site_dir}.`));
         }
     }
 

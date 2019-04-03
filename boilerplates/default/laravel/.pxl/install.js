@@ -23,8 +23,7 @@ class InstallScript extends InstallHelper {
         }
 
         this.delete('public/', true);
-        this.create_dir(this.site_dir);
-        this.move_files(tmp_lib_dir, this.site_dir);
+        this.move_files(tmp_lib_dir, this.site_dir, true);
         this.delete(`${tmp_lib_dir}/`, true);
 
         line_break();

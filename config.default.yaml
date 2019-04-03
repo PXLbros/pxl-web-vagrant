@@ -23,7 +23,9 @@ web-servers:
             https: 7002
     nginx:
         enabled: false
-        port: 8001
+        port:
+            http: 8001
+            https: 8002
 code:
     php:
         versions:

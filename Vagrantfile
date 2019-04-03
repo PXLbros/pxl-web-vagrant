@@ -175,24 +175,24 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     # Install web servers
     if vagrant_config.has_key?('web-servers')
-        web_server_port_in = 80
-        web_server_ssl_port_in = 443
+        web_server_port_http_in = 80
+        web_server_port_https_in = 443
 
         vagrant_config['web-servers'].each do |web_server_name, web_server_vagrant_config|
             if web_server_name === 'apache'
                 port_http_out = (web_server_vagrant_config['port']['http'] || (web_server_vagrant_config['port'] || 7001))
                 port_https_out = (web_server_vagrant_config['port']['https'] || 7002)
 
-                GLOBAL_VARIABLES['APACHE_PORT_HTTP'] = web_server_port_in
-                GLOBAL_VARIABLES['APACHE_PORT_HTTPS'] = web_server_ssl_port_in
+                GLOBAL_VARIABLES['APACHE_PORT_HTTP'] = web_server_port_http_in
+                GLOBAL_VARIABLES['APACHE_PORT_HTTPS'] = web_server_port_https_in
                 GLOBAL_VARIABLES['APACHE_PORT_HTTP_OUT'] = port_http_out
                 GLOBAL_VARIABLES['APACHE_PORT_HTTPs_OUT'] = port_https_out
             elsif web_server_name === 'nginx'
                 port_http_out = (web_server_vagrant_config['port']['http'] || (web_server_vagrant_config['port'] || 8001))
                 port_https_out = (web_server_vagrant_config['port']['https'] || 8002)
 
-                GLOBAL_VARIABLES['NGINX_PORT_HTTP'] = web_server_port_in
-                GLOBAL_VARIABLES['NGINX_PORT_HTTPS'] = web_server_ssl_port_in
+                GLOBAL_VARIABLES['NGINX_PORT_HTTP'] = web_server_port_http_in
+                GLOBAL_VARIABLES['NGINX_PORT_HTTPS'] = web_server_port_https_in
                 GLOBAL_VARIABLES['NGINX_PORT_HTTP_OUT'] = port_http_out
                 GLOBAL_VARIABLES['NGINX_PORT_HTTPS_OUT'] = port_https_out
             end
@@ -201,11 +201,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
             config.vm.provision 'shell', name: "Web Server: #{web_server_name}", path: "#{VAGRANT_DIR}/provision/web-servers/#{web_server_name}.sh", privileged: false, run: 'once', env: GLOBAL_VARIABLES
 
             # Bind web server port
-            config.vm.network :forwarded_port, guest: web_server_port_in, host: port_http_out
-            config.vm.network :forwarded_port, guest: web_server_ssl_port_in, host: ssl_port_out
+            config.vm.network :forwarded_port, guest: web_server_port_http_in, host: port_http_out
+            config.vm.network :forwarded_port, guest: web_server_port_https_in, host: port_https_out
 
             # Increment port number
-            web_server_port_in += 1
+            web_server_port_http_in += 1
+            web_server_port_https_in += 1
         end
     end
 

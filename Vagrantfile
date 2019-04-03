@@ -173,6 +173,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         config.vm.provision 'shell', name: 'Liquid Prompt', path: "#{VAGRANT_DIR}/provision/shell/liquidprompt.sh", run: 'once', privileged: false, env: GLOBAL_VARIABLES
     end
 
+    # LNAV
+    if vagrant_config['shell']['lnav']['enabled']
+        config.vm.provision 'shell', name: 'LNAV', path: "#{VAGRANT_DIR}/provision/shell/lnav.sh", run: 'once', privileged: false, env: GLOBAL_VARIABLES
+    end
+
     # Install web servers
     if vagrant_config.has_key?('web-servers')
         web_server_port_http_in = 80

@@ -572,12 +572,12 @@ async function main() {
         log(`${cyan(bold('Git:'))} ${red(`Error (${git_clone_error})`)}`);
     }
 
-    if (database_driver) {
+    if (database_driver && database_name) {
         log(`${cyan(bold('Database Driver:'))} ${get_database_driver_title(database_driver)}`);
-    }
 
-    if (database_name) {
-        log(`${cyan(bold('Database Name:'))} ${database_name}`);
+        if (database_name) {
+            log(`${cyan(bold('Database Name:'))} ${database_name}`);
+        }
     }
 
     if (hostname) {

@@ -91,7 +91,7 @@ async function main() {
     const no_backup = (options['no-backup'] || false);
     const force = (options['force'] || false);
 
-    let hostname;
+    let hostname = (options['hostname'] || undefined);
     
     let site_dir = (options['site-dir'] || await ask_input('Enter site directory:', null, '', ` ${process.env.PROJECTS_DIR}/`));
     
@@ -99,7 +99,7 @@ async function main() {
     site_dir = remove_trailing_slash(site_dir);
     site_dir = `${process.env.PROJECTS_DIR}/${site_dir}`;
 
-    let boilerplate;
+    let boilerplate = (options['boilerplate'] || undefined);
     let boilerplate_pxl_config = {};
     let pxl_config;
 
@@ -145,8 +145,6 @@ async function main() {
         project_type = project_type_result.value;
     }
 
-    console.log('project_type', project_type);
-
     // If not Git repository, check for boilerplate
     if (!git_repo) {
         if (boilerplate_input) {
@@ -154,8 +152,10 @@ async function main() {
             let boilerplate_name_input = boilerplate_input;
 
             boilerplate = await boilerplateUtil.loadBoilerplate(boilerplateUtil.getBoilerplateFromName(boilerplate_name_input, boilerplate_type_input), site_dir);
-        } else if (options['boilerplate'] !== '') {
-            boilerplate = await boilerplateUtil.askBoilerplate('Do you want to load from boilerplate?');
+        } else if (options['boilerplate']) {
+            boilerplate = await boilerplateUtil.askBoilerplate(null);
+        } else if (project_type === 'boilerplate') {
+            boilerplate = await boilerplateUtil.askBoilerplate(null);
         }
 
         if (boilerplate && boilerplate.pxl_config) {
@@ -166,10 +166,13 @@ async function main() {
         }
 
         if (boilerplate_pxl_config && boilerplate_pxl_config['public-dir']) {
+            public_dir = boilerplate_pxl_config['public-dir'];
             public_dir_full = boilerplate_pxl_config['public-site-dir'];
         } else if (options['public-dir']) {
+            public_dir = options['public-dir'];
             public_dir_full = `${site_dir}/${options['public-dir']}`;
         } else if (is_public_directory(site_dir) || options['public-dir'] === '') {
+            public_dir = site_dir;
             public_dir_full = site_dir;
         }
     }
@@ -435,8 +438,10 @@ async function main() {
                 database = await ask_create_database(database_driver);
             }
 
-            database_driver = database.driver;
-            database_name = database.name;
+            if (database) {
+                database_driver = database.driver;
+                database_name = database.name;
+            }
         }
     }
 

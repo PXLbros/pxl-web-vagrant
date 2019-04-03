@@ -23,14 +23,21 @@ class InstallScript extends InstallHelper {
         }
 
         this.delete('public/', true);
-        this.move_files(`${tmp_lib_dir}/`, `${this.site_dir}/`);
+        this.create_dir(this.site_dir);
+        this.move_files(tmp_lib_dir, this.site_dir);
         this.delete(`${tmp_lib_dir}/`, true);
 
         line_break();
         highlight_line('Update .env file...');
 
-        this.edit_env_file('.env', 'DB_USERNAME', process.env.MYSQL_USER_NAME);
-        this.edit_env_file('.env', 'DB_PASSWORD', process.env.MYSQL_USER_PASSWORD);
+        this.go_to_dir(this.site_dir);
+
+        this.edit_env('.env', {
+            'APP_URL': `http://${this.pxl_config.hostname}:${process.env.APACHE_PORT_HTTP_OUT}`,
+            'DB_USERNAME': process.env.MYSQL_USER_NAME,
+            'DB_PASSWORD': process.env.MYSQL_USER_PASSWORD,
+            'LOG_CHANNEL': 'single'
+        });
 
         // Database
         if (this.pxl_config.database && this.pxl_config.database.name) {

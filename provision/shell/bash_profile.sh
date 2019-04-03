@@ -26,7 +26,7 @@ alias source_bashrc='source ~/.bashrc'
 # Shortcuts
 alias ..='cd ..'
 alias cls='clear'
-alias ls='ls -lGah --color=auto'
+alias ls='ls -lGa --color=auto'
 alias grep='grep --color=auto'
 
 # /etc/hosts

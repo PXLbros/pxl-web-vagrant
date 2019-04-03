@@ -186,7 +186,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
                 GLOBAL_VARIABLES['APACHE_PORT_HTTP'] = web_server_port_http_in
                 GLOBAL_VARIABLES['APACHE_PORT_HTTPS'] = web_server_port_https_in
                 GLOBAL_VARIABLES['APACHE_PORT_HTTP_OUT'] = port_http_out
-                GLOBAL_VARIABLES['APACHE_PORT_HTTPs_OUT'] = port_https_out
+                GLOBAL_VARIABLES['APACHE_PORT_HTTPS_OUT'] = port_https_out
             elsif web_server_name === 'nginx'
                 port_http_out = (web_server_vagrant_config['port']['http'] || (web_server_vagrant_config['port'] || 8001))
                 port_https_out = (web_server_vagrant_config['port']['https'] || 8002)

@@ -1,5 +1,5 @@
 const { existsSync } = require('fs');
-const { cd, cp, exec, mv } = require('shelljs');
+const { cd, cp, exec, mkdir, mv } = require('shelljs');
 const { get_last_directory, remove_trailing_slash } = require('../../utils/str');
 const { blue_line, figlet, highlight_line, line_break } = require('../../utils/log');
 const resolve = require('path').resolve;
@@ -73,6 +73,14 @@ class InstallHelper
         cd(dir);
     }
 
+    create_dir(dir) {
+        if (existsSync(dir)) {
+            return;
+        }
+
+        mkdir('-p', dir);
+    }
+
     copy_file(from, to) {
         cp(from, to);
     }
@@ -80,6 +88,8 @@ class InstallHelper
     move_files(from_dir, to_dir) {
         from_dir = remove_trailing_slash(from_dir);
         to_dir = remove_trailing_slash(to_dir);
+
+        // highlight_line(`Move ${from_dir} to ${to_dir}...`);
 
         mv(`${from_dir}/{*,.*}`, `${to_dir}/`);
     }

@@ -13,6 +13,10 @@ if [ "$APACHE_ENABLED" == "true" ]; then
         exec_command "echo -e \"\nexport APACHE_PORT_HTTP=$APACHE_PORT_HTTP\" >> $HOME/.bashrc"
     fi
 
+    if ! grep -qF "export APACHE_PORT_HTTPS" $HOME/.bashrc; then
+        exec_command "echo -e \"\nexport APACHE_PORT_HTTPS=$APACHE_PORT_HTTPS\" >> $HOME/.bashrc"
+    fi
+
     if ! grep -qF "export APACHE_PORT_HTTP_OUT" $HOME/.bashrc; then
         exec_command "echo -e \"export APACHE_PORT_HTTP_OUT=$APACHE_PORT_HTTP_OUT\" >> $HOME/.bashrc"
     fi
@@ -81,7 +85,11 @@ if [ "$APACHE_ENABLED" == "true" ]; then
 
     # Create self-signed SSL certificate
     highlight_text "Create self-seigned SSL certificate..."
-    exec_command "sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt -subj \"/C=US/ST=California/L=Los Angeles/O=PXL/OU=Vagrant/CN=${process.env.IP_ADDRESS}\""
+    exec_command "sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt -subj \"/C=US/ST=California/L=Los Angeles/O=PXL/OU=Vagrant/CN=$IP_ADDRESS\""
+
+    highlight_text "Enable Apache mod_sss/mod_headers modules..."
+    exec_command "sudo a2enmod ssl"
+    exec_command "sudo a2enmod headers"
 
     # Restart Apache
     highlight_text "Restart Apache..."

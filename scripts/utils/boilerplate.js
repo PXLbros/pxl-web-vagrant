@@ -54,8 +54,10 @@ const boilerplateUtil = {
             return false;
         }
 
-        if (!await ask_confirm(question)) {
-            return false;
+        if (question !== null) {
+            if (!await ask_confirm(question)) {
+                return false;
+            }
         }
 
         const selected_boilerplate = await choose('Choose:', boilerplates.map(boilerplate => {

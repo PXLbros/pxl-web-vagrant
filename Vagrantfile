@@ -69,6 +69,7 @@ GLOBAL_VARIABLES = {
 
     'TMUX_VERSION': (vagrant_config['shell']['tmux']['version'] || '2.8'),
     'TMUXINATOR': (vagrant_config['shell']['tmux']['tmuxinator']['enabled'] || false),
+    'TMUXINATOR_AUTO_START': (vagrant_config['shell']['tmux']['tmuxinator']['auto-start'] || ''),
     'GPAKOSZ': (vagrant_config['shell']['tmux']['gpakosz']['enabled'] || false),
 
     'PHP_VERSIONS': (vagrant_config['code']['php']['versions'] ? vagrant_config['code']['php']['versions'].join(' ') : nil),

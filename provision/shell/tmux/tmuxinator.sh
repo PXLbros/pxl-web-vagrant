@@ -33,6 +33,7 @@ then
   - Apache Sites:
       - sudo su -
       - cd /etc/apache2/sites-available
+      - clear
   - Apache Log:
       root: /var/log/apache2
       panes:
@@ -55,7 +56,9 @@ fi
 exec_command "echo -e \"$HOME_TMUXINATOR_CONTENTS\" > $HOME/.config/tmuxinator/home.yml"
 
 # Set to open tmuxinator "Home" project upon login
-# if ! grep -qF "tmuxinator start home" $HOME/.bashrc
-# then
-#     echo -e "\ntmuxinator start home" >> $HOME/.bashrc
-# fi
+if [ ! -z "$TMUXINATOR_AUTO_START" ]; then
+    if ! grep -qF "tmuxinator start home" $HOME/.bashrc
+    then
+        echo -e "\ntmuxinator start home" >> $HOME/.bashrc
+    fi
+fi

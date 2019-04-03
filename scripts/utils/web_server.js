@@ -129,9 +129,10 @@ module.exports = {
     SSLCertificateFile /etc/ssl/certs/apache-selfsigned.crt
     SSLCertificateKeyFile /etc/ssl/private/apache-selfsigned.key
 
-    <FilesMatch "\.(cgi|shtml|phtml|php)$">
+    <FilesMatch ".(cgi|shtml|phtml|php)$">
         SSLOptions +StdEnvVars
     </FilesMatch>
+    
     <Directory /usr/lib/cgi-bin>
         SSLOptions +StdEnvVars
     </Directory>

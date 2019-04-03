@@ -2,7 +2,6 @@ const { lstatSync, readdirSync } = require('fs');
 const { join } = require('path');
 const { prompt } = require('inquirer');
 const inquirer = require('inquirer');
-const { exec } = require('shelljs');
 const { choose } = require('./choose.js');
 
 inquirer.registerPrompt('fuzzypath', require('inquirer-fuzzy-path'));

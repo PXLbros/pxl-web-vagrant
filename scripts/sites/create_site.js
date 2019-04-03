@@ -106,6 +106,8 @@ async function main() {
     let public_dir = (options['public-dir'] || null);
     let public_dir_full;
     let php_version = (options['php'] || null);
+    
+    let database;
     let database_driver = 'mysql';
     let database_name = (options['db-name'] || null);
 

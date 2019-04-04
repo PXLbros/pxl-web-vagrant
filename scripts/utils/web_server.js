@@ -263,6 +263,28 @@ module.exports = {
         return true;
     },
 
+    restart_web_server(web_server, silent = false) {
+        let restart_result;
+
+        if (web_server === 'apache') {
+            restart_result = exec(`sudo service apache2 restart`, { silent: true });
+        } else if (web_server === 'nginx') {
+            restart_result = exec(`sudo service nginx restart`, { silent: true });
+        } else {
+            throw new Error(`Invalid web server "${web_server}".`);
+        }
+
+        if (restart_result.code !== 0) {
+            throw new Error(restart_result.stderr);
+        }
+
+        if (!silent) {
+            cyan_line(`Restarted ${get_web_server_title(web_server)}.`);
+        }
+
+        return true;
+    },
+
     get_public_directories,
 
     is_public_directory(path) {

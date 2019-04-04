@@ -7,6 +7,7 @@ const { ask_confirm, ask_input } = require('./ask');
 const { remove_last_directory, remove_trailing_slash } = require('./str');
 const { error_line, line_break, title_line } = require('./log');
 const { get_public_directories } = require('../utils/web_server.js');
+const { get_driver_title: get_database_driver_title } = require('../utils/database');
 const log = console.log;
 
 function get_pxl_config_file_path_from_dir(dir) {
@@ -162,7 +163,7 @@ function print_pxl_config(pxl_config) {
         }
 
         if (typeof pxl_config['database'] === 'object') {
-            title_line('Database Driver', pxl_config['database'].driver);
+            title_line('Database Driver', get_database_driver_title(pxl_config['database'].driver));
             title_line('Database Name', pxl_config['database'].name);
         }
 

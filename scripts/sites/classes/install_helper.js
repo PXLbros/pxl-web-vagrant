@@ -65,6 +65,10 @@ class InstallHelper
         this.php(`/usr/local/bin/composer ${command}`);
     }
 
+    script(command) {
+        this.php(`./node_modules/.bin/${command}`);
+    }
+
     file_exists(path) {
         return existsSync(path);
     }

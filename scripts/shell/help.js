@@ -16,6 +16,7 @@ blue_line(`Documentation: https://pxlbros.github.io/pxl-web-vagrant`);
 line_break();
 
 cyan_line(`~ ${process.env.VAGRANT_NAME} ~`);
+cyan_line(`IP: ${process.env.VAGRANT_IP_ADDRESS}`);
 cyan_line(`http://localhost:${process.env.APACHE_PORT_HTTP_OUT}`);
 
 line_break();

@@ -23,7 +23,7 @@ line_break
 
 cyan_text '~ $VAGRANT_NAME ~'
 cyan_text 'IP: $IP_ADDRESS'
-cyan_text 'Apache: http://$IP_ADDRESS:$APACHE_PORT_HTTP_OUT'
+cyan_text 'Apache: http://localhost:$APACHE_PORT_HTTP_OUT'
 
 line_break"
 

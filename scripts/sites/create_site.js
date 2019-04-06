@@ -43,7 +43,7 @@ const options_values = [
     { name: 'db-driver', type: String, description: 'Database driver.' },
     { name: 'db-name', type: String, description: 'Database name.' },
     { name: 'overwrite', type: Boolean, description: 'Overwrite existing site if any.' },
-    { name: 'no-backup', type: Boolean, description: `Omit backup of existing site upon overwrite.` },
+    { name: 'no-backup', type: Boolean, description: `Omit backup of existing site directory if exists.` },
     { name: 'force', type: Boolean, description: `Don't prompt for questions.` },
     { name: 'save-config', type: Boolean, description: `Save PXL Web Vagrant configuration (.pxl).` },
     { name: 'show-command', type: Boolean, description: 'Show executed command after run.' },
@@ -587,7 +587,7 @@ async function main() {
         blue_line(url);
 
         line_break();
-        yellow_line(`*NOTE* Copy "127.0.0.1 ${hostname}" to local /etc/hosts file.`);
+        yellow_line(`Note: Copy "127.0.0.1 ${hostname}" to local /etc/hosts file.`);
 
         if (!options['show-command']) {
             line_break();

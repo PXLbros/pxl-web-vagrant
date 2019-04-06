@@ -24,15 +24,15 @@ fi
 highlight_text "Create configuration file..."
 exec_command "echo \"# Maximal value under which the battery level is displayed
 # Recommended value is 75
-LP_BATTERY_THRESHOLD=75
+LP_BATTERY_THRESHOLD=0
 
 # Minimal value after which the load average is displayed
 # Recommended value is 60
-LP_LOAD_THRESHOLD=60
+LP_LOAD_THRESHOLD=0
 
 # Minimal value after which the temperature is displayed (in degrees Celsius)
 # Recommended value is 60
-LP_TEMP_THRESHOLD=60
+LP_TEMP_THRESHOLD=0
 
 # The maximum percentage of the screen width used to display the path
 # Recommended value is 35
@@ -119,11 +119,11 @@ LP_RUNTIME_THRESHOLD=2
 
 # Display the virtualenv that is currently activated, if any
 # Recommended value is 1
-LP_ENABLE_VIRTUALENV=1
+LP_ENABLE_VIRTUALENV=0
 
 # Display the enabled software collections, if any
 # Recommended value is 1
-LP_ENABLE_SCLS=1
+LP_ENABLE_SCLS=0
 
 # Show average system temperature
 LP_ENABLE_TEMP=0

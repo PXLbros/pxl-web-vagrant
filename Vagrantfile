@@ -100,6 +100,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
 
     # config.vm.synced_folder '.', '/vagrant', nfs: true
+    # config.vm.synced_folder '.', '/var/www', :mount_options => [
+    #     'dmode=777',
+    #     'fmode=666'
+    # ]
+
+    config.vm.synced_folder '.', '/var/www', :nfs => { :mount_options => [ 'dmode=777', 'fmode=666', 'vers=3', 'tcp', 'fsc' ,'actimeo=2' ] }
 
     # SSH configuration
     config.ssh.forward_agent = true

@@ -14,7 +14,7 @@ Welcome to **PXL Web Vagrant** - a Vagrant environment for Web development.
 * Web servers
     * Apache
     * NGINX
-    * Built-in helper commands for managing virtual host configurations, e.g. [`create_apache_site`](/web-servers/apache.html#create-apache-site) and [`edit_nginx_site`](/web-servers/nginx.html#edit-nginx-site)
+    * Built-in helper commands for managing virtual host configurations, e.g. [`edit_site_conf`](/web-servers/#edit-site-conf)
 * Databases
     * MySQL
     * Built-in helper commands for creating and deleting databases, .e.g [`create_database`](/databases/commands.html#create-database) and [`delete_database`](/databases/commands.html#delete-database)

@@ -7,7 +7,7 @@ title: .pxl
 ## config.yaml
 
 ```yaml
-site-dir: /vagrant/projects/test.loc
+root-dir: /vagrant/projects/test.loc
 public-dir: public
 code:
     php: 7.3
@@ -19,7 +19,7 @@ database:
 ## install.js
 
 ```js
-const InstallHelper = require('/vagrant/scripts/sites/classes/install_helper');
+const InstallHelper = require('/vagrant/scripts/projects/classes/install_helper');
 
 class InstallScript extends InstallHelper {
     install() {

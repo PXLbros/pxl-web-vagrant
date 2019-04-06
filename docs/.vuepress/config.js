@@ -31,14 +31,14 @@ module.exports = {
                 ]
             },
             {
-                title: 'Sites',
+                title: 'Projects',
                 collapsable: false,
                 children: [
-                    ['/sites/commands', 'Commands'],
-                    ['/sites/create', 'Create'],
-                    ['/sites/edit_site_conf', 'Edit Site Configuration'],
-                    ['/sites/delete', 'Delete'],
-                    ['/sites/config', '.pxl']
+                    ['/projects/commands', 'Commands'],
+                    ['/projects/create', 'Create'],
+                    ['/projects/edit_web_server_conf', 'Edit Project Web Server Configuration'],
+                    ['/projects/delete', 'Delete'],
+                    ['/projects/config', '.pxl']
                 ]
             },
             {

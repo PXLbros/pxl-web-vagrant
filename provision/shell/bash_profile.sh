@@ -5,7 +5,7 @@ export LOG_FILE_PATH=shell/bash_profile.log
 . /vagrant/provision/helpers/include.sh
 
 SCRIPTS_DIR="/vagrant/scripts"
-SCRIPTS_SITES_DIR="$SCRIPTS_DIR/sites"
+SCRIPTS_PROJECTS_DIR="$SCRIPTS_DIR/projects"
 
 title "bash_profile"
 
@@ -32,16 +32,16 @@ alias grep='grep --color=auto'
 # /etc/hosts
 alias edit_hosts='sudo vim /etc/hosts'
 
-# Sites
-alias create_site='node $SCRIPTS_SITES_DIR/create_site.js'
-alias edit_site_conf='node $SCRIPTS_SITES_DIR/edit_site_conf.js'
-alias enable_site_conf='node $SCRIPTS_SITES_DIR/enable_site_conf.js'
-alias disable_site_conf='node $SCRIPTS_SITES_DIR/disable_site_conf.js'
-alias delete_site='node $SCRIPTS_SITES_DIR/delete_site.js'
-alias install_site='node $SCRIPTS_SITES_DIR/install_site.js'
+# Projects
+alias create_project='node $SCRIPTS_PROJECTS_DIR/create_project.js'
+alias edit_project_conf='node $SCRIPTS_PROJECTS_DIR/edit_project_conf.js'
+alias enable_project_conf='node $SCRIPTS_PROJECTS_DIR/enable_project_conf.js'
+alias disable_project_conf='node $SCRIPTS_PROJECTS_DIR/disable_project_conf.js'
+alias delete_project='node $SCRIPTS_PROJECTS_DIR/delete_project.js'
+alias install_project='node $SCRIPTS_PROJECTS_DIR/install_project.js'
 
 # Git
-alias git_repo_info='node $SCRIPTS_SITES_DIR/git/git_repo_info.js'
+alias git_repo_info='node $SCRIPTS_PROJECTS_DIR/git/git_repo_info.js'
 "
 
 if [ "$APACHE_ENABLED" == "true" ]
@@ -55,9 +55,9 @@ alias stop_apache='sudo systemctl stop apache2'
 alias reload_apache='sudo systemctl reload apache2'
 alias apache_status='sudo systemctl status apache2'
 alias edit_apache_conf='sudo vim /etc/apache2/apache2.conf'
-alias create_apache_site='create_site --web-server=apache'
-alias edit_apache_site_conf='edit_site_conf --web-server=apache'
-alias delete_apache_site='delete_site --web-server=apache'"
+alias create_apache_project='create_project --web-server=apache'
+alias edit_apache_project_conf='edit_project_conf --web-server=apache'
+alias delete_apache_project='delete_project --web-server=apache'"
 fi
 
 if [ "$NGINX_ENABLED" == "true" ]
@@ -71,9 +71,9 @@ alias stop_nginx='sudo service nginx stop'
 alias nginx_status='sudo service nginx status'
 alias reload_nginx='sudo service nginx reload'
 alias edit_nginx_conf='sudo vim /etc/nginx/nginx.conf'
-alias create_nginx_site='create_site --web-server=nginx'
-alias edit_nginx_site_conf='edit_site_conf --web-server=nginx'
-alias delete_nginx_site='delete_site --web-server=nginx'"
+alias create_nginx_project='create_project --web-server=nginx'
+alias edit_nginx_project_conf='edit_project_conf --web-server=nginx'
+alias delete_nginx_project='delete_project --web-server=nginx'"
 fi
 
 BASH_PROFILE_CONTENTS="${BASH_PROFILE_CONTENTS}

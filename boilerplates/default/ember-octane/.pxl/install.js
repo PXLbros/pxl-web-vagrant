@@ -1,4 +1,4 @@
-const InstallHelper = require('/vagrant/scripts/sites/classes/install_helper');
+const InstallHelper = require('/vagrant/scripts/projects/classes/install_helper');
 const { get_last_directory } = require('/vagrant/scripts/utils/str');
 const { highlight_line } = require('/vagrant/scripts/utils/log');
 
@@ -13,11 +13,11 @@ class InstallScript extends InstallHelper {
         // Create Ember project
         highlight_line('\nCreate Ember.js Octane project...');
 
-        const project_name = get_last_directory(this.site_dir);
+        const project_name = get_last_directory(this.project_dir);
         
-        this.run(`ember new ${project_name} --dir=${this.site_dir} --no-welcome --yarn -b @ember/octane-app-blueprint`);
+        this.run(`ember new ${project_name} --dir=${this.project_dir} --no-welcome --yarn -b @ember/octane-app-blueprint`);
 
-        this.go_to_dir(this.site_dir);
+        this.go_to_dir(this.project_dir);
 
         // Update .editorconfig file
         this.edit_env('.editorconfig', {

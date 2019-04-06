@@ -1,11 +1,11 @@
-const InstallHelper = require('/vagrant/scripts/sites/classes/install_helper');
+const InstallHelper = require('/vagrant/scripts/projects/classes/install_helper');
 const { highlight_line, line_break } = require('/vagrant/scripts/utils/log');
 
 class InstallScript extends InstallHelper {
     install() {
         super.install();
 
-        this.go_to_dir(this.pxl_config['public-site-dir']);
+        this.go_to_dir(this.pxl_config['public-project-dir']);
 
         // Download WordPress
         highlight_line('Download WordPress...');
@@ -21,12 +21,12 @@ class InstallScript extends InstallHelper {
         this.replace_env_file('wp-config.php', 'password_here', process.env.MYSQL_USER_PASSWORD);
         
         let config_str_to_add = `\ndefine('FS_METHOD', 'direct');\n`;
-        config_str_to_add += `\ndefine('WP_SITEURL', '${this.site_url}');`;
-        config_str_to_add += `\ndefine('WP_HOME', '${this.site_url}');`;
+        config_str_to_add += `\ndefine('WP_SITEURL', '${this.project_url}');`;
+        config_str_to_add += `\ndefine('WP_HOME', '${this.project_url}');`;
 
         this.run(`echo "${config_str_to_add}" >> wp-config.php`);
 
-        this.run(`sudo chown -R vagrant:vagrant ${this.pxl_config['public-site-dir']}`);
+        this.run(`sudo chown -R vagrant:vagrant ${this.pxl_config['public-project-dir']}`);
 
         this.run(`curl "http://${this.pxl_config.hostname}/wp-admin/install.php?step=2" \
     --data-urlencode "weblog_title=${this.pxl_config.hostname}"\

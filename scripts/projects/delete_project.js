@@ -11,8 +11,8 @@ const log = console.log;
 
 const options_values = [
     { name: 'web-server', type: String, description: 'Web server.' },
+    { name: 'root-dir', type: String, description: 'Project root directory.' },
     { name: 'hostname', type: String, description: 'Site hostname.' },
-    { name: 'site-dir', type: String, description: 'Site root directory.' },
     { name: 'force', type: Boolean, description: `Don't prompt for questions.` },
     { name: 'help', type: Boolean, description: 'Show this help.' }
 ];
@@ -117,7 +117,7 @@ async function main() {
         // exec(`sudo rm ${selected_nginx_site_configuration_enabled_file_path}`);
     }
 
-    // const site_dir = (options['site-dir'] || await ask_input('Enter site directory:', document_root_without_public));
+    // const site_dir = (options['root-dir'] || await ask_input('Enter site directory:', document_root_without_public));
 
     // Check if PXL Web Vagrant configuration in site dir
     // try {

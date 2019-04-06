@@ -17,5 +17,5 @@ title: Default Boilerplates
 ## Example
 
 ```bash
-create_site --boilerplate=laravel
+create_project --boilerplate=laravel
 ```

@@ -10,10 +10,10 @@ class InstallHelper
     constructor(pxl_config) {
         this.pxl_config = pxl_config;
 
-        this.site_dir = this.pxl_config['site-dir'];
+        this.root_dir = this.pxl_config['root-dir'];
 
-        if (this.site_dir) {
-            this.site_dir_name = get_last_directory(this.site_dir);
+        if (this.root_dir) {
+            this.root_dir_name = get_last_directory(this.root_dir);
         }
 
         if (this.pxl_config.hostname) {
@@ -35,16 +35,16 @@ class InstallHelper
         }
 
         // Go to site directory
-        if (this.file_exists(this.site_dir)) {
-            this.go_to_dir(this.site_dir);
+        if (this.file_exists(this.root_dir)) {
+            this.go_to_dir(this.root_dir);
         }
     }
 
     finish_install() {
         if (this.file_exists(this.pxl_config['custom-files-dir'])) {
-            blue_line(`Found custom-files-dir directory, sync ${this.pxl_config['site-dir']} with ${this.pxl_config['custom-files-dir']}...`);
+            blue_line(`Found custom-files-dir directory, sync ${this.pxl_config['root-dir']} with ${this.pxl_config['custom-files-dir']}...`);
 
-            this.sync_paths(this.pxl_config['custom-files-dir'], this.pxl_config['site-dir']);
+            this.sync_paths(this.pxl_config['custom-files-dir'], this.pxl_config['root-dir']);
         }
     }
 

@@ -9,7 +9,7 @@ const { error_line, line_break, success_line, title_line } = require('../utils/l
 const log = console.log;
 
 const options = commandLineArgs([
-    { name: 'site-dir', type: String },
+    { name: 'root-dir', type: String },
     { name: 'force', type: Boolean }
 ]);
 
@@ -20,8 +20,8 @@ async function main() {
         let pxl_config;
         
         // Try load from arguments
-        if (options['site-dir']) {
-            pxl_config = load_pxl_config_from_dir(`${options['site-dir']}/.pxl`);
+        if (options['root-dir']) {
+            pxl_config = load_pxl_config_from_dir(`${options['root-dir']}/.pxl`);
 
             if (!pxl_config) {
                 throw new Error('Could not find PXL Web Vagrant configuration file.');
@@ -40,9 +40,9 @@ async function main() {
         }
 
         if (!pxl_config) {
-            let site_dir = await ask_input('What is the site directory?', get_current_dir());
+            let root_dir = await ask_input('What is the site directory?', get_current_dir());
 
-            pxl_config = load_pxl_config_from_dir(`${site_dir}/.pxl`);
+            pxl_config = load_pxl_config_from_dir(`${root_dir}/.pxl`);
         }
 
         if (!pxl_config) {

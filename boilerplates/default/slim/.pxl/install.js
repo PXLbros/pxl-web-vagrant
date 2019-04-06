@@ -1,4 +1,4 @@
-const InstallHelper = require('/vagrant/scripts/sites/classes/install_helper');
+const InstallHelper = require('/vagrant/scripts/projects/classes/install_helper');
 const { highlight_line, line_break } = require('/vagrant/scripts/utils/log');
 const resolve = require('path').resolve;
 
@@ -31,7 +31,7 @@ class InstallScript extends InstallHelper {
         }
 
         this.delete('public/', true);
-        this.move_files(tmp_lib_dir_full, this.site_dir, true);
+        this.move_files(tmp_lib_dir_full, this.project_dir, true);
         this.delete(`${tmp_lib_dir_full}/`, true);
 
         line_break();

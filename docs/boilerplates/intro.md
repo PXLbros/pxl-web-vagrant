@@ -4,4 +4,4 @@ title: Boilerplates
 
 # Boilerplates
 
-Boilerplates allow you to create pre-defined sites.
+Boilerplates allow you to create projects from pre-defined rules and files.

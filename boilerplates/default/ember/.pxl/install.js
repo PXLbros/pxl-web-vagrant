@@ -1,4 +1,4 @@
-const InstallHelper = require('/vagrant/scripts/sites/classes/install_helper');
+const InstallHelper = require('/vagrant/scripts/projects/classes/install_helper');
 const { remove_last_directory } = require('/vagrant/scripts/utils/str');
 const { highlight_line, line_break } = require('/vagrant/scripts/utils/log');
 
@@ -13,11 +13,11 @@ class InstallScript extends InstallHelper {
         // Create Ember project
         highlight_line('\nCreate Ember.js project...');
 
-        const pre_site_dir = remove_last_directory(this.site_dir);
+        const pre_project_dir = remove_last_directory(this.project_dir);
         
-        this.run(`cd ${pre_site_dir} && pwd && ember new --dir=${this.site_dir} --no-welcome --yarn`);
+        this.run(`cd ${pre_project_dir} && pwd && ember new --dir=${this.project_dir} --no-welcome --yarn`);
 
-        this.go_to_dir(this.site_dir);
+        this.go_to_dir(this.project_dir);
 
         // Build
         this.run('ember build');

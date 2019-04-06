@@ -42,7 +42,7 @@ function load_pxl_config_from_dir(dir) {
     return pxl_config;
 }
 
-function load_pxl_config(pxl_config_file_path, site_dir = null) {
+function load_pxl_config(pxl_config_file_path, project_dir = null) {
     const pxl_config_dir = remove_last_directory(pxl_config_file_path);
 
     try {
@@ -59,21 +59,21 @@ function load_pxl_config(pxl_config_file_path, site_dir = null) {
             }
 
             // validate_pxl_config(pxl_config);
-            pxl_config['site-dir'] = (site_dir || remove_last_directory(pxl_config_dir));
+            pxl_config['root-dir'] = (project_dir || remove_last_directory(pxl_config_dir));
 
-            let public_site_dir;
+            let public_dir;
 
             if (pxl_config['public-dir']) {
                 if (get_public_directories().includes(pxl_config['public-dir'])) {
-                    public_site_dir = `${pxl_config['site-dir']}/${pxl_config['public-dir']}`;
+                    public_dir = `${pxl_config['root-dir']}/${pxl_config['public-dir']}`;
                 } else {
-                    public_site_dir = pxl_config['public-dir'];
+                    public_dir = pxl_config['public-dir'];
                 }
             } else {
-                public_site_dir = pxl_config['site-dir'];
+                public_dir = pxl_config['root-dir'];
             }
 
-            pxl_config['public-site-dir'] = public_site_dir;
+            pxl_config['public-dir'] = public_dir;
         }
 
         // Check for install/uninstall script
@@ -323,8 +323,8 @@ module.exports = {
         return load_pxl_config_from_dir(dir);
     },
 
-    load_pxl_config(path, site_dir = null) {
-        return load_pxl_config(path, site_dir);
+    load_pxl_config(path, root_dir = null) {
+        return load_pxl_config(path, root_dir);
     },
 
     print_pxl_config(pxl_config) {

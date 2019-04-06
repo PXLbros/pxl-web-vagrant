@@ -32,7 +32,7 @@ const log = console.log;
 // return;
 
 const options_values = [
-    { name: 'site-dir', type: String, description: 'Site root directory.' },
+    { name: 'root-dir', type: String, description: 'Site root directory.' },
     { name: 'public-dir', type: String, description: 'Site public directory.' },
     { name: 'hostname', type: String, description: 'Site hostname.' },
     { name: 'web-server', type: String, description: 'Web server.' },
@@ -92,12 +92,6 @@ async function main() {
     const force = (options['force'] || false);
 
     let hostname = (options['hostname'] || undefined);
-    
-    let site_dir = (options['site-dir'] || await ask_input('Enter site directory:', null, '', ` ${process.env.PROJECTS_DIR}/`));
-    
-    // Make sure site_dir doesn't have a trailing slash
-    site_dir = remove_trailing_slash(site_dir);
-    site_dir = `${process.env.PROJECTS_DIR}/${site_dir}`;
 
     let boilerplate = (options['boilerplate'] || undefined);
     let boilerplate_pxl_config = {};
@@ -124,19 +118,19 @@ async function main() {
         const project_type_result = await prompt([{
             type: 'list',
             name: 'value',
-            message: 'Choose project type:',
+            message: 'Project type:',
             default: 'master',
             choices: [
                 {
-                    name: 'Empty project',
-                    value: 'empty'
+                    name: 'Blank',
+                    value: 'blank'
                 },
                 {
-                    name: 'From boilerplate',
+                    name: 'Boilerplate',
                     value: 'boilerplate'
                 },
                 {
-                    name: 'From existing Git repository',
+                    name: 'Git',
                     value: 'git'
                 }
             ]
@@ -145,13 +139,19 @@ async function main() {
         project_type = project_type_result.value;
     }
 
+    let root_dir = (options['root-dir'] || await ask_input('Enter site directory:', null, '', ` ${process.env.PROJECTS_DIR}/`));
+    
+    // Make sure root_dir doesn't have a trailing slash
+    root_dir = remove_trailing_slash(root_dir);
+    siteroot_dir_dir = `${process.env.PROJECTS_DIR}/${root_dir}`;
+
     // If not Git repository, check for boilerplate
     if (!git_repo) {
         if (boilerplate_input) {
             let boilerplate_type_input = 'default';
             let boilerplate_name_input = boilerplate_input;
 
-            boilerplate = await boilerplateUtil.loadBoilerplate(boilerplateUtil.getBoilerplateFromName(boilerplate_name_input, boilerplate_type_input), site_dir);
+            boilerplate = await boilerplateUtil.loadBoilerplate(boilerplateUtil.getBoilerplateFromName(boilerplate_name_input, boilerplate_type_input), root_dir);
         } else if (options['boilerplate']) {
             boilerplate = await boilerplateUtil.askBoilerplate(null);
         } else if (project_type === 'boilerplate') {
@@ -159,7 +159,7 @@ async function main() {
         }
 
         if (boilerplate && boilerplate.pxl_config) {
-            boilerplate.pxl_config['site-dir'] = site_dir;
+            boilerplate.pxl_config['root-dir'] = root_dir;
 
             boilerplate_pxl_config = boilerplate.pxl_config;
             boilerplate_pxl_config.hostname = hostname;
@@ -170,10 +170,10 @@ async function main() {
             public_dir_full = boilerplate_pxl_config['public-site-dir'];
         } else if (options['public-dir']) {
             public_dir = options['public-dir'];
-            public_dir_full = `${site_dir}/${options['public-dir']}`;
-        } else if (is_public_directory(site_dir) || options['public-dir'] === '') {
-            public_dir = site_dir;
-            public_dir_full = site_dir;
+            public_dir_full = `${root_dir}/${options['public-dir']}`;
+        } else if (is_public_directory(root_dir) || options['public-dir'] === '') {
+            public_dir = root_dir;
+            public_dir_full = root_dir;
         }
     }
 
@@ -191,26 +191,26 @@ async function main() {
     let git_clone_error;
 
     // If site directory already exist, take backup/delete existing
-    if (existsSync(site_dir)) {
+    if (existsSync(root_dir)) {
         // Take backup
         if (!no_backup || no_backup !== true) {
-            const backup_dir = `${site_dir}_${format(new Date(), 'YYYY-MM-DD_H-mm-ss')}`;
+            const backup_dir = `${root_dir}_${format(new Date(), 'YYYY-MM-DD_H-mm-ss')}`;
 
-            if (force || await ask_confirm(`Site directory ${site_dir} already exists, do you want to take a backup?`)) {
-                exec(`sudo mv ${site_dir} ${backup_dir}`, { silent: true });
+            if (force || await ask_confirm(`Site directory ${root_dir} already exists, do you want to take a backup?`)) {
+                exec(`sudo mv ${root_dir} ${backup_dir}`, { silent: true });
 
-                log(yellow(`Backed up existing directory ${site_dir} to ${backup_dir}.`));
+                log(yellow(`Backed up existing directory ${root_dir} to ${backup_dir}.`));
             } else {
                 // No backup, delete existing site directory
-                exec(`sudo rm -rf ${site_dir}`);
+                exec(`sudo rm -rf ${root_dir}`);
 
-                log(red(`Removed existing directory ${site_dir}.`));
+                log(red(`Removed existing directory ${root_dir}.`));
             }
         } else {
             // No backup, delete existing site directory
-            exec(`sudo rm -rf ${site_dir}`);
+            exec(`sudo rm -rf ${root_dir}`);
 
-            log(red(`Removed existing directory ${site_dir}.`));
+            log(red(`Removed existing directory ${root_dir}.`));
         }
     }
 
@@ -220,11 +220,11 @@ async function main() {
     if (git_repo) {
         line_break();
 
-        log(cyan(`Cloning ${git_branch ? `branch "${git_branch}" from ` : ''}Git repository ${git_repo} to ${site_dir}...`));
+        log(cyan(`Cloning ${git_branch ? `branch "${git_branch}" from ` : ''}Git repository ${git_repo} to ${root_dir}...`));
 
         // Clone Git repository
         try {
-            const git_clone_result = exec(`git clone ${git_repo}${git_branch ? ` --single-branch --branch=${git_branch}` : ''} ${site_dir}`); // { silent: true }
+            const git_clone_result = exec(`git clone ${git_repo}${git_branch ? ` --single-branch --branch=${git_branch}` : ''} ${root_dir}`); // { silent: true }
             git_clone_error = (git_clone_result.code !== 0 ? git_clone_result.stderr : null);
 
             if (git_clone_error) {
@@ -236,14 +236,14 @@ async function main() {
             return;
         }
 
-        success_line(`Git repository cloned to ${site_dir}.`);
+        success_line(`Git repository cloned to ${root_dir}.`);
 
         // Fetch Git
-        exec(`cd ${site_dir} && git fetch`, { silent: true });
+        exec(`cd ${root_dir} && git fetch`, { silent: true });
 
         // Ask for Git branch
         if (!git_branch) {
-            const cwd = site_dir;
+            const cwd = root_dir;
             let git_repo_branches = git_branches.sync(cwd);
             git_repo_branches = uniq(git_repo_branches);
             
@@ -269,7 +269,7 @@ async function main() {
 
         // Check for .pxl/config.yaml file
         try {
-            pxl_config = load_pxl_config_from_dir(`${site_dir}/.pxl`);
+            pxl_config = load_pxl_config_from_dir(`${root_dir}/.pxl`);
 
             if (pxl_config) {
                 if (pxl_config.hostname) {
@@ -306,18 +306,18 @@ async function main() {
             } else {
                 if (!public_dir_full && hostname) {
                     // Check or ask public dir
-                    if (is_public_directory(site_dir)) {
-                        public_dir_full = site_dir;
+                    if (is_public_directory(root_dir)) {
+                        public_dir_full = root_dir;
                     } else {
                         if (options['public-dir'] === '') {
-                            public_dir_full = site_dir;
+                            public_dir_full = root_dir;
                         } else {
                             let public_dir_input = await ask_input('What is the public site directory? (leave empty for same as site directory)'); // TODO: Can we wait with this question till after cloning git? Because it'll say in .pxl config file from clone if
                     
                             if (public_dir_input) {
                                 public_dir_input = remove_trailing_slash(public_dir_input);
                     
-                                public_dir_full = `${site_dir}/${public_dir_input}`;
+                                public_dir_full = `${root_dir}/${public_dir_input}`;
                             }
                         }
                     }
@@ -342,7 +342,7 @@ async function main() {
         if (public_dir_input) {
             public_dir_input = remove_trailing_slash(public_dir_input);
 
-            public_dir_full = `${site_dir}/${public_dir_input}`;
+            public_dir_full = `${root_dir}/${public_dir_input}`;
         }
     }
 
@@ -478,10 +478,10 @@ async function main() {
         if (public_dir_full) {
             public_dir = get_last_directory(public_dir_full);
         } else {
-            public_dir = site_dir;
+            public_dir = root_dir;
         }
     } else if (!public_dir_full) {
-        public_dir_full = `${site_dir}/${public_dir}`;
+        public_dir_full = `${root_dir}/${public_dir}`;
     }
 
     // Save virtual host configuration file
@@ -534,7 +534,7 @@ async function main() {
 
         if (!pxl_config_file_exist_but_error && (force || options['save-config'] || await ask_confirm(`Do you want to save PXL Web Vagrant configuration?`))) {
             try {
-                const pxl_config_dir = create_pxl_config_in_dir(site_dir, public_dir, php_version, database_driver, database_name, boilerplate ? boilerplate.pxl_config.name : null);
+                const pxl_config_dir = create_pxl_config_in_dir(root_dir, public_dir, php_version, database_driver, database_name, boilerplate ? boilerplate.pxl_config.name : null);
 
                 success_line(`PXL Web Vagrant configuration ${pxl_config_dir} created.`);
             } catch (create_pxl_config_error) {
@@ -558,7 +558,7 @@ async function main() {
         log(`${cyan(bold('Hostname:'))} ${hostname}`);
     }
 
-    log(`${cyan(bold('Site Directory:'))} ${site_dir}`);
+    log(`${cyan(bold('Site Directory:'))} ${root_dir}`);
 
     if (public_dir_full) {
         log(`${cyan(bold('Public Directory:'))} ${public_dir_full}`);
@@ -605,8 +605,8 @@ async function main() {
             command_str += ` \\\n\t--hostname=${hostname}`;
         }
 
-        if (site_dir) {
-            command_str += ` \\\n\t--site-dir=${site_dir}`;
+        if (root_dir) {
+            command_str += ` \\\n\t--root-dir=${root_dir}`;
         }
 
         if (public_dir_full) {

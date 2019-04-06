@@ -14,7 +14,7 @@ title: Commands
 ### Example
 
 ```bash
-create_site --hostname=test.loc --site-dir=/vagrant/projects/test.loc --php=7.3 --no-backup --overwrite --git-repo= --boilerplate= --public-dir= --db-driver=mysql --db-name=test --show-command --save-config
+create_site --hostname=test.loc --root-dir=/vagrant/projects/test.loc --php=7.3 --no-backup --overwrite --git-repo= --boilerplate= --public-dir= --db-driver=mysql --db-name=test --show-command --save-config
 ```
 
 ## edit_site

@@ -26,7 +26,7 @@ class InstallHelper
     }
 
     install() {
-        highlight_line(`Run install script ${this.pxl_config['install-script']}...`);
+        highlight_line(`Run install script (${this.pxl_config['install-script']})...`);
         line_break();
 
         if (this.pxl_config.name) {

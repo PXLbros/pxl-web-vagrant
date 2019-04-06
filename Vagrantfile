@@ -113,7 +113,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Calculate memory
     memory = vagrant_config['vm']['memory']
 
-    if vagrant_config['vm']['memory'] == "auto"
+    if vagrant_config['vm']['memory'] == 'auto'
         host = RbConfig::CONFIG['host_os']
 
         # Give VM 1/4 system memory

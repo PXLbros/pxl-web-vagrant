@@ -4,30 +4,10 @@ title: Custom Boilerplates
 
 # Custom Boilerplates
 
-You can create your own custom boilerplates.
+Aside from the [default boilerplates](/boilerplates/intro.html), you can also create your own custom boilerplates.
 
-## .pxl
+## Get Started
 
-...
-
-## .pxl/config.yaml
-
-...
-
-## .pxl/install.js
-
-...
-
-## .pxl/files
-
-### .pxl/files/custom
-
-...
-
-### .pxl/files/static
-
-...
-
-## .pxl/files/static
-
-...
+```
+create_boilerplate my-boilerplate
+```

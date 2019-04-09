@@ -368,8 +368,7 @@ async function main() {
         }
     } else {
         // If not from Git repo, create site & public directory (don't do it if boilerplate)
-        if (!existsSync(public_dir_full) && !boilerplate) {
-            console.log('MAKE DIR!', public_dir_full);
+        if (public_dir_full && !existsSync(public_dir_full) && !boilerplate) {
             exec(`mkdir -p ${public_dir_full}`);
         }
     }

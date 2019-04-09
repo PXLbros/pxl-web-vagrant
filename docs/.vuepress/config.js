@@ -46,8 +46,7 @@ module.exports = {
                 collapsable: false,
                 children: [
                     ['/web-servers/apache', 'Apache'],
-                    ['/web-servers/nginx', 'NGINX'],
-                    ['/web-servers/https', 'HTTPS']
+                    ['/web-servers/nginx', 'NGINX']
                 ]
             },
             {
@@ -70,7 +69,6 @@ module.exports = {
                 collapsable: false,
                 children: [
                     ['/boilerplates/intro', 'Introduction'],
-                    ['/boilerplates/default', 'Default Boilerplates'],
                     ['/boilerplates/custom', 'Custom Boilerplates']
                 ]
             },

@@ -55,9 +55,8 @@ alias stop_apache='sudo systemctl stop apache2'
 alias reload_apache='sudo systemctl reload apache2'
 alias apache_status='sudo systemctl status apache2'
 alias edit_apache_conf='sudo vim /etc/apache2/apache2.conf'
-alias create_apache_project='create_project --web-server=apache'
-alias edit_apache_project_conf='edit_project_site_conf --web-server=apache'
-alias delete_apache_project='delete_project --web-server=apache'"
+alias edit_apache_site_conf='edit_project_site_conf --web-server=apache'
+alias delete_apache_site_conf='delete_project_site_conf --web-server=apache'"
 fi
 
 if [ "$NGINX_ENABLED" == "true" ]
@@ -71,9 +70,8 @@ alias stop_nginx='sudo service nginx stop'
 alias nginx_status='sudo service nginx status'
 alias reload_nginx='sudo service nginx reload'
 alias edit_nginx_conf='sudo vim /etc/nginx/nginx.conf'
-alias create_nginx_project='create_project --web-server=nginx'
-alias edit_nginx_project_conf='edit_project_site_conf --web-server=nginx'
-alias delete_nginx_project='delete_project --web-server=nginx'"
+alias edit_nginx_site_conf='edit_project_site_conf --web-server=nginx'
+alias delete_nginx_site_conf='delete_project_site_conf --web-server=nginx'"
 fi
 
 BASH_PROFILE_CONTENTS="${BASH_PROFILE_CONTENTS}

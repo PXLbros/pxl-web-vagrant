@@ -211,7 +211,7 @@ async function main() {
         }
     }
 
-    if (project_type === 'git') {
+    if (project_type === 'git' && !git_repo) {
         git_repo = (await ask_input('Enter Git SSH repository (e.g. git@github.com:Organization/project-name.git):'));
     }
 

@@ -10,7 +10,6 @@ Welcome to **PXL Web Vagrant** - a Vagrant environment for Web development.
     * Version 5.6 & 7.0-7.3
     * Support for running multiple versions simultaneously
     * Caching with Memcached/Redis/APC
-* Node.js
 * Web servers
     * Apache
     * NGINX
@@ -22,5 +21,3 @@ Welcome to **PXL Web Vagrant** - a Vagrant environment for Web development.
     * LiquidPrompt
     * tmux
         * tmuxinator
-* Other
-    * Support for custom Vagrant provisioning scripts

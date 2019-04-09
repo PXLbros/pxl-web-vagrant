@@ -22,12 +22,12 @@ title: NGINX
 
 ### `stop_nginx`
 
-### `nginx_status`
-
 ### `reload_nginx`
 
-### `create_nginx_site`
+### `nginx_status`
 
-### `edit_nginx_site`
+### `edit_nginx_conf`
 
-### `delete_nginx_site`
+### `edit_nginx_site_conf`
+
+### `delete_nginx_site_conf`

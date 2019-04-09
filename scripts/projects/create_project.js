@@ -146,7 +146,7 @@ async function main() {
                     value: 'git'
                 },
                 {
-                    name: `From current directory (${__dirname})`,
+                    name: `From current directory (${process.cwd()})`,
                     value: 'dir'
                 }
             ]
@@ -369,6 +369,7 @@ async function main() {
     } else {
         // If not from Git repo, create site & public directory (don't do it if boilerplate)
         if (!existsSync(public_dir_full) && !boilerplate) {
+            console.log('MAKE DIR!', public_dir_full);
             exec(`mkdir -p ${public_dir_full}`);
         }
     }

@@ -1,8 +1,8 @@
-const { existsSync } = require('fs');
+const { existsSync, writeFileSync } = require('fs');
 const { cd, cp, exec, mkdir, mv } = require('shelljs');
+const slugify = require('slugify');
 const { get_last_directory, remove_trailing_slash } = require('../../utils/str');
 const { blue_line, figlet, highlight_line, line_break } = require('../../utils/log');
-const resolve = require('path').resolve;
 const warn = console.warn;
 
 class InstallHelper
@@ -167,6 +167,40 @@ class InstallHelper
         const exec_result = exec(`rm ${recursive ? '-rf' : ''} ${path}`);
         
         return (exec_result.code === 0);
+    }
+
+    tmuxinator(command, data) {
+        switch (command) {
+            case 'new':
+                let tmuxinator_config_str = `name: ${data.name}
+root: ~/
+
+windows:
+`;
+
+                for (let tab of data.tabs) {
+                    tmuxinator_config_str += `  - ${tab.title || 'Unnamed'}:\n`;
+
+                    if (tab.dir) {
+                        tmuxinator_config_str += `      root: ${tab.dir}\n`;
+                    }
+
+                    if (tab.commands && tab.commands.length > 0) {
+                        tmuxinator_config_str += `      panes:\n`;
+                        
+                        for (let command_statement of tab.commands) {
+                            tmuxinator_config_str += `        - ${command_statement}\n`;
+                        }
+                    }
+
+                }
+
+                const file_path = `/home/vagrant/.config/tmuxinator/${slugify(data.name.toLowerCase())}.yml`;
+
+                writeFileSync(file_path, tmuxinator_config_str.trimRight());
+
+                break;
+        }
     }
 }
 

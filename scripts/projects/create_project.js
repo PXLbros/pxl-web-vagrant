@@ -15,6 +15,7 @@ const { ask_web_server, enable_web_server_site, get_config_filename, get_config_
 const { blue_line, error_line, line_break, success_line, yellow_line } = require('../utils/log');
 const { uniq } = require('lodash');
 // const github = require('octonode');
+// const resolve = require('path').resolve;
 const git_branches = require('list-git-branches');
 const log = console.log;
 
@@ -32,7 +33,8 @@ const log = console.log;
 // return;
 
 const options_values = [
-    { name: 'root-dir', type: String, description: 'Site root directory.' },
+    { name: 'type', type: String, description: 'Type of project (blank, boilerplate or git).' },
+    { name: 'dir', type: String, description: 'Site root directory.' },
     { name: 'public-dir', type: String, description: 'Site public directory.' },
     { name: 'hostname', type: String, description: 'Site hostname.' },
     { name: 'web-server', type: String, description: 'Web server.' },
@@ -51,7 +53,7 @@ const options_values = [
 ];
 
 async function main() {
-    exec('figlet create site');
+    exec('figlet create project');
 
     let options;
 
@@ -85,6 +87,8 @@ async function main() {
         log(usage);
         return;
     }
+    
+    let setup_web_server = false;
 
     let boilerplate_input = (options['boilerplate'] || null);
 
@@ -108,13 +112,21 @@ async function main() {
     let git_repo = (options['git-repo'] || null);
     let git_branch = (options['git-branch'] || null);
     
-    let project_type;
+    let project_type = (options['type'] || null);
 
     if (git_repo) {
+        if (project_type) {
+            console.warn('Warning: --type overwritten by --git-repo');
+        }
+
         project_type = 'git';
     } else if (boilerplate) {
+        if (project_type) {
+            console.warn('Warning: --type overwritten by --boilerplate');
+        }
+
         project_type = 'boilerplate';
-    } else {
+    } else if (!project_type) {
         const project_type_result = await prompt([{
             type: 'list',
             name: 'value',
@@ -132,6 +144,10 @@ async function main() {
                 {
                     name: 'Git',
                     value: 'git'
+                },
+                {
+                    name: `From current directory (${__dirname})`,
+                    value: 'dir'
                 }
             ]
         }]);
@@ -139,11 +155,24 @@ async function main() {
         project_type = project_type_result.value;
     }
 
-    let root_dir = (options['root-dir'] || await ask_input('Enter site directory:', null, '', ` ${process.env.PROJECTS_DIR}/`));
-    
-    // Make sure root_dir doesn't have a trailing slash
-    root_dir = remove_trailing_slash(root_dir);
-    siteroot_dir_dir = `${process.env.PROJECTS_DIR}/${root_dir}`;
+    let root_dir
+
+    if (project_type === 'dir') {
+        root_dir = process.cwd();
+
+        if (root_dir === '/vagrant/projects') {
+            line_break();
+            error_line(`You can't run from /vagrant/projects, choose a project directory.`);
+            
+            return;
+        }
+    } else {
+        root_dir = (options['dir'] || await ask_input('Enter site directory:', null, '', ` ${process.env.PROJECTS_DIR}/`));
+        
+        // Make sure root_dir doesn't have a trailing slash
+        root_dir = remove_trailing_slash(root_dir);
+        root_dir = `${process.env.PROJECTS_DIR}/${root_dir}`;
+    }
 
     // If not Git repository, check for boilerplate
     if (!git_repo) {
@@ -151,7 +180,12 @@ async function main() {
             let boilerplate_type_input = 'default';
             let boilerplate_name_input = boilerplate_input;
 
-            boilerplate = await boilerplateUtil.loadBoilerplate(boilerplateUtil.getBoilerplateFromName(boilerplate_name_input, boilerplate_type_input), root_dir);
+            try {
+                boilerplate = await boilerplateUtil.loadBoilerplate(boilerplateUtil.getBoilerplateFromName(boilerplate_name_input, boilerplate_type_input), root_dir);
+            } catch (load_boilerplate_error) {
+                error_line(load_boilerplate_error.message);
+                return;
+            }
         } else if (options['boilerplate']) {
             boilerplate = await boilerplateUtil.askBoilerplate(null);
         } else if (project_type === 'boilerplate') {
@@ -177,11 +211,15 @@ async function main() {
         }
     }
 
-    if (options['git-repo'] === undefined && !boilerplate) {
-        if (await ask_confirm('Create from existing Git repository?')) {
-            git_repo = (await ask_input('Enter Git SSH repository (e.g. git@github.com:Organization/project-name.git):'));
-        }
+    if (project_type === 'git') {
+        git_repo = (await ask_input('Enter Git SSH repository (e.g. git@github.com:Organization/project-name.git):'));
     }
+
+    // if (options['git-repo'] === undefined && !boilerplate) {
+    //     if (await ask_confirm('Create from existing Git repository?')) {
+    //         git_repo = (await ask_input('Enter Git SSH repository (e.g. git@github.com:Organization/project-name.git):'));
+    //     }
+    // }
 
     let overwrite = (options['overwrite'] || false);
 
@@ -191,7 +229,7 @@ async function main() {
     let git_clone_error;
 
     // If site directory already exist, take backup/delete existing
-    if (existsSync(root_dir)) {
+    if (project_type !== 'dir' && existsSync(root_dir)) {
         // Take backup
         if (!no_backup || no_backup !== true) {
             const backup_dir = `${root_dir}_${format(new Date(), 'YYYY-MM-DD_H-mm-ss')}`;
@@ -204,13 +242,13 @@ async function main() {
                 // No backup, delete existing site directory
                 exec(`sudo rm -rf ${root_dir}`);
 
-                log(red(`Removed existing directory ${root_dir}.`));
+                log(red(`Removed existing directory ${root_dir}.\n`));
             }
         } else {
             // No backup, delete existing site directory
             exec(`sudo rm -rf ${root_dir}`);
 
-            log(red(`Removed existing directory ${root_dir}.`));
+            log(red(`Removed existing directory ${root_dir}.\n`));
         }
     }
 
@@ -335,18 +373,24 @@ async function main() {
         }
     }
 
-    // FRAGA PUBLIC DIR OM INTE FINNS
+    let web_server = options['web-server'];
+
     if (!public_dir) {
-        let public_dir_input = await ask_input('What is the public site directory? (leave empty for same as site directory)'); // TODO: Can we wait with this question till after cloning git? Because it'll say in .pxl config file from clone if
+        if (!web_server && web_server !== '') {
+            web_server = await ask_web_server('Web server?', true, 'None');
+        }
 
-        if (public_dir_input) {
-            public_dir_input = remove_trailing_slash(public_dir_input);
+        if (web_server) {
+            let public_dir_input = await ask_input('What is the public site directory? (leave empty for same as project directory)'); // TODO: Can we wait with this question till after cloning git? Because it'll say in .pxl config file from clone if
 
-            public_dir_full = `${root_dir}/${public_dir_input}`;
+            if (public_dir_input) {
+                public_dir_input = remove_trailing_slash(public_dir_input);
+
+                public_dir_full = `${root_dir}/${public_dir_input}`;
+            }
         }
     }
 
-    let web_server = options['web-server'];
     let overwrite_web_server_conf_file = (options['overwrite'] || false);
 
     if (boilerplate_pxl_config && boilerplate_pxl_config.database && boilerplate_pxl_config.database.driver) {
@@ -384,15 +428,15 @@ async function main() {
         hostname = null;
     }
 
-    if (!web_server && web_server !== '') {
-        const installed_web_servers = get_installed_web_servers();
+    // if (!web_server && web_server !== '') {
+    //     const installed_web_servers = get_installed_web_servers();
 
-        if (installed_web_servers.length === 1) {
-            web_server = installed_web_servers[0].value;
-        } else {
-            web_server = await ask_web_server('Choose Web Server', true);
-        }
-    }
+    //     if (installed_web_servers.length === 1) {
+    //         web_server = installed_web_servers[0].value;
+    //     } else {
+    //         web_server = await ask_web_server('Choose Web Server', true);
+    //     }
+    // }
 
     if (web_server && !hostname) {
         hostname = await ask_input('Enter hostname (e.g. domain.loc):');
@@ -424,6 +468,10 @@ async function main() {
             if (pxl_config && pxl_config.code) {
                 pxl_config.code.php = php_version;
             }
+        } else if (options['php']) {
+            php_version = options['php'];
+        } else {
+            php_version = await ask_php_version();
         }
     }
 
@@ -449,14 +497,18 @@ async function main() {
         let do_create_database = false;
 
         if (database_exists(database_driver, database_name)) {
-            if (overwrite || (force || await ask_confirm(`${get_database_driver_title(database_driver)} database "${database_name}" already exist, do you want to replace it?`))) {
+            const ask_replace_database_response = await ask_confirm(`${get_database_driver_title(database_driver)} database "${database_name}" already exist, do you want to replace it?`);
+
+            if (overwrite || (force || ask_replace_database_response)) {
                 delete_database(database_driver, database_name);
                 
                 do_create_database = true;
             } else {
-                line_break();
-                error_line(`${get_database_driver_title(database_driver)} database "${database_name}" already exists.`);
-                line_break();
+                if (force || overwrite) {
+                    line_break();
+                    error_line(`${get_database_driver_title(database_driver)} database "${database_name}" already exists.`);
+                    line_break();
+                }
             }
         } else {
             do_create_database = true;
@@ -530,8 +582,6 @@ async function main() {
     }
 
     if (!pxl_config) {
-        line_break();
-
         if (!pxl_config_file_exist_but_error && (force || options['save-config'] || await ask_confirm(`Do you want to save PXL Web Vagrant configuration?`))) {
             try {
                 const pxl_config_dir = create_pxl_config_in_dir(root_dir, public_dir, php_version, database_driver, database_name, boilerplate ? boilerplate.pxl_config.name : null);
@@ -548,7 +598,7 @@ async function main() {
 
     // success_line(`Success!`);
 
-    // line_break();
+    line_break();
 
     if (web_server) {
         log(`${cyan(bold('Web Server:'))} ${get_web_server_title(web_server)}`);
@@ -606,7 +656,7 @@ async function main() {
         }
 
         if (root_dir) {
-            command_str += ` \\\n\t--root-dir=${root_dir}`;
+            command_str += ` \\\n\t--dir=${root_dir}`;
         }
 
         if (public_dir_full) {

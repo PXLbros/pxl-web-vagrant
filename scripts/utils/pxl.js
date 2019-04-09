@@ -236,7 +236,7 @@ function create_pxl_config_in_dir(dir, public_dir, php_version = null, database_
     const install_script_file_path = `${config_dir}/install.js`;
 
     if (!test('-d', install_script_file_path)) {
-        let install_script_template = `const InstallHelper = require('/vagrant/scripts/sites/classes/install_helper');
+        let install_script_template = `const InstallHelper = require('/vagrant/scripts/projects/classes/install_helper');
 
 class InstallScript extends InstallHelper {
     install() {

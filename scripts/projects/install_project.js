@@ -78,7 +78,7 @@ async function main() {
             const configuration_file_name = get_config_filename('apache', pxl_config['hostname']);
             const configuration_file_path = get_config_file_path('apache', configuration_file_name);
 
-            save_virtual_host_config(configuration_file_path, 'apache', pxl_config['hostname'], pxl_config['public-dir'], pxl_config['php'] || null, true);
+            save_virtual_host_config(configuration_file_path, 'apache', pxl_config['hostname'], pxl_config['public-dir'], pxl_config['code']['php'] || null, true);
 
             try {
                 // Enable web server site

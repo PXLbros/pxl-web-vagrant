@@ -23,13 +23,13 @@ class InstallScript extends InstallHelper {
         }
 
         this.delete('public/', true);
-        this.move_files(tmp_lib_dir, this.project_dir, true);
+        this.move_files(tmp_lib_dir, this.root_dir, true);
         this.delete(`${tmp_lib_dir}/`, true);
 
         line_break();
         highlight_line('Update .env file...');
 
-        this.go_to_dir(this.project_dir);
+        this.go_to_dir(this.root_dir);
 
         this.edit_env('.env', {
             'APP_URL': `http://${this.pxl_config.hostname}:${process.env.APACHE_PORT_HTTP_OUT}`,

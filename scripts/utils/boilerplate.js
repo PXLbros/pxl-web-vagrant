@@ -1,7 +1,6 @@
 const { existsSync, readdirSync } = require('fs');
 const { ask_confirm } = require('./ask');
 const { choose } = require('./choose');
-const { get_last_directory } = require('./str');
 const { load_pxl_config } = require('./pxl');
 
 const boilerplateUtil = {
@@ -19,7 +18,9 @@ const boilerplateUtil = {
             return;
         }
 
-        return readdirSync(boilerplates_dir).map(boilerplate_dir => {
+        return readdirSync(boilerplates_dir).filter(boilerplate_dir => {
+            return !boilerplate_dir.startsWith('.');
+        }).map(boilerplate_dir => {
             const dir = `${boilerplates_dir}/${boilerplate_dir}`;
 
             return {
@@ -77,20 +78,23 @@ const boilerplateUtil = {
             return;
         }
 
-        if (existsSync(boilerplate.pxl_config_file_path)) {
-            try {
-                const pxl_config = load_pxl_config(boilerplate.pxl_config_file_path, project_dir);
-                pxl_config['boilerplate-dir'] = boilerplate.dir;
-                pxl_config['custom-files-dir'] = `${boilerplate.dir}/custom-files`;
-                pxl_config['static-files-dir'] = `${boilerplate.dir}/static-files`;
+        if (!existsSync(boilerplate.pxl_config_file_path)) {
+            throw new Error(`Could not find boilerplate config at ${boilerplate.pxl_config_file_path}.`);
+        }
+        // } else {
+        //     boilerplate.name = get_last_directory(boilerplate.dir);
+        // }
 
-                boilerplate.pxl_config = pxl_config;
-            } catch (load_pxl_config_error) {
-                console.log(load_pxl_config_error);
-                console.log(load_pxl_config_error.message);
-            }
-        } else {
-            boilerplate.name = get_last_directory(boilerplate.dir);
+        try {
+            const pxl_config = load_pxl_config(boilerplate.pxl_config_file_path, project_dir);
+            pxl_config['boilerplate-dir'] = boilerplate.dir;
+            pxl_config['custom-files-dir'] = `${boilerplate.dir}/custom-files`;
+            pxl_config['static-files-dir'] = `${boilerplate.dir}/static-files`;
+
+            boilerplate.pxl_config = pxl_config;
+        } catch (load_pxl_config_error) {
+            console.log(load_pxl_config_error);
+            console.log(load_pxl_config_error.message);
         }
 
         return boilerplate;

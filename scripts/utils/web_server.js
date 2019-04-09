@@ -84,7 +84,6 @@ module.exports = {
 
         let config_to_delete_path;
 
-
         if (web_server === 'apache') {
             contents = `<VirtualHost *:${process.env.APACHE_PORT_HTTP}>
     ServerName ${hostname}

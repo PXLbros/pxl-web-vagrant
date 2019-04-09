@@ -30,11 +30,11 @@ add_ppa ondrej/apache2 ondrej/php
 exec_command "apt-get update -y"
 
 for PHP_VERSION in "${PHP_VERSIONS[@]}"; do
+    figlet "PHP $PHP_VERSION"
+
     if [ -x "$(command -v php$PHP_VERSION)" ]; then
         highlight_text "PHP $PHP_VERSION already installed."
     else
-        figlet "PHP $PHP_VERSION"
-
         exec_command "apt-get -y install php$PHP_VERSION"
 
         if [ -x "$(command -v php$PHP_VERSION)" ]; then

@@ -13,11 +13,11 @@ class InstallScript extends InstallHelper {
         // Create Ember project
         highlight_line('\nCreate Ember.js Octane project...');
 
-        const project_name = get_last_directory(this.project_dir);
+        const project_name = get_last_directory(this.root_dir);
         
-        this.run(`ember new ${project_name} --dir=${this.project_dir} --no-welcome --yarn -b @ember/octane-app-blueprint`);
+        this.run(`ember new ${project_name} --dir=${this.root_dir} --no-welcome --yarn -b @ember/octane-app-blueprint`);
 
-        this.go_to_dir(this.project_dir);
+        this.go_to_dir(this.root_dir);
 
         // Update .editorconfig file
         this.edit_env('.editorconfig', {

@@ -57,8 +57,10 @@ exec_command "echo -e \"$HOME_TMUXINATOR_CONTENTS\" > $HOME/.config/tmuxinator/h
 
 # Set to open tmuxinator "Home" project upon login
 if [ ! -z "$TMUXINATOR_AUTO_START" ]; then
-    # if ! grep -qF "tmuxinator start" $HOME/.bashrc
-    # then
+    if ! grep -qF "tmuxinator start" $HOME/.bashrc
+    then
         echo -e "\ntmuxinator start $TMUXINATOR_AUTO_START" >> $HOME/.bashrc
-    # fi
+    else
+        error_text "TODO: Not adding new tmuxinator auto-start"
+    fi
 fi

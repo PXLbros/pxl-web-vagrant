@@ -34,9 +34,9 @@ alias edit_hosts='sudo vim /etc/hosts'
 
 # Projects
 alias create_project='node $SCRIPTS_PROJECTS_DIR/create_project.js'
-alias edit_project_conf='node $SCRIPTS_PROJECTS_DIR/edit_project_conf.js'
-alias enable_project_conf='node $SCRIPTS_PROJECTS_DIR/enable_project_conf.js'
-alias disable_project_conf='node $SCRIPTS_PROJECTS_DIR/disable_project_conf.js'
+alias edit_project_site_conf='node $SCRIPTS_PROJECTS_DIR/edit_project_site_conf.js'
+alias enable_project_site_conf='node $SCRIPTS_PROJECTS_DIR/enable_project_site_conf.js'
+alias disable_project_site_conf='node $SCRIPTS_PROJECTS_DIR/disable_project_site_conf.js'
 alias delete_project='node $SCRIPTS_PROJECTS_DIR/delete_project.js'
 alias install_project='node $SCRIPTS_PROJECTS_DIR/install_project.js'
 
@@ -56,7 +56,7 @@ alias reload_apache='sudo systemctl reload apache2'
 alias apache_status='sudo systemctl status apache2'
 alias edit_apache_conf='sudo vim /etc/apache2/apache2.conf'
 alias create_apache_project='create_project --web-server=apache'
-alias edit_apache_project_conf='edit_project_conf --web-server=apache'
+alias edit_apache_project_conf='edit_project_site_conf --web-server=apache'
 alias delete_apache_project='delete_project --web-server=apache'"
 fi
 
@@ -72,7 +72,7 @@ alias nginx_status='sudo service nginx status'
 alias reload_nginx='sudo service nginx reload'
 alias edit_nginx_conf='sudo vim /etc/nginx/nginx.conf'
 alias create_nginx_project='create_project --web-server=nginx'
-alias edit_nginx_project_conf='edit_project_conf --web-server=nginx'
+alias edit_nginx_project_conf='edit_project_site_conf --web-server=nginx'
 alias delete_nginx_project='delete_project --web-server=nginx'"
 fi
 

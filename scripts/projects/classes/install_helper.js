@@ -81,6 +81,10 @@ class InstallHelper
         cd(dir);
     }
 
+    cd(dir) {
+        cd(dir);
+    }
+
     create_dir(dir) {
         if (existsSync(dir)) {
             return;

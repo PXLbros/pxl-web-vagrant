@@ -18,10 +18,11 @@ async function main() {
     // Backup sites available directory
     cyan_line('Backing up Apache sites-available directory...');
 
-    const sites_available_response = await exec(`mkdir -p ${backup_dir}/apache2/sites-available && rsync -r /etc/apache2/sites-available/ ${backup_dir}/apache2/sites-available`, { silent: true });
+    const sites_available_dir = `${backup_dir}/apache2/sites-available`;
+    // const sites_available_response = await exec(`rsync -r ${sites_available_dir} /etc/apache2/sites-available/`, { silent: true });
 
     if (sites_available_response.code !== 0) {
-        error_line(`Error: ${sites_available_response.stderr}`);
+        error_line(`Apache sites-available Error: ${sites_available_response.stderr}`);
         return;
     }
 
@@ -31,7 +32,7 @@ async function main() {
     const bash_profile_response = await exec(`cp ~/.bash_profile ${backup_dir}/.bash_profile`);
 
     if (bash_profile_response.code !== 0) {
-        error_line(`Error: ${bash_profile_response.stderr}`);
+        error_line(`.bash_profile Error: ${bash_profile_response.stderr}`);
         return;
     }
 
@@ -42,11 +43,11 @@ async function main() {
     const mysql_response = await exec(`mkdir -p ${mysql_backup_dir}/ && rsync -r /var/lib/mysql/ ${mysql_backup_dir}`, { silent: true });
 
     if (mysql_response.code !== 0) {
-        error_line(`Error: ${mysql_response.stderr}`);
+        error_line(`MySQL Error: ${mysql_response.stderr}`);
         return;
     }
 
-    highlight_line('Backup complete!');
+    highlight_line('Restore complete!');
 }
 
 main();

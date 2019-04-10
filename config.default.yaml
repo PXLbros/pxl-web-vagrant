@@ -59,5 +59,6 @@ shell:
             auto-start: home
         gpakosz:
             enabled: true
+            statusbar-title: PXL Web Vagrant
     liquidprompt:
         enabled: true

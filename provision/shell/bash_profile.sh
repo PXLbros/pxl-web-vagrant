@@ -12,8 +12,9 @@ title "bash_profile"
 BASH_PROFILE_CONTENTS="# Source ~/.bashrc
 [[ -s \"$HOME/.bashrc\" ]] && source \"$HOME/.bashrc\"
 
-# PXL Web vagrant
-alias help='node $SCRIPTS_DIR/shell/help.js'
+# PXL Web Vagrant
+alias upgrade='node $SCRIPTS_DIR/pxl/upgrade.js'
+alias help='node $SCRIPTS_DIRpxl/help.js'
 
 # .bash_profile
 alias edit_bash_profile='vim ~/.bash_profile'
@@ -92,6 +93,16 @@ alias mysql_status='sudo service mysql status'
 alias create_mysql_database='create_database --driver=mysql'
 alias delete_mysql_database='delete_database --driver=mysql'"
 fi
+
+# PHP
+BASH_PROFILE_CONTENTS="${BASH_PROFILE_CONTENTS}
+
+# PHP
+alias edit_php56_conf='sudo vim /etc/php/5.6/fpm/php.ini'
+alias edit_php70_conf='sudo vim /etc/php/7.0/fpm/php.ini'
+alias edit_php71_conf='sudo vim /etc/php/7.1/fpm/php.ini'
+alias edit_php72_conf='sudo vim /etc/php/7.2/fpm/php.ini'
+alias edit_php73_conf='sudo vim /etc/php/7.3/fpm/php.ini'"
 
 # Save .bash_profile
 exec_command "echo -e \"$BASH_PROFILE_CONTENTS\" > $HOME/.bash_profile"

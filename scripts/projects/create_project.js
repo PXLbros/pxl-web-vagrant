@@ -88,8 +88,6 @@ async function main() {
         log(usage);
         return;
     }
-    
-    let setup_web_server = false;
 
     let boilerplate_input = (options['boilerplate'] || null);
 

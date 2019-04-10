@@ -265,7 +265,17 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Finalize
     config.vm.provision 'shell', name: 'Finalize', path: "#{VAGRANT_DIR}/provision/finalize.sh", privileged: false, env: GLOBAL_VARIABLES, run: 'once'
 
+    # Restore backup
+    # ...
+
     # Copy SSH keys from host to guest
     config.vm.provision 'file', source: '~/.ssh/id_rsa.pub', destination: '~/.ssh/id_rsa.pub'
     config.vm.provision 'shell', inline: 'cat ~vagrant/.ssh/id_rsa.pub >> ~vagrant/.ssh/authorized_keys'
+
+    # Before destroy
+    config.trigger.before :destroy do |trigger|
+        # Backup
+        trigger.warn = "Backing up"
+        trigger.run_remote = { inline: 'backup --non-interactive' }
+    end
 end

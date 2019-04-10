@@ -1,10 +1,8 @@
-const { existsSync, lstatSync, readdirSync } = require('fs');
+const { lstatSync, readdirSync } = require('fs');
 const { join } = require('path');
 const { exec } = require('shelljs');
-const { cyan_line, error_line, highlight_line, line_break } = require('../utils/log');
+const { cyan_line, error_line, highlight_line, success_line } = require('../utils/log');
 const { prompt } = require('inquirer');
-const { format } = require('date-fns');
-const { ask_confirm } = require('../utils/ask');
 
 async function main() {
     // List backups
@@ -40,11 +38,32 @@ async function main() {
         return;
     }
 
+    const sites_available_confs = readdirSync('/etc/apache2/sites-available');
+    let num_enabled_sites_available_confs = 0;
+    
     for (let sites_available_conf of sites_available_confs) {
+        const enable_sites_available_conf_response = await exec(`cd /etc/apache2/sites-available && sudo a2ensite ${sites_available_conf}`, { silent: true });
+
+        if (enable_sites_available_conf_response.code === 0 && enable_sites_available_conf_response.stdout.trim() !== `Site ${sites_available_conf.substring(0, sites_available_conf.length - 5)} already enabled`) {
+            success_line(`Apache virtual host configuration ${sites_available_conf} enabled.`);
+
+            num_enabled_sites_available_confs++;
+        } else {
+            error_line(enable_sites_available_conf_response.stdout.trim());
+        }
+    }
+
+    // Reload Apache if one or more virtual host configuration files were enabled
+    if (num_enabled_sites_available_confs > 0) {
+        const reload_apache_response = await exec(`sudo service apache2 reload`, { silent: true });
+
+        if (reload_apache_response.code !== 0) {
+            error_line(`Reload Apache error:\n${reload_apache_response.stderr}`);
+        }
     }
 
     // Restore .bash_profile
-    cyan_line('Restoring.bash_profile...');
+    cyan_line('Restoring .bash_profile...');
 
     const bash_profile_response = await exec(`cp ${backup_dir}/.bash_profile ~/.bash_profile`);
 
@@ -54,15 +73,26 @@ async function main() {
     }
 
     // Restore MySQL
-    cyan_line('Restoring MySQL...');
+    // cyan_line('Restoring MySQL...');
 
-    const mysql_backup_dir = `${backup_dir}/mysql/var/lib/mysql`;
-    const mysql_response = await exec(`sudo service mysql stop && rsync -r ${mysql_backup_dir}/ /var/lib/mysql && sudo chown -R mysql:mysql /var/lib/mysql/ && sudo service mysql start`, { silent: true });
+    // const mysql_backup_dir = `${backup_dir}/mysql`;
+    // const mysql_backup_path = `${mysql_backup_dir}/databases.sql`;
 
-    if (mysql_response.code !== 0) {
-        error_line(`Error: ${mysql_response.stderr}`);
-        return;
-    }
+    // const mysql_response = await exec(`mysqldump -uvagrant -pvagrant < ${mysql_backup_path}`);
+
+    // if (mysql_response.code !== 0) {
+    //     error_line(`Error: ${mysql_response.stderr}`);
+    //     return;
+    // }
+
+    // Restore /etc/hosts file
+    // const etc_hosts_backup_path = `${backup_dir}/etc/hosts`;
+    // const etc_hosts_response = await exec(`sudo cp ${etc_hosts_backup_path} /etc/hosts`, { silent: true });
+
+    // if (etc_hosts_response.code !== 0) {
+    //     error_line(`/etc/hosts Error: ${etc_hosts_response.stderr}`);
+    //     return;
+    // }
 
     highlight_line('Restore complete!');
 }

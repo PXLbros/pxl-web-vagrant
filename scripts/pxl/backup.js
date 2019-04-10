@@ -1,13 +1,35 @@
+const commandLineArgs = require('command-line-args');
 const { existsSync } = require('fs');
 const { exec } = require('shelljs');
-const { cyan_line, error_line, highlight_line, line_break } = require('../utils/log');
+const { cyan_line, error_line, highlight_line } = require('../utils/log');
 const { format } = require('date-fns');
 const { ask_confirm } = require('../utils/ask');
 
+const options_values = [
+    { name: 'non-interactive', type: Boolean, description: 'Non-interactive mode.' },
+];
+
 async function main() {
+    let options;
+
+    try {
+        options = commandLineArgs(options_values.map(option => {
+            return {
+                name: option.name,
+                type: option.type
+            };
+        }));
+    } catch (e) {
+        console.log(e.message);
+        
+        return;
+    }
+
+    let non_interactive = options['non-interactive'] || false;
+
     const backup_dir = `/vagrant/backups/${format(new Date(), 'YYYY-MM-DD')}`;
 
-    if (existsSync(backup_dir)) {
+    if (existsSync(backup_dir) && !non_interactive) {
         if (!await ask_confirm(`You have already backed up today, do you want to overwrite previous backup at ${backup_dir}?`)) {
             return;
         }
@@ -37,15 +59,26 @@ async function main() {
     }
 
     // Backup MySQL databases
-    cyan_line('Backing up MySQL databases...');
+    // cyan_line('Backing up MySQL databases...');
 
-    const mysql_backup_dir = `${backup_dir}/mysql/var/lib/mysql`;
-    const mysql_response = await exec(`mkdir -p ${mysql_backup_dir}/ && rsync -r /var/lib/mysql/ ${mysql_backup_dir}`, { silent: true });
+    // const mysql_backup_dir = `${backup_dir}/mysql`;
+    // const mysql_backup_path = `${mysql_backup_dir}/databases.sql`;
 
-    if (mysql_response.code !== 0) {
-        error_line(`MySQL Error: ${mysql_response.stderr}`);
-        return;
-    }
+    // const mysql_response = await exec(`mysqldump -uvagrant -pvagrant --all-databases --skip-lock-tables > ${mysql_backup_path}`, { silent: true });
+
+    // if (mysql_response.code !== 0) {
+    //     error_line(`MySQL Error: ${mysql_response.stderr}`);
+    //     return;
+    // }
+
+    // Backup /etc/hosts file
+    // const etc_hosts_backup_path = `${backup_dir}/etc/hosts`;
+    // const etc_hosts_response = await exec(`mkdir -p ${etc_hosts_backup_path} && sudo cp /etc/hosts ${etc_hosts_backup_dir}`, { silent: true });
+
+    // if (etc_hosts_response.code !== 0) {
+    //     error_line(`/etc/hosts Error: ${etc_hosts_response.stderr}`);
+    //     return;
+    // }
 
     highlight_line('Restore complete!');
 }

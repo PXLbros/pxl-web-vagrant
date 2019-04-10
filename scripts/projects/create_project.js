@@ -54,6 +54,7 @@ const options_values = [
 
 async function main() {
     exec('figlet create project');
+    line_break();
 
     let options;
 
@@ -201,7 +202,7 @@ async function main() {
 
         if (boilerplate_pxl_config && boilerplate_pxl_config['public-dir']) {
             public_dir = boilerplate_pxl_config['public-dir'];
-            public_dir_full = boilerplate_pxl_config['public-site-dir'];
+            public_dir_full = boilerplate_pxl_config['public-dir'];
         } else if (options['public-dir']) {
             public_dir = options['public-dir'];
             public_dir_full = `${root_dir}/${options['public-dir']}`;
@@ -256,8 +257,6 @@ async function main() {
 
     // Create from Git repository
     if (git_repo) {
-        line_break();
-
         log(cyan(`Cloning ${git_branch ? `branch "${git_branch}" from ` : ''}Git repository ${git_repo} to ${root_dir}...`));
 
         // Clone Git repository
@@ -329,8 +328,8 @@ async function main() {
                     database_name = pxl_config.database.name;
                 }
 
-                if (pxl_config['public-site-dir']) {
-                    public_dir = pxl_config['public-site-dir'];
+                if (pxl_config['public-dir']) {
+                    public_dir = pxl_config['public-dir'];
                     public_dir_full = public_dir;
                 }
 
@@ -375,19 +374,23 @@ async function main() {
 
     let web_server = options['web-server'];
 
-    if (!public_dir) {
-        if (!web_server && web_server !== '') {
+    if (!web_server && web_server !== '') {
+        const installed_web_servers = get_installed_web_servers();
+
+        if (installed_web_servers.length === 1) {
+            web_server = installed_web_servers[0].value;
+        } else {
             web_server = await ask_web_server('Web server?', true, 'None');
         }
+    }
 
-        if (web_server) {
-            let public_dir_input = await ask_input('What is the public site directory? (leave empty for same as project directory)'); // TODO: Can we wait with this question till after cloning git? Because it'll say in .pxl config file from clone if
+    if (!public_dir && web_server) {
+        let public_dir_input = await ask_input('What is the public site directory? (leave empty for same as project directory)'); // TODO: Can we wait with this question till after cloning git? Because it'll say in .pxl config file from clone if
 
-            if (public_dir_input) {
-                public_dir_input = remove_trailing_slash(public_dir_input);
+        if (public_dir_input) {
+            public_dir_input = remove_trailing_slash(public_dir_input);
 
-                public_dir_full = `${root_dir}/${public_dir_input}`;
-            }
+            public_dir_full = `${root_dir}/${public_dir_input}`;
         }
     }
 

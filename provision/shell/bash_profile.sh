@@ -13,6 +13,7 @@ BASH_PROFILE_CONTENTS="# Source ~/.bashrc
 [[ -s \"$HOME/.bashrc\" ]] && source \"$HOME/.bashrc\"
 
 # PXL Web Vagrant
+alias backup='node $SCRIPTS_DIR/pxl/backup.js'
 alias upgrade='node $SCRIPTS_DIR/pxl/upgrade.js'
 alias help='node $SCRIPTS_DIRpxl/help.js'
 

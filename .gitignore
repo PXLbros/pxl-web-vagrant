@@ -3,6 +3,9 @@
 /projects/*
 !/projects/.gitkeep 
 
+/backups/*
+!/backups/.gitkeep
+
 /boilerplates/user/*
 !/boilerplates/user/.gitkeep 
 

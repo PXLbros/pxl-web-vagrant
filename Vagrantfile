@@ -275,7 +275,9 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     # Before destroy
     config.trigger.before :destroy do |trigger|
         # Backup
-        trigger.warn = "Backing up"
-        trigger.run_remote = { inline: 'backup --non-interactive' }
+        if vagrant_config['vm']['backup-on-destroy']
+            # trigger.warn = "Backing up..."
+            # trigger.run_remote = { inline: 'echo "hey"' }
+        end
     end
 end

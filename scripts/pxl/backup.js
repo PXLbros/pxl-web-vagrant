@@ -40,8 +40,8 @@ async function main() {
     // Backup sites available directory
     cyan_line('Backing up Apache sites-available directory...');
 
-    const sites_available_dir = `${backup_dir}/apache2/sites-available`;
-    // const sites_available_response = await exec(`rsync -r ${sites_available_dir} /etc/apache2/sites-available/`, { silent: true });
+    const sites_available_backup_dir = `${backup_dir}/apache2/sites-available`;
+    const sites_available_response = await exec(`mkdir -p ${sites_available_backup_dir} && rsync -r /etc/apache2/sites-available ${sites_available_backup_dir}/`, { silent: true });
 
     if (sites_available_response.code !== 0) {
         error_line(`Apache sites-available Error: ${sites_available_response.stderr}`);

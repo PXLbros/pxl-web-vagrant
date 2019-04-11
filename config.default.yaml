@@ -15,6 +15,7 @@ vm:
         upgrade-apt: true
     home-dir: /vagrant/projects
     projects-dir: /vagrant/projects
+    backup-on-destroy: true
 web-servers:
     apache:
         enabled: true

@@ -21,3 +21,4 @@ Welcome to **PXL Web Vagrant** - a Vagrant environment for Web development.
     * LiquidPrompt
     * tmux
         * tmuxinator
+* Backup/restore

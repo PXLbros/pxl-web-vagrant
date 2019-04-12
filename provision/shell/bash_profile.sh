@@ -16,7 +16,7 @@ BASH_PROFILE_CONTENTS="# Source ~/.bashrc
 alias backup='sudo node $SCRIPTS_DIR/pxl/backup.js'
 alias restore='sudo node $SCRIPTS_DIR/pxl/restore.js'
 alias upgrade='node $SCRIPTS_DIR/pxl/upgrade.js'
-alias help='node $SCRIPTS_DIRpxl/help.js'
+alias help='node $SCRIPTS_DIR/pxl/help.js'
 
 # .bash_profile
 alias edit_bash_profile='vim ~/.bash_profile'

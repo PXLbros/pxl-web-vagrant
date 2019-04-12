@@ -10,6 +10,15 @@ export LOG_FILE_PATH=initialize.log
 # Optimize Apt mirrors
 sudo perl -pi -e 's@^\s*(deb(\-src)?)\s+http://us.archive.*?\s+@\1 mirror://mirrors.ubuntu.com/mirrors.txt @g' /etc/apt/sources.list
 
+# apt-fast
+exec_command "sudo apt-get update"
+exec_command "sudo apt-get install -y aria2 --no-install-recommends"
+exec_command "wget https://raw.githubusercontent.com/ilikenwf/apt-fast/master/apt-fast"
+exec_command "wget https://raw.githubusercontent.com/ilikenwf/apt-fast/master/apt-fast.conf"
+exec_command "sudo cp apt-fast /usr/bin/"
+exec_command "sudo chmod +x /usr/bin/apt-fast"
+exec_command "sudo cp apt-fast.conf /etc"
+
 # Install figlet
 apt-get -y install figlet &>/dev/null
 

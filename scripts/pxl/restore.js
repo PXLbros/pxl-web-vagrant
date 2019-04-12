@@ -73,26 +73,26 @@ async function main() {
     }
 
     // Restore MySQL
-    // cyan_line('Restoring MySQL...');
+    cyan_line('Restoring MySQL...');
 
-    // const mysql_backup_dir = `${backup_dir}/mysql`;
-    // const mysql_backup_path = `${mysql_backup_dir}/databases.sql`;
+    const mysql_backup_dir = `${backup_dir}/mysql`;
+    const mysql_backup_path = `${mysql_backup_dir}/databases.sql`;
+    
+    const mysql_response = await exec(`mysqldump -uvagrant -pvagrant --all-databases < ${mysql_backup_path}`, { silent: true });
 
-    // const mysql_response = await exec(`mysqldump -uvagrant -pvagrant < ${mysql_backup_path}`);
-
-    // if (mysql_response.code !== 0) {
-    //     error_line(`Error: ${mysql_response.stderr}`);
-    //     return;
-    // }
+    if (mysql_response.code !== 0) {
+        error_line(`Error: ${mysql_response.stderr}`);
+        return;
+    }
 
     // Restore /etc/hosts file
-    // const etc_hosts_backup_path = `${backup_dir}/etc/hosts`;
-    // const etc_hosts_response = await exec(`sudo cp ${etc_hosts_backup_path} /etc/hosts`, { silent: true });
+    const etc_hosts_backup_dir = `${backup_dir}/etc`;
+    const etc_hosts_response = await exec(`sudo cp ${etc_hosts_backup_dir}/hosts /etc/hosts`, { silent: true });
 
-    // if (etc_hosts_response.code !== 0) {
-    //     error_line(`/etc/hosts Error: ${etc_hosts_response.stderr}`);
-    //     return;
-    // }
+    if (etc_hosts_response.code !== 0) {
+        error_line(`/etc/hosts Error: ${etc_hosts_response.stderr}`);
+        return;
+    }
 
     highlight_line('Restore complete!');
 }

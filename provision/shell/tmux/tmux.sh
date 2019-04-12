@@ -55,6 +55,6 @@ if [ "$GPAKOSZ" = "true" ]; then
         exec_command "sed -i '/set -g history-limit/s/^#//' $TMUX_CONF_FILE"
 
         # Remove uptime from bottom left status bar
-        exec_command "sed -i \"s/tmux_conf_theme_status_left=.*/tmux_conf_theme_status_left=' ❐ #S'/g\" $TMUX_CONF_FILE"
+        exec_command "sed -i \"s/tmux_conf_theme_status_left=.*/tmux_conf_theme_status_left=' ❐ $VAGRANT_NAME '/g\" $TMUX_CONF_FILE"
     fi
 fi

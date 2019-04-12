@@ -30,9 +30,12 @@ async function main() {
     const backup_dir = `/vagrant/backups/${format(new Date(), 'YYYY-MM-DD')}`;
 
     if (existsSync(backup_dir) && !non_interactive) {
-        if (!await ask_confirm(`You have already backed up today, do you want to overwrite previous backup at ${backup_dir}?`)) {
+        if (!await ask_confirm(`There's already a backup from today (${backup_dir}), do you want to overwrite?`)) {
             return;
         }
+
+        // Delete previous backup
+        exec(`rm -rf ${backup_dir}`, { silent: true });
     }
 
     highlight_line(`Backing up to ${backup_dir}...`);
@@ -59,26 +62,30 @@ async function main() {
     }
 
     // Backup MySQL databases
-    // cyan_line('Backing up MySQL databases...');
+    cyan_line('Backing up MySQL databases...');
 
-    // const mysql_backup_dir = `${backup_dir}/mysql`;
-    // const mysql_backup_path = `${mysql_backup_dir}/databases.sql`;
+    const mysql_backup_dir = `${backup_dir}/mysql`;
+    const mysql_backup_path = `${mysql_backup_dir}/databases.sql`;
 
-    // const mysql_response = await exec(`mysqldump -uvagrant -pvagrant --all-databases --skip-lock-tables > ${mysql_backup_path}`, { silent: true });
+    if (!existsSync(mysql_backup_dir)) {
+        exec(`mkdir -p ${mysql_backup_dir}`, { silent: true });
+    }
 
-    // if (mysql_response.code !== 0) {
-    //     error_line(`MySQL Error: ${mysql_response.stderr}`);
-    //     return;
-    // }
+    const mysql_response = await exec(`mysqldump -uvagrant -pvagrant --all-databases --skip-lock-tables > ${mysql_backup_path}`, { silent: true });
+
+    if (mysql_response.code !== 0) {
+        error_line(`MySQL Error: ${mysql_response.stderr}`);
+        return;
+    }
 
     // Backup /etc/hosts file
-    // const etc_hosts_backup_path = `${backup_dir}/etc/hosts`;
-    // const etc_hosts_response = await exec(`mkdir -p ${etc_hosts_backup_path} && sudo cp /etc/hosts ${etc_hosts_backup_dir}`, { silent: true });
+    const etc_hosts_backup_dir = `${backup_dir}/etc`;
+    const etc_hosts_response = await exec(`mkdir -p ${etc_hosts_backup_dir} && sudo cp /etc/hosts ${etc_hosts_backup_dir}/hosts`, { silent: true });
 
-    // if (etc_hosts_response.code !== 0) {
-    //     error_line(`/etc/hosts Error: ${etc_hosts_response.stderr}`);
-    //     return;
-    // }
+    if (etc_hosts_response.code !== 0) {
+        error_line(`/etc/hosts Error: ${etc_hosts_response.stderr}`);
+        return;
+    }
 
     highlight_line('Restore complete!');
 }

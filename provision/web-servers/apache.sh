@@ -7,6 +7,7 @@ export LOG_FILE_PATH=web-servers/apache.log
 if [ "$APACHE_ENABLED" == "true" ]; then
     title "Apache"
 
+    APACHE_CONF_PATH=/etc/apache2/apache2.conf
     DEFAULT_APACHE_SITE_CONF=/etc/apache2/sites-available/000-default.conf
 
     if ! grep -qF "export APACHE_PORT_HTTP" $HOME/.bashrc; then
@@ -71,17 +72,19 @@ if [ "$APACHE_ENABLED" == "true" ]; then
     exec_command 'echo "ErrorLogFormat \"[%t] %M\"" | sudo tee --append /etc/apache2/apache2.cnf > /dev/null'
 
     # Add EnableMMAP off to conf
-    if ! grep -qF "EnableMMAP" /etc/apache2/apache2.conf; then
-        exec_command "sudo sed -i '/HostnameLookups Off/a EnableMMAP off' /etc/apache2/apache2.conf"
+    if ! grep -qF "EnableMMAP" $APACHE_CONF_PATH; then
+        exec_command "sudo sed -i '/HostnameLookups Off/a EnableMMAP off' $APACHE_CONF_PATH"
     fi
 
-    # TODO: Set PXL Web Vagrant docs as home page
-    highlight_text "Set PXL Web Vagrant documentation as home page at http://$IP_ADDRESS..."
-    exec_command "sudo sed -i 's|DocumentRoot /var/www/html|DocumentRoot /vagrant/docs/.vuepress/dist|' $DEFAULT_APACHE_SITE_CONF"
+    # Enable Mutex
+    exec_command "sudo sed -i s/^#Mutex/Mutex/ $APACHE_CONF_PATH"
 
-    # if ! grep -qF "<Directory /vagrant/docs/.vuepress/dist>" $DEFAULT_APACHE_SITE_CONF; then
-        exec_command "sudo cp /vagrant/provision/web-servers/apache/default.conf $DEFAULT_APACHE_SITE_CONF"
-    # fi
+    # TODO: Set PXL Web Vagrant docs as home page
+    # highlight_text "Set PXL Web Vagrant documentation as home page at http://$IP_ADDRESS..."
+    # exec_command "sudo sed -i 's|DocumentRoot /var/www/html|DocumentRoot /vagrant/docs/.vuepress/dist|' $DEFAULT_APACHE_SITE_CONF"
+
+    # Set home page
+    exec_command "sudo cp /vagrant/provision/web-servers/apache/default.conf $DEFAULT_APACHE_SITE_CONF"
 
     # Create self-signed SSL certificate
     highlight_text "Create self-seigned SSL certificate..."

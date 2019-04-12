@@ -37,11 +37,13 @@ alias edit_hosts='sudo vim /etc/hosts'
 
 # Projects
 alias create_project='node $SCRIPTS_PROJECTS_DIR/create_project.js'
-alias edit_project_site_conf='node $SCRIPTS_PROJECTS_DIR/edit_project_site_conf.js'
 alias enable_project_site_conf='node $SCRIPTS_PROJECTS_DIR/enable_project_site_conf.js'
 alias disable_project_site_conf='node $SCRIPTS_PROJECTS_DIR/disable_project_site_conf.js'
 alias delete_project='node $SCRIPTS_PROJECTS_DIR/delete_project.js'
 alias install_project='node $SCRIPTS_PROJECTS_DIR/install_project.js'
+
+# Web Servers
+alias edit_site_conf='node $SCRIPTS_PROJECTS_DIR/web-servers/edit_site_conf.js'
 
 # Git
 alias git_repo_info='node $SCRIPTS_PROJECTS_DIR/git/git_repo_info.js'

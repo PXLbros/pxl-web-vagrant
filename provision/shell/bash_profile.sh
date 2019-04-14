@@ -43,7 +43,7 @@ alias delete_project='node $SCRIPTS_PROJECTS_DIR/delete_project.js'
 alias install_project='node $SCRIPTS_PROJECTS_DIR/install_project.js'
 
 # Web Servers
-alias edit_site_conf='node $SCRIPTS_PROJECTS_DIR/web-servers/edit_site_conf.js'
+alias edit_site_conf='node $SCRIPTS_DIR/web_servers/edit_site_conf.js'
 
 # Git
 alias git_repo_info='node $SCRIPTS_PROJECTS_DIR/git/git_repo_info.js'

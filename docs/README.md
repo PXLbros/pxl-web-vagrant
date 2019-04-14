@@ -15,10 +15,11 @@ Welcome to **PXL Web Vagrant** - a Vagrant environment for Web development.
     * NGINX
     * Built-in helper commands for managing virtual host configurations, e.g. [`edit_site_conf`](/web-servers/#edit-site-conf)
 * Databases
-    * MySQL
+    * MySQL (phpMyAdmin)
     * Built-in helper commands for creating and deleting databases, .e.g [`create_database`](/databases/commands.html#create-database) and [`delete_database`](/databases/commands.html#delete-database)
 * Shell
     * LiquidPrompt
     * tmux
         * tmuxinator
-* Backup/restore
+* Backup/restore settings, site configurations and databases
+* Share environment easily

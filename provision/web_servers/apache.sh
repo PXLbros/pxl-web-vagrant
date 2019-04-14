@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export LOG_FILE_PATH=web-servers/apache.log
+export LOG_FILE_PATH=web_servers/apache.log
 
 . /vagrant/provision/helpers/include.sh
 
@@ -84,7 +84,8 @@ if [ "$APACHE_ENABLED" == "true" ]; then
     # exec_command "sudo sed -i 's|DocumentRoot /var/www/html|DocumentRoot /vagrant/docs/.vuepress/dist|' $DEFAULT_APACHE_SITE_CONF"
 
     # Set home page
-    exec_command "sudo cp /vagrant/provision/web-servers/apache/default.conf $DEFAULT_APACHE_SITE_CONF"
+    exec_command "sudo cp /vagrant/provision/web_servers/apache/default.conf $DEFAULT_APACHE_SITE_CONF"
+    exec_command "cd /vagrant/docs/.vuepress && yarn && yarn docs:build"
 
     # Create self-signed SSL certificate
     highlight_text "Create self-seigned SSL certificate..."

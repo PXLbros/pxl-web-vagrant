@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export LOG_FILE_PATH=web-servers/nginx.log
+export LOG_FILE_PATH=web_servers/nginx.log
 
 . /vagrant/provision/helpers/include.sh
 

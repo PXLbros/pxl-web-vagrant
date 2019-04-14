@@ -6,11 +6,13 @@ export LOG_FILE_PATH=databases/mysql/phpmyadmin.log
 
 title "phpMyAdmin"
 
+PHPMYADMIN_ROOT_PASSWORD=vagrant
+
 highlight_text "Configure..."
 exec_command "sudo debconf-set-selections <<< 'phpmyadmin phpmyadmin/dbconfig-install boolean true'"
-exec_command "sudo debconf-set-selections <<< 'phpmyadmin phpmyadmin/app-password-confirm password root'"
-exec_command "sudo debconf-set-selections <<< 'phpmyadmin phpmyadmin/mysql/admin-pass password root'"
-exec_command "sudo debconf-set-selections <<< 'phpmyadmin phpmyadmin/mysql/app-pass password root'"
+exec_command "sudo debconf-set-selections <<< 'phpmyadmin phpmyadmin/app-password-confirm password $PHPMYADMIN_ROOT_PASSWORD'"
+exec_command "sudo debconf-set-selections <<< 'phpmyadmin phpmyadmin/mysql/admin-pass password $PHPMYADMIN_ROOT_PASSWORD'"
+exec_command "sudo debconf-set-selections <<< 'phpmyadmin phpmyadmin/mysql/app-pass password $PHPMYADMIN_ROOT_PASSWORD'"
 exec_command "sudo debconf-set-selections <<< 'phpmyadmin phpmyadmin/reconfigure-webserver multiselect none'"
 
 highlight_text "Install..."
@@ -23,3 +25,19 @@ for PHP_VERSION in "${PHP_VERSIONS[@]}"; do
     exec_command "sudo php${PHP_VERSION}enmod mbstring"
     exec_command "sudo systemctl restart apache2"
 done
+
+# Create Apache Virtual Host
+if [[ ! -x "$(command -v apache)" ]]; then
+    echo "<VirtualHost *:80>
+    DocumentRoot /usr/share/phpmyadmin
+
+    <Directory />
+        Options Indexes FollowSymLinks MultiViews
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/phpmyadmin.log
+    CustomLog ${APACHE_LOG_DIR}/phpmyadmin.log combined
+</VirtualHost>" > /etc/apache2/sites-available/phpmyadmin.conf
+fi

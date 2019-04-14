@@ -208,7 +208,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
             end
 
             # Install web server
-            config.vm.provision 'shell', name: "Web Server: #{web_server_name}", path: "#{VAGRANT_DIR}/provision/web-servers/#{web_server_name}.sh", privileged: false, run: 'once', env: GLOBAL_VARIABLES
+            config.vm.provision 'shell', name: "Web Server: #{web_server_name}", path: "#{VAGRANT_DIR}/provision/web_servers/#{web_server_name}.sh", privileged: false, run: 'once', env: GLOBAL_VARIABLES
 
             # Bind web server port
             config.vm.network :forwarded_port, guest: web_server_port_http_in, host: port_http_out

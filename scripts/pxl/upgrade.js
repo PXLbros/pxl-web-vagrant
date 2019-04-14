@@ -1,5 +1,5 @@
 const { exec } = require('shelljs');
-const { cyan_line, error_line, highlight_line, line_break } = require('../utils/log');
+const { cyan_line, error_line, highlight_line } = require('../utils/log');
 
 async function main() {
     const response = await exec('cd /vagrant && git pull', { silent: true });

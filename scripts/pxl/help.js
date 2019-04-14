@@ -1,5 +1,5 @@
 const { exec } = require('shelljs');
-const { blue_line, cyan_line, line_break } = require('../utils/log');
+const { blue_line, cyan_line, line_break, teal_line } = require('../utils/log');
 
 const package_json = require('../../package.json');
 
@@ -17,7 +17,9 @@ line_break();
 
 cyan_line(`~ ${process.env.VAGRANT_NAME} ~`);
 cyan_line(`IP: ${process.env.VAGRANT_IP_ADDRESS}`);
-cyan_line(`http://${process.env.VAGRANT_IP_ADDRESS}:${process.env.APACHE_PORT_HTTP_OUT}`);
-cyan_line(`phpMyAdmin: http://${process.env.VAGRANT_IP_ADDRESS}:${process.env.APACHE_PORT_HTTP_OUT}/phpmyadmin`);
+cyan_line(`http://${process.env.VAGRANT_IP_ADDRESS}`);
+
+line_break();
+teal_line(`phpMyAdmin:\nhttp://${process.env.VAGRANT_IP_ADDRESS}/phpmyadmin`);
 
 line_break();

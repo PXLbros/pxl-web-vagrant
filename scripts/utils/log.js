@@ -35,6 +35,10 @@ module.exports = {
         log(chalk.white(text));
     },
 
+    teal_line(text) {
+        log(chalk.teal(text));
+    },
+
     yellow_line,
 
     line_break() {

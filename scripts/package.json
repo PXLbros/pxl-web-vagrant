@@ -16,15 +16,15 @@
     "eslint": "^5.16.0",
     "eslint-plugin-node": "^8.0.1",
     "eslint-watch": "^5.0.1",
-    "inquirer": "^6.2.2",
+    "inquirer": "^6.3.1",
     "inquirer-fuzzy-path": "^2.0.3",
-    "js-yaml": "^3.13.0",
+    "js-yaml": "^3.13.1",
     "octonode": "^0.9.5",
     "shelljs": "^0.8.3",
     "slugify": "^1.3.4"
   },
   "dependencies": {
-    "@octokit/rest": "^16.23.2",
+    "@octokit/rest": "^16.24.1",
     "git-repo-info": "^2.1.0",
     "list-git-branches": "^1.0.0",
     "list-git-remotes": "^1.0.1",

@@ -154,7 +154,7 @@ async function main() {
         project_type = project_type_result.value;
     }
 
-    let root_dir
+    let root_dir;
 
     if (project_type === 'dir') {
         root_dir = process.cwd();

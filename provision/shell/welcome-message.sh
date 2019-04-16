@@ -12,7 +12,7 @@ WELCOME_MESSAGE="#!/bin/bash
 
 line_break
 
-figlet PXL Web Vagrant
+figlet -t PXL Web Vagrant
 
 line_break
 

@@ -35,3 +35,6 @@ Welcome to **PXL Web Vagrant** - a Vagrant environment for Web development.
         * tmuxinator
 * Backup/restore settings, site virtual host configurations and databases
 * Share environment easily
+* Provisioning
+    * Clear and formatted
+    * Configurable

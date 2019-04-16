@@ -5,7 +5,7 @@ const { exec, rm } = require('shelljs');
 const { yellow } = require('chalk');
 const { ask_confirm } = require('../utils/ask');
 const { choose_files_from_dir } = require('../utils/choose');
-const { error_line, line_break } = require('../utils/log');
+const { error_line, figlet, line_break } = require('../utils/log');
 const { ask_web_server, get_web_server_title, get_installed_web_servers, get_sites_config_dir, remove_public_from_dir, reload_web_server } = require('../utils/web_server');
 const log = console.log;
 
@@ -33,7 +33,7 @@ try {
 }
 
 async function main() {
-    exec('figlet delete site');
+    figlet('delete site');
     
     if (options.help) {
         const usage = commandLineUsage([

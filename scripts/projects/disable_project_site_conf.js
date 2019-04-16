@@ -4,7 +4,7 @@ const { exec } = require('shelljs');
 const { ask_confirm } = require('../utils/ask');
 const { choose_files_from_dir } = require('../utils/choose');
 const { ask_web_server, disable_web_server_site, get_installed_web_servers, get_sites_config_dir, get_web_server_title, reload_web_server } = require('../utils/web_server.js');
-const { error_line, highlight_line, line_break } = require('../utils/log');
+const { error_line, highlight_line, figlet, line_break } = require('../utils/log');
 
 const options = commandLineArgs([
     { name: 'web-server', type: String },
@@ -14,7 +14,7 @@ const options = commandLineArgs([
 ]);
 
 async function main() {
-    exec('figlet disable site conf');
+    figlet('disable site conf');
     line_break();
 
     let reload = (options['reload'] || false);

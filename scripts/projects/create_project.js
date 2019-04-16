@@ -12,7 +12,7 @@ const { get_last_directory, remove_trailing_slash } = require('../utils/str');
 const boilerplateUtil = require('../utils/boilerplate');
 const { create: create_database, delete: delete_database, exists: database_exists, get_driver_title: get_database_driver_title } = require('../utils/database');
 const { ask_web_server, enable_web_server_site, get_config_filename, get_config_file_path, get_installed_web_servers, get_web_server_title, restart_web_server, save_virtual_host_config } = require('../utils/web_server.js');
-const { blue_line, error_line, line_break, success_line, yellow_line } = require('../utils/log');
+const { blue_line, error_line, figlet, line_break, success_line, yellow_line } = require('../utils/log');
 const { uniq } = require('lodash');
 // const github = require('octonode');
 // const resolve = require('path').resolve;
@@ -53,7 +53,7 @@ const options_values = [
 ];
 
 async function main() {
-    exec('figlet create project');
+    figlet('create project');
     line_break();
 
     let options;

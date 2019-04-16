@@ -10,15 +10,6 @@ export LOG_FILE_PATH=initialize.log
 # Optimize Apt mirrors
 sudo perl -pi -e 's@^\s*(deb(\-src)?)\s+http://us.archive.*?\s+@\1 mirror://mirrors.ubuntu.com/mirrors.txt @g' /etc/apt/sources.list
 
-# apt-fast
-exec_command "sudo apt-get update"
-exec_command "sudo apt-get install -y aria2 --no-install-recommends"
-exec_command "wget https://raw.githubusercontent.com/ilikenwf/apt-fast/master/apt-fast"
-exec_command "wget https://raw.githubusercontent.com/ilikenwf/apt-fast/master/apt-fast.conf"
-exec_command "sudo cp apt-fast /usr/bin/"
-exec_command "sudo chmod +x /usr/bin/apt-fast"
-exec_command "sudo cp apt-fast.conf /etc"
-
 # Install figlet
 apt-get -y install figlet &>/dev/null
 
@@ -48,6 +39,15 @@ highlight_text "Configure date/time..."
 exec_command "locale-gen $LC_ALL"
 exec_command "dpkg-reconfigure locales"
 exec_command "rm /etc/localtime && ln -s /usr/share/zoneinfo/$TIMEZONE /etc/localtime"
+
+# apt-fast
+exec_command "sudo apt-get update"
+exec_command "sudo apt-get install -y aria2 --no-install-recommends"
+exec_command "wget https://raw.githubusercontent.com/ilikenwf/apt-fast/master/apt-fast"
+exec_command "wget https://raw.githubusercontent.com/ilikenwf/apt-fast/master/apt-fast.conf"
+exec_command "sudo cp apt-fast /usr/bin/"
+exec_command "sudo chmod +x /usr/bin/apt-fast"
+exec_command "sudo cp apt-fast.conf /etc"
 
 # Update APT
 highlight_text "Update APT..."

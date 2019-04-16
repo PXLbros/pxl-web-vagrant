@@ -12,7 +12,7 @@ NC='\033[0m'
 
 title() {
     echo -e " "
-    figlet $1
+    figlet -t $1
     echo -e " "
 }
 

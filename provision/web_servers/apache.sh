@@ -85,7 +85,7 @@ if [ "$APACHE_ENABLED" == "true" ]; then
 
     # Set home page
     exec_command "sudo cp /vagrant/provision/web_servers/apache/default.conf $DEFAULT_APACHE_SITE_CONF"
-    exec_command "cd /vagrant/docs/.vuepress && yarn && yarn docs:build"
+    # exec_command "cd /vagrant/docs/.vuepress && yarn && yarn docs:build"
 
     # Create self-signed SSL certificate
     highlight_text "Create self-seigned SSL certificate..."

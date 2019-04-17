@@ -18,7 +18,7 @@
   },
   "homepage": "https://pxlbros.github.io/pxl-web-vagrant",
   "devDependencies": {
-    "vuepress": "^0.14.10"
+    "vuepress": "^0.14.11"
   },
   "resolutions": {
     "webpack-dev-middleware": "3.6.0"

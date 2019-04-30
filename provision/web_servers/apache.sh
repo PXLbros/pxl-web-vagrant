@@ -15,7 +15,7 @@ if [ "$APACHE_ENABLED" == "true" ]; then
     fi
 
     if ! grep -qF "export APACHE_PORT_HTTPS" $HOME/.bashrc; then
-        exec_command "echo -e \"\nexport APACHE_PORT_HTTPS=$APACHE_PORT_HTTPS\" >> $HOME/.bashrc"
+        exec_command "echo -e \"export APACHE_PORT_HTTPS=$APACHE_PORT_HTTPS\" >> $HOME/.bashrc"
     fi
 
     if ! grep -qF "export APACHE_PORT_HTTP_OUT" $HOME/.bashrc; then

@@ -78,6 +78,8 @@ GLOBAL_VARIABLES = {
     'MEMCACHED': (vagrant_config['code']['php']['cache']['memcached']['enabled'] ? true : false),
     'APC': (vagrant_config['code']['php']['cache']['apc']['enabled'] ? true : false),
 
+    'XDEBUG': (vagrant_config['code']['php']['xdebug']['enabled'] || false),
+
     'USER_GIT_CONFIG': user_gitconfig
 }
 
@@ -236,6 +238,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
             if vagrant_config['code']['php']['cache']['apc']['enabled']
                 # Install APC
                 config.vm.provision 'shell', name: "APC", path: "#{VAGRANT_DIR}/provision/code/php/cache/apc.sh", privileged: true, env: GLOBAL_VARIABLES, run: 'once'
+            end
+
+            # Xdebug
+            if vagrant_config['code']['php']['xdebug']['enabled']
+                # Install Xdebug
+                config.vm.provision 'shell', name: "Xdebug", path: "#{VAGRANT_DIR}/provision/code/php/xdebug.sh", privileged: true, env: GLOBAL_VARIABLES, run: 'once'
+                config.vm.network :forwarded_port, guest: 9000, host: 9001
             end
         end
     end

@@ -1,0 +1,9 @@
+<div>
+    <h1 :class="{ 'inactive': isSigningIn }">
+        MFAdmin
+    </h1>
+    
+    <div :class="{ 'loading': isSigningIn }" class="ui segment">
+        <sign-in-form v-show="!is_sign_up_mode" @enter-sign-up="is_sign_up_mode = true"></sign-in-form>
+    </div>
+</div>

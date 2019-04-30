@@ -36,6 +36,7 @@ alias grep='grep --color=auto'
 alias edit_hosts='sudo vim /etc/hosts'
 
 # Projects
+alias projects='cd $PROJECTS_DIR'
 alias create_project='node $SCRIPTS_PROJECTS_DIR/create_project.js'
 alias enable_project_site_conf='node $SCRIPTS_PROJECTS_DIR/enable_project_site_conf.js'
 alias disable_project_site_conf='node $SCRIPTS_PROJECTS_DIR/disable_project_site_conf.js'

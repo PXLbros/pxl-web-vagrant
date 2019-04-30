@@ -1,0 +1,68 @@
+<form class="ui form" @submit.prevent="save">
+    <sui-modal v-model="isOpen" :closable="false">
+        <template v-if="customer">
+            <sui-modal-header>
+                Kund #{{ customer.uid }}
+            </sui-modal-header>
+
+            <sui-modal-content>
+                <sui-modal-description>
+                    <form class="ui form" @prevent.submit="save">
+                        <sui-tab :menu="{ secondary: true }">
+                            <sui-tab-pane title="Generellt">
+                                <sui-form-field :width="12">
+                                    <label>
+                                        Kommentar
+                                    </label>
+
+                                    <textarea v-model="form_data.comment"></textarea>
+                                </sui-form-field>
+                            </sui-tab-pane>
+
+                            <sui-tab-pane title="Rabatt">
+                                <sui-form-field :width="4">
+                                    <div class="ui right labeled input">
+                                        <input type="number" v-model="form_data.discount">
+
+                                        <div class="ui label">
+                                            kr
+                                        </div>
+                                    </div>
+
+                                    <sui-list>
+                                        <sui-list-item>
+                                            <sui-list-header>
+                                                Differens
+                                            </sui-list-header>
+
+                                            <span :class="{
+                                                'positive': difference > 0,
+                                                'negative': difference < 0
+                                            }" class="difference">
+                                                {{ difference }} kr
+                                            </span>
+                                        </sui-list-item>
+                                    </sui-list>
+                                </sui-form-field>
+                            </sui-tab-pane>
+
+                            <sui-tab-pane title="Inbetalningar">
+                                Inga inbetalningar.
+                            </sui-tab-pane>
+                        </sui-tab>
+                    </form>
+                </sui-modal-description>
+            </sui-modal-content>
+
+            <sui-modal-actions>
+                <sui-button type="submit" primary :disabled="is_saving" :loading="is_saving">
+                    Spara
+                </sui-button>
+
+                <sui-button type="button" @click="close" :disabled="is_saving">
+                    Stäng
+                </sui-button>
+            </sui-modal-actions>
+        </template>
+    </sui-modal>
+</form>

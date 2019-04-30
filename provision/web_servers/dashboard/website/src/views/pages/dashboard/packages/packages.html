@@ -1,0 +1,20 @@
+<div class="packages-page">
+    <div class="action-header">
+        <h1>
+            Paket
+        </h1>
+
+        <div class="header-actions">
+        </div>
+    </div>
+
+    <resource-table
+        resource-type="packages"
+
+        :columns="[
+            { text: 'Namn', value: 'name', sortable: 'name', width: 14 }
+        ]"
+        
+        default-sort-column="name"
+    ></resource-table>
+</div>

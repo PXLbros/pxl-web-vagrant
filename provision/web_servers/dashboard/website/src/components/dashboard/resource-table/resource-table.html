@@ -1,0 +1,107 @@
+<div class="resources-table">
+    <div v-if="is_loading" class="ui active inline small loader"></div>
+
+    <div v-else-if="load_error">
+        {{ load_error }}
+    </div>
+
+    <template v-else-if="resources">
+        <form class="ui small form filter-form" @submit.prevent>
+            <sui-form-fields :fields="2">
+                <sui-form-field :width="4">
+                    <label>Filter</label>
+                    <input type="text" v-model="filter_text" placeholder="Sök på kundnummer, OCR eller kommentar" @blur="filter" @keyup.enter="filter">
+                </sui-form-field>
+
+                <sui-form-field v-if="current_filter" class="button-form-field">
+                    <button type="button" class="ui small button clear-filter-button" :disabled="!hasFilter" @click="clearFilter">
+                        Rensa
+                    </button>
+                </sui-form-field>
+            </sui-form-fields>
+        </form>
+
+        <div v-if="resources.length > 0">
+            <sui-table basic="very" class="sortable" selectable striped compact>
+                <sui-table-header full-width>
+                    <sui-table-row>
+                        <!-- <sui-table-header-cell /> -->
+                        
+                        <sui-table-header-cell v-for="(column, column_index) in columns" :key="column_index" @click="sort(column.sort)">
+                            {{ column.text }}
+
+                            <sui-icon v-if="column.sort === current_sort_by" name="sort" :class="{
+                                'up': current_sort_order === 'desc',
+                                'down': current_sort_order === 'asc'
+                            }" />
+                        </sui-table-header-cell>
+
+                        <sui-table-header-cell />
+                    </sui-table-row>
+                </sui-table-header>
+
+                <sui-table-body>
+                    <sui-table-row v-for="resource in formatted_resources" :key="resource.id">
+                        <!-- <sui-table-cell collapsing>
+                            <sui-checkbox toggle />
+                        </sui-table-cell> -->
+
+                        <sui-table-cell v-for="(resource_value, resource_value_index) in resource.values" :key="resource_value_index">
+                            <!-- Date -->
+                            <!-- <timeago v-if="resource_value.type === 'date'" :datetime="resource_value.value" locale="sv"></timeago> -->
+                            <template v-if="resource_value.type === 'date'">
+                                {{ resource_value.value | date('DD MMMM YYYY') }}
+                            </template>
+
+                            <!-- String -->
+                            <template v-else>
+                                {{ resource_value.value || '-' }}
+                            </template>
+                        </sui-table-cell>
+
+                        <sui-table-cell>
+                            <sui-dropdown class="mini icon" icon="wrench" button>
+                                <sui-dropdown-menu>
+                                    <sui-dropdown-item @click="openResourceModal(resource)">Öppnar</sui-dropdown-item>
+                                    <sui-dropdown-item @click="openInvoiceModal(resource)">Fakturera</sui-dropdown-item>
+                                    <sui-dropdown-divider />
+                                    <sui-dropdown-item disabled>Ta bort</sui-dropdown-item>
+                                </sui-dropdown-menu>
+                            </sui-dropdown>
+                        </sui-table-cell>
+                    </sui-table-row>
+                </sui-table-body>
+            </sui-table>
+
+            <div class="paging-container">
+                <div style="display:flex;align-items:center">
+                    <div class="ui mini pagination menu" v-if="num_pages > 1">
+                        <a class="icon item" :class="{ 'disabled': current_page === 1 }" @click="goToPreviousPage">
+                            <i class="left chevron icon"></i>
+                        </a>
+
+                        <a class="icon item" :class="{ 'disabled': current_page === num_pages }" @click="goToNextPage">
+                            <i class="right chevron icon"></i>
+                        </a>
+                    </div>
+
+                    <p class="current-page-text">
+                        Sida {{ current_page }} av {{ num_pages }}
+                    </p>
+                </div>
+
+                <div>
+                    <label class="per-page-text">
+                        Per sida:
+                    </label>
+
+                    <sui-dropdown selection :options="num_per_page_options" v-model="num_per_page" />
+                </div>
+            </div>
+        </div>
+
+        <div v-else>
+            Inga kunder.
+        </div>
+    </template>
+</div>

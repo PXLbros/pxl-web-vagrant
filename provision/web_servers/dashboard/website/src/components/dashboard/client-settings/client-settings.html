@@ -1,0 +1,29 @@
+<div class="client-settings">
+    <form class="ui form" @submit.prevent="save">
+        <sui-form-field :width="3" required>
+            <label>
+                Namn
+            </label>
+
+            <input type="text" v-model="form_data.name" :disabled="is_saving">
+        </sui-form-field>
+
+        <sui-form-field :width="2">
+            <label>
+                Leveransavgift
+            </label>
+
+            <div class="ui right labeled input">
+                <input type="text" v-model="form_data.delivery_fee" :disabled="is_saving">
+
+                <div class="ui label">
+                    kr
+                </div>
+            </div>
+        </sui-form-field>
+
+        <sui-button type="submit" primary size="small" :disabled="is_saving" :loading="is_saving">
+            Spara
+        </sui-button>
+    </form>
+</div>

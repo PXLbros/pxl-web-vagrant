@@ -1,0 +1,83 @@
+<div id="dashboard-layout">
+    <div id="mobile-nav" class="ui fixed inverted main menu">
+        <div class="ui container">
+            <a class="launch icon item">
+                <i class="content icon"></i>
+            </a>
+
+            <div class="right menu">
+                <a href="" class="vertically fitted borderless item">
+                    <i class="power icon"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div id="sidebar">
+        <div class="ui vertical inverted sticky menu sidebar-menu">
+            <div class="item">
+                <div class="header">
+                    MFAdmin
+                </div>
+            </div>
+
+            <div class="item">
+                <div class="header">
+                    Uppdrag
+
+                    <sui-button secondary size="mini" icon="plus" @click="$router.push({ name: 'add-client' })"></sui-button>
+                </div>
+
+                <sidebar-clients />
+            </div>
+
+            <div class="item">
+                <div class="header">
+                    Paket &amp; Moduler
+                </div>
+
+                <div class="menu">
+                    <router-link :to="{ name: 'packages' }" class="item">
+                        Paket
+                    </router-link>
+
+                    <router-link :to="{ name: 'modules' }" class="item">
+                        Moduler
+                    </router-link>
+                </div>
+            </div>
+
+            <div class="item">
+                <a href="" class="header">
+                    {{ $store.getters.user.name }}
+                </a>
+
+                <div class="menu">
+                    <router-link :to="{ name: 'settings' }" class="item">
+                        Inställningar
+                    </router-link>
+                </div>
+            </div>
+
+            <div class="item">
+                <div class="menu">
+                    <a href="javascript:" class="item" @click="signOut">
+                        Logga ut
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="page">
+        <div id="page-container">
+            <!-- <div class="ui small breadcrumb">
+                <a class="section">Home</a>
+                <i class="right chevron icon divider"></i>
+                <div class="active section">Personal Information</div>
+            </div> -->
+
+            <slot></slot>
+        </div>
+    </div>
+</div>

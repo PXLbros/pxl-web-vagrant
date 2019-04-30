@@ -15,7 +15,7 @@ highlight_text "Install APC..."
 exec_command "sudo apt-get -y install php-apcu"
 
 # Configure
-highlight_text "Configure Opcache..."
+# highlight_text "Configure Apcache..."
 # exec_command "apt-get -y install php7.2-opcache"
 
 # Restart Apache

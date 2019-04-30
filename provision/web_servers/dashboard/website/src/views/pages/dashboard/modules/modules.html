@@ -1,0 +1,34 @@
+<div class="modules-page">
+    <div class="action-header">
+        <h1>
+            Moduler
+        </h1>
+
+        <div class="header-actions">
+            <sui-dropdown class="mini icon" icon="wrench" button>
+                <sui-dropdown-menu>
+                    <sui-dropdown-item @click="openModuleModal">
+                        Lägg till
+                    </sui-dropdown-item>
+                    <!-- <sui-dropdown-divider /> -->
+                </sui-dropdown-menu>
+            </sui-dropdown>
+        </div>
+    </div>
+
+    <resource-table
+        resource-type="modules"
+
+        :columns="[
+            { text: 'Namn', value: 'name', sortable: 'name', width: 14 }
+        ]"
+
+        default-sort-column="name"
+    ></resource-table>
+
+    <resource-modal
+        resource-type="modules"
+
+        :is-open="is_module_modal_open"
+    ></resource-modal>
+</div>

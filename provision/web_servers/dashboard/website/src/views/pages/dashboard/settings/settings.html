@@ -1,0 +1,147 @@
+<div class="settings-page">
+    <div v-if="is_loading" class="ui active inline small loader"></div>
+
+    <div v-else-if="load_error" class="load-error">
+        {{ load_error }}
+    </div>
+
+    <template v-else-if="settings">
+        <form class="ui form" @submit.prevent="save">
+            <div class="action-header">
+                <h1>
+                    Inställningar
+                </h1>
+
+                <div class="header-actions">
+                    <sui-button primary size="mini" :disabled="is_saving" :loading="is_saving">
+                        Spara
+                    </sui-button>
+                </div>
+            </div>
+
+            <sui-tab>
+                <sui-tab-pane title="Generellt">
+                    <div class="ui grid">
+                        <div class="six wide column">
+                            <sui-form-field>
+                                <label>
+                                    Gatuaddress
+                                </label>
+
+                                <input type="text" v-model="settings.street_address" :disabled="is_saving">
+                            </sui-form-field>
+
+                            <sui-form-fields :fields="2">
+                                <sui-form-field :width="10">
+                                    <label>
+                                        Ort
+                                    </label>
+
+                                    <input type="text" v-model="settings.city" :disabled="is_saving">
+                                </sui-form-field>
+
+                                <sui-form-field :width="6">
+                                    <label>
+                                        Postnummer
+                                    </label>
+
+                                    <input type="text" v-model="settings.zip_code" :disabled="is_saving">
+                                </sui-form-field>
+                            </sui-form-fields>
+
+                            <sui-form-field>
+                                <label>
+                                    Telefonnummer
+                                </label>
+
+                                <input type="text" v-model="settings.phone_number" :disabled="is_saving">
+                            </sui-form-field>
+
+                            <sui-form-field>
+                                <label>
+                                    Email
+                                </label>
+
+                                <input type="text" v-model="settings.email_address" :disabled="is_saving">
+                            </sui-form-field>
+                            
+                            <sui-form-field>
+                                <label>
+                                    Hemsida
+                                </label>
+
+                                <input type="text" v-model="settings.website" :disabled="is_saving">
+                            </sui-form-field>
+
+                            <sui-form-field>
+                                <label>
+                                    Org.nr
+                                </label>
+
+                                <input type="text" v-model="settings.organization_number" :disabled="is_saving">
+                            </sui-form-field>
+                        </div>
+                    </div>
+                </sui-tab-pane>
+
+                <sui-tab-pane title="Priser">
+                    <div class="ui grid">
+                        <div class="four wide column">
+                            <sui-form-field>
+                                <label>
+                                    Leveransavgift
+                                </label>
+
+                                <div class="ui right labeled input">
+                                    <input type="text" v-model="settings.delivery_fee" :disabled="is_saving">
+
+                                    <div class="ui label">
+                                        kr
+                                    </div>
+                                </div>
+                            </sui-form-field>
+                        </div>
+                    </div>
+                </sui-tab-pane>
+
+                <sui-tab-pane title="Dagar">
+                    <div class="ui grid">
+                        <div class="four wide column">
+                            <sui-form-field>
+                                <label>
+                                    Dagar innan förseningsavgift 
+                                </label>
+
+                                <div class="ui right labeled input">
+                                    <input type="text" v-model="settings.num_days_to_pay" :disabled="is_saving">
+
+                                    <div class="ui label">
+                                        dagar
+                                    </div>
+                                </div>
+                            </sui-form-field>
+
+                            <sui-form-field>
+                                <label>
+                                    Dagar utan köptvång
+                                </label>
+
+                                <div class="ui right labeled input">
+                                    <input type="text" v-model="settings.num_non_paid_days" :disabled="is_saving">
+
+                                    <div class="ui label">
+                                        dagar
+                                    </div>
+                                </div>
+                            </sui-form-field>
+                        </div>
+                    </div>
+                </sui-tab-pane>
+            </sui-tab>
+
+            <!-- <sui-tab-pane title="Faktura">
+            </sui-tab-pane> -->
+        </sui-tab>
+        </form>
+    </template>
+</div>

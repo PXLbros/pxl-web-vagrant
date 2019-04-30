@@ -8,7 +8,9 @@ class InstallScript extends InstallHelper {
 
         // Download Slim Framework dependencies
         highlight_line('Download Slim Framework dependencies...');
-        this.composer('global require slim/slim-skeleton');
+        // this.composer('global require slim/slim-skeleton');
+        this.composer('composer require slim/slim:4.0.0-alpha');
+        this.composer('composer require slim/psr7:dev-master');
 
         line_break();
 

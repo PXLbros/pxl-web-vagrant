@@ -1,0 +1,57 @@
+<div>
+    <div v-if="is_loading" class="ui active inline small loader"></div>
+
+    <div v-else-if="load_error" class="load-error">
+        {{ load_error }}
+    </div>
+
+    <div v-else-if="client">
+        <div class="action-header">
+            <h1>
+                {{ client.name }}
+            </h1>
+
+            <div class="header-actions">
+                <!-- <sui-button size="tiny" @click="$router.push({ name: 'edit-client', params: { id: client.id } })">
+                    Ändra
+                </sui-button> -->
+                <sui-dropdown class="mini icon" icon="wrench" button>
+                    <sui-dropdown-menu>
+                        <sui-dropdown-item @click="openInvoiceModal">Fakturera</sui-dropdown-item>
+                        <sui-dropdown-divider />
+                        <sui-dropdown-item @click="deleteClient">Ta bort</sui-dropdown-item>
+                    </sui-dropdown-menu>
+                </sui-dropdown>
+            </div>
+        </div>
+
+        <sui-tab>
+            <sui-tab-pane title="Kunder">
+                <customers-table :client="client" @open-customer-modal="openCustomerModal" @open-invoice-modal="openInvoiceModal" @customers-loaded="onCustomersLoaded" />
+            </sui-tab-pane>
+
+            <sui-tab-pane title="Fakturor">
+                <invoices-table :client="client" />
+            </sui-tab-pane>
+
+            <sui-tab-pane title="Ekonomi">
+                <div class="stats-container">
+                    <div>
+                        <strong>Total inkomst:</strong> {{ client.total_income_formatted }} kr
+                    </div>
+
+                    <div>
+                        <strong>Inkomst/kund:</strong> {{ client.income_per_customer_formatted }} kr
+                    </div>
+                </div>
+            </sui-tab-pane>
+
+            <sui-tab-pane title="Inställningar">
+                <client-settings :client="client" @saved="onClientSaved" />
+            </sui-tab-pane>
+        </sui-tab>
+
+        <customer-modal ref="customer_modal" :customer="edit_customer" :is-open="edit_customer !== null" @close="edit_customer = null" />
+        <invoice-modal ref="invoice_modal" :client="client" :is-open="is_invoice_modal_open" @close="is_invoice_modal_open = false" />
+    </div>
+</div>

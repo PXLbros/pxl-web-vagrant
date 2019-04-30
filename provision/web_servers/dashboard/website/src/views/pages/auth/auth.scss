@@ -1,0 +1,20 @@
+h1,
+.welcome-text {
+    &.inactive {
+        opacity: 0.25;
+    }
+}
+
+h1 {
+    font-size: 1.6em;
+    margin-bottom: 0.8em;
+}
+
+.welcome-text {
+    margin-bottom: 1.2em;
+}
+
+.sign-in-form {
+    width: 300px;
+}
+

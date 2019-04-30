@@ -1,0 +1,27 @@
+<form class="ui form sign-in-form" @submit.prevent="signIn" novalidate>
+    <div class="ui error message">
+        {{ sign_in_error }}
+    </div>
+
+    <div class="field">
+        <label>
+            Email
+        </label>
+
+        <input type="email" v-model="email" ref="email_input">
+    </div>
+
+    <div class="field">
+        <label>
+            Lösenord
+        </label>
+
+        <input type="password"  v-model="password" ref="password_input">
+    </div>
+
+    <div>
+        <button type="submit" class="ui small primary button" :disabled="is_signing_in || is_signed_in">
+            Logga in
+        </button>
+    </div>
+</form>

@@ -1,0 +1,19 @@
+.ui.modal {
+    .content {
+        min-height: 400px;
+    }
+}
+
+.difference {
+    &.positive {
+        color: $green;
+    }
+
+    &.negative {
+        color: $red;
+    }
+}
+
+.ui.tab {
+    border: none;
+}

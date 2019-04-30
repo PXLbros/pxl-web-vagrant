@@ -1,0 +1,58 @@
+<div class="invoices-table">
+    <div v-if="is_loading" class="ui active inline small loader"></div>
+
+    <div v-else-if="load_error">
+        {{ load_error }}
+    </div>
+
+    <template v-else-if="invoices">
+        <div v-if="invoices.length > 0">
+            <sui-table basic="very" striped selectable>
+                <sui-table-header full-width>
+                    <sui-table-row>                        
+                        <sui-table-header-cell v-for="(column, column_index) in columns" :key="column_index">
+                            {{ column.text }}
+                        </sui-table-header-cell>
+
+                        <sui-table-header-cell />
+                    </sui-table-row>
+                </sui-table-header>
+
+                <sui-table-body>
+                    <sui-table-row v-for="invoice in formatted_invoices" :key="invoice.id">
+                        <sui-table-cell v-for="(invoice_value, invoice_value_index) in invoice.values" :key="invoice_value_index">
+                            <a href="javascript:" v-if="invoice_value.type === 'customers'" @click="openInvoiceDetails(invoice)">
+                                <sui-label>
+                                    <sui-icon name="users" /> {{ invoice_value.value }}
+                                </sui-label>
+                            </a>
+
+                            <template v-else-if="invoice_value.type === 'date'">
+                                {{ invoice_value.value | date(invoice_value.date_format) }}
+                            </template>
+
+                            <template v-else>
+                                {{ invoice_value.value || '-' }}
+                            </template>
+                        </sui-table-cell>
+
+                        <sui-table-cell>
+                            <sui-dropdown class="icon" icon="wrench" button>
+                                <sui-dropdown-menu>
+                                    <sui-dropdown-item @click="openInvoice(invoice)">Öppna</sui-dropdown-item>
+                                    <sui-dropdown-item @click="downloadInvoice(invoice)">Spara</sui-dropdown-item>
+                                    <sui-dropdown-divider />
+                                    <sui-dropdown-item disabled>Ta bort</sui-dropdown-item>
+                                </sui-dropdown-menu>
+                            </sui-dropdown>
+                        </sui-table-cell>
+                    </sui-table-row>
+                </sui-table-body>
+            </sui-table>
+        </div>
+
+        <div v-else>
+            Inga fakturor.
+        </div>
+    </template>
+</div>

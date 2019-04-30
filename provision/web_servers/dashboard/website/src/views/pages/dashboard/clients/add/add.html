@@ -1,0 +1,119 @@
+<div>
+    <div class="action-header">
+        <h1>
+            Nytt uppdrag
+        </h1>
+
+        <div class="header-actions">
+            
+        </div>
+    </div>
+
+    <form class="ui form" @submit.prevent="save">
+        <sui-tab>
+            <sui-tab-pane title="Generellt">
+                <sui-form-field :width="4" required>
+                    <label>
+                        Namn
+                    </label>
+                    
+                    <input v-model="form_data.name">
+                </sui-form-field>
+
+                <sui-form-field :width="4">
+                    <label>
+                        Moduler
+                    </label>
+                    
+                    <sui-dropdown fluid :options="packagesOptions" placeholder="Hämta moduler från paket" selection v-model="selected_package_id" :disabled="isLoadingPackages" :loading="isLoadingPackages" />
+                </sui-form-field>
+
+                <sui-form-field>
+                    <div v-if="form_data.modules.length > 0">
+                        <div class="ui grid">
+                            <div class="six wide column">
+                                <sui-form-fields v-for="(module, module_index) in form_data.modules" :key="module_index" inline :fields="3">
+                                    <sui-form-field required>
+                                        <label>
+                                            Namn
+                                        </label>
+
+                                        <input v-model="module.name" ref="module_name_inputs">
+                                    </sui-form-field>
+
+                                    <sui-form-field required>
+                                        <label>
+                                            Pris
+                                        </label>
+
+                                        <div class="ui right labeled input">
+                                            <input type="text" v-model="module.price" class="price-input" :disabled="is_saving">
+
+                                            <div class="ui label">
+                                                kr
+                                            </div>
+                                        </div>
+                                    </sui-form-field>
+
+                                    <sui-form-field class="remove-form-field">
+                                        <sui-button type="button" size="mini" icon="trash" @click="removeModule(module, module_index)">
+                                            Ta bort
+                                        </sui-button>
+                                    </sui-form-field>
+                                </sui-form-fields>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <sui-button type="button" size="mini" @click="addModule">
+                            Lägg till modul
+                        </sui-button>
+                    </div>
+                </sui-form-field>
+
+                <sui-form-fields :fields="2">
+                    <sui-form-field :width="2" required>
+                        <label>
+                            Kundnummer:
+                        </label>
+                        
+                        <input type="number" v-model="form_data.customer_uid_from" placeholder="Från">
+                    </sui-form-field>
+                
+                    <sui-form-field :width="2">
+                        <label>
+                            &nbsp;
+                        </label>
+                        
+                        <input type="number" v-model="form_data.customer_uid_to" placeholder="Till">
+                    </sui-form-field>
+                </sui-form-fields>
+            </sui-tab-pane>
+
+            <sui-tab-pane title="Avancerat">
+                <div class="ui grid">
+                    <div class="four wide column">
+                        <sui-form-field>
+                            <label>
+                                Leveransavgift
+                            </label>
+
+                            <div class="ui right labeled input">
+                                <input type="text" v-model="form_data.delivery_fee">
+
+                                <div class="ui label">
+                                    kr
+                                </div>
+                            </div>
+                        </sui-form-field>
+                    </div>
+                </div>
+            </sui-tab-pane>
+        </sui-tab>
+
+        <sui-button type="submit" class="save-button" primary :disabled="is_saving" :loading="is_saving">
+            Spara
+        </sui-button>
+    </form>
+</div>

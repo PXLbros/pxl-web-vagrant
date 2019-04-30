@@ -1,0 +1,43 @@
+.filter-form {
+    .button-form-field {
+        button {
+            position: relative;
+            top: 24px;
+        }
+    }
+}
+
+.paging-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .current-page-text,
+    .per-page-text {
+        font-size: 0.9em;
+        color: $medium-gray;
+    }
+
+    .current-page-text {
+        margin: 0 10px;
+    }
+
+    .per-page-text {
+        margin-right: 10px;
+    }
+}
+
+.ui.table tr td {
+    border: none;
+}
+
+.ui.sortable.table thead th {
+    border: none;
+    // border-bottom: 1px solid $light-gray;
+}
+
+.ui.list {
+    .item {
+        line-height: 1.8em;
+    }
+}

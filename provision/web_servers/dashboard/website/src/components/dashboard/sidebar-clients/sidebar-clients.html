@@ -1,0 +1,19 @@
+<div :class="{ 'menu': !isLoadingClients }" class="sidebar-clients">
+    <div v-if="isLoadingClients" class="ui active inline mini loader"></div>
+
+    <div v-else-if="loadClientsError" class="load-error">
+        Kunde inte ladda uppdragen.
+    </div>
+
+    <template v-else-if="clients !== null" class="clients">
+        <template v-if="clients.length > 0">
+            <router-link :to="{ name: 'edit-client', params: { 'id': client.id } }" v-for="client in clients" :key="`sidebar-client-${client.id}`" :class="{ 'active': $route.name === 'edit-client' && $route.params.id === client.id }" class="item">
+                {{ client.name }}
+            </router-link>
+        </template>
+
+        <div v-else class="no-clients">
+            Inga uppdrag
+        </div>
+    </template>
+</div>

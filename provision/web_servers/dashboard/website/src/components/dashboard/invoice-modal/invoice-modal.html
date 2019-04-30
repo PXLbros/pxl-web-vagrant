@@ -1,0 +1,75 @@
+<form class="ui form" @submit.prevent="create">
+    <sui-modal v-model="isOpen" :closable="false">
+        <sui-modal-header>
+            Fakturera
+        </sui-modal-header>
+
+        <sui-modal-content>
+            <sui-modal-description>
+                <sui-form-field :width="6" required>
+                    <label>
+                        Datum
+                    </label>
+
+                    <input type="date" v-model="form_data.date" :disabled="is_creating">
+                </sui-form-field>
+
+                <sui-form-field>
+                    <label>
+                        Kunder
+                    </label>
+
+                    <sui-form-fields inline>
+                        <sui-form-field>
+                            <sui-checkbox radio label="Alla" v-model="form_data.customer_type" value="all" />
+                        </sui-form-field>
+
+                        <sui-form-field>
+                            <sui-checkbox radio label="Intervall" v-model="form_data.customer_type" value="interval" />
+                        </sui-form-field>
+
+                        <sui-form-field>
+                            <sui-checkbox radio label="Enskilda" v-model="form_data.customer_type" value="selective" />
+                        </sui-form-field>
+                    </sui-form-fields>
+                </sui-form-field>
+
+                <template v-if="form_data.customer_type === 'interval'">
+                    <sui-form-fields :fields="2">
+                        <sui-form-field inline required :width="6">
+                            <label>
+                                Kundnummer från:
+                            </label>
+
+                            <input type="number" v-model="form_data.customer_uid_from" placeholder="Från">
+                        </sui-form-field>
+
+                        <sui-form-field inline>
+                            <label>
+                                till:
+                            </label>
+
+                            <input type="number" v-model="form_data.customer_uid_to" placeholder="Till">
+                        </sui-form-field>
+                    </sui-form-fields>
+                </template>
+
+                <template v-else-if="form_data.customer_type === 'selective'">
+                    <sui-form-field :width="10">
+                        <sui-dropdown v-model="form_data.selective_customers" multiple fluid :options="customerOptions" placeholder="Välj" search selection />
+                    </sui-form-field>
+                </template>
+            </sui-modal-description>
+        </sui-modal-content>
+
+        <sui-modal-actions>
+            <sui-button type="submit" primary :disabled="is_creating" :loading="is_creating">
+                Skapa
+            </sui-button>
+
+            <sui-button type="button" @click="close" :disabled="is_creating">
+                Stäng
+            </sui-button>
+        </sui-modal-actions>
+    </sui-modal>
+</form>

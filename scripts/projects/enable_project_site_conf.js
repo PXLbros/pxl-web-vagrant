@@ -1,6 +1,5 @@
 const commandLineArgs = require('command-line-args');
 const { existsSync } = require('fs');
-const { exec } = require('shelljs');
 const { ask_confirm } = require('../utils/ask');
 const { choose_files_from_dir } = require('../utils/choose');
 const { ask_web_server, enable_web_server_site, get_installed_web_servers, get_sites_config_dir, get_web_server_title, reload_web_server } = require('../utils/web_server.js');

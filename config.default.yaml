@@ -41,6 +41,8 @@ code:
                 enabled: true
             apc:
                 enabled: true
+        xdebug:
+            enabled: true
 databases:
     mysql:
         enabled: true

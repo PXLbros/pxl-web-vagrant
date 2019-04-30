@@ -8,7 +8,7 @@ title "Node"
 
 highlight_text "Install NVM..."
 
-exec_command "curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.11/install.sh | bash && source $HOME/.bashrc"
+exec_command "curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.34.0/install.sh | bash && source $HOME/.bashrc"
 
 export NVM_DIR="$HOME/.nvm"
 

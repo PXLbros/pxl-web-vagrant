@@ -91,6 +91,7 @@ if [ "$APACHE_ENABLED" == "true" ]; then
     highlight_text "Create self-seigned SSL certificate..."
     exec_command "sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt -subj \"/C=US/ST=California/L=Los Angeles/O=PXL/OU=Vagrant/CN=$IP_ADDRESS\""
 
+    # Enable Apache modules
     highlight_text "Enable Apache mod_sss/mod_headers modules..."
     exec_command "sudo a2enmod ssl"
     exec_command "sudo a2enmod headers"

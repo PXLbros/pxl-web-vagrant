@@ -11,6 +11,7 @@ export LOG_FILE_PATH=initialize.log
 sudo perl -pi -e 's@^\s*(deb(\-src)?)\s+http://us.archive.*?\s+@\1 mirror://mirrors.ubuntu.com/mirrors.txt @g' /etc/apt/sources.list
 
 # Install figlet
+apt-get update &>/dev/null
 apt-get -y install figlet &>/dev/null
 
 # Show welcome title

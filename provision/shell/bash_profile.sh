@@ -60,6 +60,8 @@ alias restart_apache='sudo systemctl restart apache2'
 alias stop_apache='sudo systemctl stop apache2'
 alias reload_apache='sudo systemctl reload apache2'
 alias apache_status='sudo systemctl status apache2'
+alias check_apache_config='sudo apache2ctl -t'
+alias check_apache_vhost='sudo apache2ctl -S'
 alias edit_apache_conf='sudo vim /etc/apache2/apache2.conf'
 alias edit_apache_site_conf='edit_project_site_conf --web-server=apache'
 alias delete_apache_site_conf='delete_project_site_conf --web-server=apache'"

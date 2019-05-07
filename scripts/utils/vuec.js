@@ -57,7 +57,7 @@ inquirer.prompt(questions).then(input => {
 
     // Create .scss file
     try {
-        fs.writeFileSync(scss_file_path);
+        fs.writeFileSync(scss_file_path, '');
     } catch (e) {
         console.log('Could not create .scss file!');
 

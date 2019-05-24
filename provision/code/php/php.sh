@@ -35,6 +35,7 @@ for PHP_VERSION in "${PHP_VERSIONS[@]}"; do
     if [ -x "$(command -v php$PHP_VERSION)" ]; then
         highlight_text "PHP $PHP_VERSION already installed."
     else
+        highlight_text "Install PHP$PHP_VERSION..."
         exec_command "apt-get -y install php$PHP_VERSION"
 
         if [ -x "$(command -v php$PHP_VERSION)" ]; then

@@ -36,10 +36,10 @@
                                             </sui-list-header>
 
                                             <span :class="{
-                                                'positive': difference > 0,
-                                                'negative': difference < 0
+                                                'positive': customer.total_price > 0,
+                                                'negative': customer.total_price < 0
                                             }" class="difference">
-                                                {{ difference }} kr
+                                                {{ customer.total_price }} kr
                                             </span>
                                         </sui-list-item>
                                     </sui-list>

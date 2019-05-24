@@ -19,12 +19,6 @@ export default {
         }
     },
 
-    computed: {
-        difference() {
-            return (this.customer.price - (this.form_data.discount || 0));
-        }
-    },
-
     data() {
         let form_data = {};
 

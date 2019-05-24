@@ -282,14 +282,16 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     
     # Before destroy
     config.trigger.before :destroy do |trigger|
-        puts "Before destroy..."
+        # puts "Before destroy..."
 
         # Backup
         if vagrant_config['vm']['backup-on-destroy']
-            puts "Backup..."
+            # puts "Backup..."
             
             # trigger.warn = "Backing up..."
             # trigger.run_remote = { inline: 'echo "hey"' }
         end
     end
+
+    config.vm.network "forwarded_port", guest: 27017, host: 27019
 end

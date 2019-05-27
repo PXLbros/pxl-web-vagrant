@@ -94,7 +94,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
     # Configure Vagrant
     config.vm.define vagrant_config['vm']['name']
-    config.vm.box = 'bento/ubuntu-18.04'
+    # config.vm.box = 'bento/ubuntu-18.04'
+    config.vm.box = 'chenhan/ubuntu-desktop-19.04'
 
     # Set static IP
     if !vagrant_config['vm']['ip'].empty?

@@ -31,6 +31,8 @@ alias ..='cd ..'
 alias cls='clear'
 alias ls='ls -lGa --color=auto'
 alias grep='grep --color=auto'
+alias gh='history | grep '
+alias last_modified_files='find ./ -type f -mtime -1'
 
 # /etc/hosts
 alias edit_hosts='sudo vim /etc/hosts'

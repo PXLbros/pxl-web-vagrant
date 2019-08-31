@@ -22,7 +22,7 @@ exec_command "sudo apt-get install memcached"
 
 # Install Memcached PHP extension
 highlight_text "Install Memcached PHP extension..."
-exec_command "apt-get install -y php-memcached"
+exec_command "sudo apt-get install -y php-memcached"
 
 # Restart Apache
 if [ "$APACHE_ENABLED" == "true" ]; then

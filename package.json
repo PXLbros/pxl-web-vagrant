@@ -18,6 +18,7 @@
   },
   "homepage": "https://pxlbros.github.io/pxl-web-vagrant",
   "devDependencies": {
+    "eslint": "^6.7.2",
     "vuepress": "^1.0.3"
   },
   "resolutions": {

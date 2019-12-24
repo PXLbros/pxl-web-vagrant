@@ -532,6 +532,7 @@ async function main() {
             public_dir = get_last_directory(public_dir_full);
         } else {
             public_dir = root_dir;
+            public_dir_full = root_dir;
         }
     } else if (!public_dir_full) {
         public_dir_full = `${root_dir}/${public_dir}`;

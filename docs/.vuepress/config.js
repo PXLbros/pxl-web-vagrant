@@ -22,13 +22,13 @@ module.exports = {
                 title: 'Getting Started',
                 collapsable: false,
                 children: [
-                    ['/vagrant-commands', 'Vagrant_Commands'],
                     ['/requirements', 'Requirements'],
                     ['/installation', 'Installation'],
                     ['/configuration', 'Configuration'],
                     ['/running', 'Running'],
                     ['/stopping', 'Stopping'],
                     ['/uninstallation', 'Uninstallation']
+                    ['/vagrant-commands', 'Vagrant_Commands'],
                 ]
             },
             {

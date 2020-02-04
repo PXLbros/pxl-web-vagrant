@@ -31,6 +31,17 @@ module.exports = {
                     ['/vagrant-commands', 'Vagrant Commands']
                 ]
             },
+            // {
+            //     title: 'Projects',
+            //     collapsable: false,
+            //     children: [
+            //         ['/projects/commands', 'Commands'],
+            //         ['/projects/create', 'Create'],
+            //         ['/projects/edit_web_server_conf', 'Edit Project Web Server Configuration'],
+            //         ['/projects/delete', 'Delete'],
+            //         ['/projects/config', '.pxl']
+            //     ]
+            // },
             {
                 title: 'Web Servers',
                 collapsable: false,

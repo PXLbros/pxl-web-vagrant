@@ -27,8 +27,8 @@ module.exports = {
                     ['/configuration', 'Configuration'],
                     ['/running', 'Running'],
                     ['/stopping', 'Stopping'],
-                    ['/uninstallation', 'Uninstallation'],
-                    ['/vagrant-commands', 'Vagrant Commands']
+                    ['/uninstallation', 'Uninstallation']
+                    ['/vagrant-commands', 'Vagrant_Commands'],
                 ]
             },
             {

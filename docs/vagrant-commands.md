@@ -1,5 +1,5 @@
 ---
-title: Vagrant Commands
+title: Vagrant_Commands
 ---
 
 # Commands

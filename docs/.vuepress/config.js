@@ -27,18 +27,8 @@ module.exports = {
                     ['/configuration', 'Configuration'],
                     ['/running', 'Running'],
                     ['/stopping', 'Stopping'],
-                    ['/uninstallation', 'Uninstallation']
-                ]
-            },
-            {
-                title: 'Projects',
-                collapsable: false,
-                children: [
-                    ['/projects/commands', 'Commands'],
-                    ['/projects/create', 'Create'],
-                    ['/projects/edit_web_server_conf', 'Edit Project Web Server Configuration'],
-                    ['/projects/delete', 'Delete'],
-                    ['/projects/config', '.pxl']
+                    ['/uninstallation', 'Uninstallation'],
+                    ['/vagrant-commands', 'Vagrant Commands']
                 ]
             },
             {

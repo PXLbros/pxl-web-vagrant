@@ -29,6 +29,7 @@
     "next": "^9.0.3",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
+    "twit": "^2.2.11",
     "webpack-dev-middleware": "^3.7.0"
   }
 }

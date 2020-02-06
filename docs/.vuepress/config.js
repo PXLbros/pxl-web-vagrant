@@ -1,5 +1,5 @@
 module.exports = {
-    base: '/',
+    base: '/pxl-web-vagrant/',
 
     title: 'PXL Web Vagrant',
     description: 'PXL Web Vagrant Environment',

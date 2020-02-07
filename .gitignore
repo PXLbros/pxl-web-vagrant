@@ -11,9 +11,6 @@
 
 /provision/user/*
 !/provision/user/.gitkeep
-/provision/shell/scripts/yarn.lock
-
-/scripts/yarn.lock
 
 /config.yaml
 /.command
@@ -22,5 +19,4 @@ node_modules/
 
 .vagrant
 .DS_Store
-yarn.lock
 yarn-error.log

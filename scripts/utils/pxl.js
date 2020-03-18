@@ -45,58 +45,54 @@ function load_pxl_config_from_dir(dir) {
 function load_pxl_config(pxl_config_file_path, project_dir = null) {
     const pxl_config_dir = remove_last_directory(pxl_config_file_path);
 
-    try {
-        let pxl_config_contents = readFileSync(pxl_config_file_path, 'utf8');
-        pxl_config_contents = pxl_config_contents.trim();
+    let pxl_config_contents = readFileSync(pxl_config_file_path, 'utf8');
+    pxl_config_contents = pxl_config_contents.trim();
 
-        let pxl_config = {};
-        
-        if (pxl_config_contents) {
-            pxl_config = yaml.safeLoad(pxl_config_contents);
+    let pxl_config = {};
+    
+    if (pxl_config_contents) {
+        pxl_config = yaml.safeLoad(pxl_config_contents);
 
-            if (!pxl_config) {
-                throw new Error(`Could not load PXL Web Vagrant configuration file "${pxl_config_file_path}".`);
-            }
+        if (!pxl_config) {
+            throw new Error(`Could not load PXL Web Vagrant configuration file "${pxl_config_file_path}".`);
+        }
 
-            // validate_pxl_config(pxl_config);
-            pxl_config['root-dir'] = (project_dir || remove_last_directory(pxl_config_dir));
+        // validate_pxl_config(pxl_config);
+        pxl_config['root-dir'] = (project_dir || remove_last_directory(pxl_config_dir));
 
-            let public_dir;
+        let public_dir;
 
-            if (pxl_config['public-dir']) {
-                if (get_public_directories().includes(pxl_config['public-dir'])) {
-                    public_dir = `${pxl_config['root-dir']}/${pxl_config['public-dir']}`;
-                } else {
-                    public_dir = pxl_config['public-dir'];
-                }
+        if (pxl_config['public-dir']) {
+            if (get_public_directories().includes(pxl_config['public-dir'])) {
+                public_dir = `${pxl_config['root-dir']}/${pxl_config['public-dir']}`;
             } else {
-                public_dir = pxl_config['root-dir'];
+                public_dir = pxl_config['public-dir'];
             }
-
-            pxl_config['public-dir'] = public_dir;
+        } else {
+            public_dir = pxl_config['root-dir'];
         }
 
-        // Check for install/uninstall script
-        const install_script_path = `${pxl_config_dir}/install.js`;
-        const uninstall_script_path = `${pxl_config_dir}/install.js`;
-
-        if (existsSync(install_script_path)) {
-            pxl_config['install-script'] = install_script_path;
-        }
-
-        if (existsSync(uninstall_script_path)) {
-            pxl_config['uninstall-script'] = uninstall_script_path;
-        }
-
-        // Fix PHP if 7.0 (removes .0)
-        if (pxl_config.code && pxl_config.code.php === 7) {
-            pxl_config.code.php = '7.0';
-        }
-
-        return pxl_config;
-    } catch (e) {
-        throw e;
+        pxl_config['public-dir'] = public_dir;
     }
+
+    // Check for install/uninstall script
+    const install_script_path = `${pxl_config_dir}/install.js`;
+    const uninstall_script_path = `${pxl_config_dir}/install.js`;
+
+    if (existsSync(install_script_path)) {
+        pxl_config['install-script'] = install_script_path;
+    }
+
+    if (existsSync(uninstall_script_path)) {
+        pxl_config['uninstall-script'] = uninstall_script_path;
+    }
+
+    // Fix PHP if 7.0 (removes .0)
+    if (pxl_config.code && pxl_config.code.php === 7) {
+        pxl_config.code.php = '7.0';
+    }
+
+    return pxl_config;
 }
 
 function find_pxl_configs(dir, filter_type = null) {

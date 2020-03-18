@@ -39,3 +39,20 @@ exec_command "nvm alias default lts/*"
 highlight_text "Give Vagrant user NVM home directory permissions..."
 
 exec_command "sudo chown -R vagrant:vagrant $HOME/.nvm"
+
+# Global NPM packages
+GLOBAL_NPM_PACKAGES=(
+    "hostile"
+    "ngrok"
+)
+
+for GLOBAL_NPM_PACKAGE in "${GLOBAL_NPM_PACKAGES[@]}"
+do
+    highlight_text "Install $GLOBAL_NPM_PACKAGE..."
+    exec_command "npm install -g $GLOBAL_NPM_PACKAGE"
+done
+
+# # Install provision shell script dependencies
+# cd /vagrant/scripts/
+
+# exec_command "npm install"

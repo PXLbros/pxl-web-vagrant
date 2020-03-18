@@ -19,16 +19,16 @@
   "homepage": "https://pxlbros.github.io/pxl-web-vagrant",
   "devDependencies": {
     "eslint": "^6.7.2",
-    "vuepress": "^1.3.0"
+    "vuepress": "^1.4.0"
   },
   "resolutions": {
     "webpack-dev-middleware": "3.6.0"
   },
   "dependencies": {
     "@google-cloud/speech": "^3.6.0",
-    "next": "^9.2.1",
-    "react": "^16.12.0",
-    "react-dom": "^16.12.0",
+    "next": "^9.3.1",
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0",
     "twit": "^2.2.11",
     "webpack-dev-middleware": "^3.7.2"
   }

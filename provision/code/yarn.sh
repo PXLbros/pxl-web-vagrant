@@ -4,7 +4,7 @@ export LOG_FILE_PATH=code/yarn.log
 
 . /vagrant/provision/helpers/include.sh
 
-title 'Yarn'
+title "Yarn"
 
 # Update APT
 highlight_text "Update APT..."
@@ -16,20 +16,3 @@ exec_command "sudo apt-get update -y"
 # Install yarn
 highlight_text "Install Yarn..."
 exec_command "sudo apt-get install yarn -y"
-
-# Global packages
-GLOBAL_PACKAGES=(
-    "hostile"
-    "ngrok"
-)
-
-for GLOBAL_PACKAGE in "${GLOBAL_PACKAGES[@]}"
-do
-    highlight_text "Install $GLOBAL_PACKAGE..."
-    exec_command "sudo yarn global add $GLOBAL_PACKAGE"
-done
-
-# Install provision shell script dependencies
-cd /vagrant/scripts/
-
-exec_command "yarn install"

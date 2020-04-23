@@ -62,6 +62,7 @@ GLOBAL_VARIABLES = {
     
     'MYSQL_ENABLED': vagrant_config['databases']['mysql']['enabled'],
     'MYSQL_VERSION': vagrant_config['databases']['mysql']['version'],
+    'MYSQL_VERSIONS': (vagrant_config['code']['mysql']['versions'] ? vagrant_config['code']['mysql']['versions'].join(' ') : nil),
 
     'PHPMYADMIN': vagrant_config['databases']['mysql']['phpmyadmin'],
 

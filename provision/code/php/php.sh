@@ -6,6 +6,7 @@ export LOG_FILE_PATH=code/php.log
 
 PHP_VERSIONS=($PHP_VERSIONS)
 PHP_COMMON_MODULES=(
+    "dom",
     "fpm"
     "curl"
     "gd"
